@@ -8,36 +8,31 @@
 <meta name="apple-mobile-web-app-title" content="Musiktheorie">
 <meta name="theme-color" content="#1a1a2e">
 <meta name="format-detection" content="telephone=no">
-<title>🎼 Musiktheorie – Interaktiv v2 (iPad)</title>
+<title>🎼 Musiktheorie – Interaktiv v3 (iPad)</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   html {
     height: 100%;
-    /* Verhindert Text-Reflow beim Drehen */
     -webkit-text-size-adjust: 100%;
   }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-    /* Dynamic viewport height: kein Springen, wenn die Adressleiste ein-/ausgeblendet wird */
     min-height: 100vh;
     min-height: 100dvh;
     color: #e8e8e8;
     -webkit-font-smoothing: antialiased;
     -webkit-tap-highlight-color: transparent;
     overflow-x: hidden;
-    /* iPad-Ränder: Safe-Area + Padding */
     padding:
       max(16px, env(safe-area-inset-top, 0px))
       max(16px, env(safe-area-inset-right, 0px))
       calc(16px + env(safe-area-inset-bottom, 0px))
       max(16px, env(safe-area-inset-left, 0px));
-    /* Platz, damit das On-Screen-Keyboard die Eingabe nicht verdeckt */
     scroll-padding-bottom: 40vh;
   }
 
-  /* Buttons und Eingaben: kein Doppeltipp-Zoom, keine Textauswahl */
   button, .section-btn, .option, .acc-btn, .btn, .text-input {
     touch-action: manipulation;
     -webkit-user-select: none;
@@ -80,7 +75,6 @@
     display: flex; flex-direction: column; gap: 5px;
     min-height: 96px;
   }
-  /* :active ersetzt :hover auf iPad – gibt sofortiges visuelles Feedback */
   .section-btn:active {
     background: rgba(233,69,96,0.25);
     border-color: rgba(233,69,96,0.7);
@@ -140,6 +134,7 @@
     margin-bottom: 16px;
   }
   .ex-header .left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .ex-header .right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
   .btn-back {
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
@@ -161,6 +156,50 @@
   .badge.score { background: linear-gradient(135deg, #4ecdc4, #2d9c95); color: #fff; font-weight: 600; }
   .badge.streak { background: linear-gradient(135deg, #f5a623, #e8860c); color: #fff; font-weight: 600; display: none; }
   .badge.streak.on { display: inline-block; }
+
+  .btn-merke {
+    background: rgba(78,205,196,0.12);
+    color: #4ecdc4;
+    border: 1px solid rgba(78,205,196,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: .85rem;
+    font-weight: 600;
+    cursor: pointer;
+    min-height: 44px;
+    transition: background .15s, transform .1s;
+  }
+  .btn-merke:active { background: rgba(78,205,196,0.3); transform: scale(0.97); }
+  .btn-merke.active { background: rgba(78,205,196,0.28); color: #fff; }
+
+  .merke-box {
+    background: rgba(78,205,196,0.08);
+    border: 1px solid rgba(78,205,196,0.25);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 18px;
+    font-size: .88rem;
+    line-height: 1.55;
+    color: #d8d8e0;
+    animation: slideUp .25s ease;
+  }
+  .merke-box h4 {
+    color: #4ecdc4;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 8px;
+  }
+  .merke-box ul { margin: 0; padding-left: 20px; }
+  .merke-box li { margin: 4px 0; }
+  .merke-box b { color: #fff; }
+  .merke-box code {
+    background: rgba(255,255,255,0.08);
+    padding: 1px 5px; border-radius: 4px;
+    font-family: 'Menlo', 'Courier New', monospace;
+    font-size: .82rem;
+  }
 
   .progress-outer {
     height: 5px; background: rgba(255,255,255,0.08);
@@ -189,18 +228,15 @@
     display: flex; justify-content: center;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
-    /* Verhindert versehentliches Doppeltipp-Zoom im Notenbild */
     touch-action: pan-x;
   }
   .staff-box svg { max-width: 100%; height: auto; }
   .staff-interactive {
     cursor: crosshair;
-    /* Wichtig: kein Doppeltipp-Zoom auf dem Notensystem */
     touch-action: manipulation;
   }
   .staff-interactive svg {
     cursor: crosshair;
-    /* Sanftes Antippen ohne Scroll-Interpretation */
     touch-action: manipulation;
   }
 
@@ -220,7 +256,6 @@
     transition: all .15s;
     font-family: Georgia, serif;
     line-height: 1;
-    /* Apple empfehlen mindestens 44×44pt – hier großzügiger */
   }
   .acc-btn:active:not(:disabled) { transform: scale(0.92); background: rgba(255,255,255,0.22); }
   .acc-btn.active {
@@ -327,7 +362,6 @@
     font-family: inherit; font-size: 1.05rem;
     transition: border-color 0.15s, background 0.15s;
     min-height: 52px;
-    /* iOS: Standard-Textfeld-Styling zurücksetzen */
     -webkit-appearance: none;
     appearance: none;
   }
@@ -416,7 +450,6 @@
 
   /* ================= iPad-Optimierungen ================= */
 
-  /* iPad portrait (768–1024px): mehr Luft, größere Schrift */
   @media (min-width: 768px) {
     body { font-size: 16px; }
     .app { max-width: 860px; }
@@ -427,14 +460,12 @@
     .staff-box { padding: 16px; }
   }
 
-  /* iPad Pro / landscape: etwas breitere Spalte */
   @media (min-width: 1024px) {
     .app { max-width: 1000px; }
     h1 { font-size: 2.4rem; }
     .subtitle { font-size: 1rem; }
   }
 
-  /* Sehr kleine iPhones – bleiben trotzdem benutzbar */
   @media (max-width: 520px) {
     .options { grid-template-columns: 1fr; }
     h1 { font-size: 1.5rem; }
@@ -444,7 +475,6 @@
     .action-row .btn { min-width: 100%; }
   }
 
-  /* Reduzierte Bewegung respektieren */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
@@ -459,7 +489,7 @@
   <!-- ============ MENU ============ -->
   <div id="menu" class="card">
     <h1>🎼 Musiktheorie – Interaktiv</h1>
-    <p class="subtitle">14 Kapitel – vom Notennamen bis zur harmonischen Analyse. Klicke Noten direkt ins System – jetzt auch im Bassschlüssel! Mit Vorzeichen ♯ ♭ ♮, Live-Prüfung, Klang 🔊 und Statistik-Export 📤.<br>Deine Ergebnisse werden <b>pro Thema gespeichert</b>.</p>
+    <p class="subtitle">15 Kapitel – vom Notennamen bis zur harmonischen Analyse und zum Gehör. Klicke Noten direkt ins System – im Violin- und Bassschlüssel. Mit Vorzeichen ♯ ♭ ♮, Live-Prüfung, Klang 🔊, Merke-Kästen 📖 und Statistik-Export 📤.<br>Deine Ergebnisse werden <b>pro Thema gespeichert</b>.</p>
     <div class="section-grid" id="sectionGrid"></div>
     <div class="legend">
       <span><span class="dot" style="background:#4ecdc4"></span>≥ 80 % sitzt</span>
@@ -480,10 +510,15 @@
         <button class="btn-back" onclick="showMenu()">← Menü</button>
         <span class="badge" id="qCounter">Frage 1/8</span>
       </div>
-      <div style="display:flex;gap:8px;">
+      <div class="right">
+        <button class="btn-merke" id="btnMerke" onclick="toggleMerke()">📖 Merke</button>
         <span class="badge streak" id="streakBadge">🔥 0</span>
         <span class="badge score" id="scoreBadge">0 Punkte</span>
       </div>
+    </div>
+    <div class="merke-box" id="merkeBox" style="display:none;">
+      <h4>📖 Merke – <span id="merkeTitle"></span></h4>
+      <div id="merkeContent"></div>
     </div>
     <div class="progress-outer"><div class="progress-inner" id="progressBar"></div></div>
     <span class="q-label" id="sectionLabel">…</span>
@@ -612,7 +647,8 @@ function parseUserNote(input) {
   const octave = parseInt(m[3], 10);
   let name = letter, accidental = null;
   if (letter === 'b') {
-    if (suffix) return null;
+    // „b3" oder „bes3" → H♭
+    if (suffix && suffix !== 'es' && suffix !== 's') return null;
     name = 'h'; accidental = 'b';
   } else {
     if (suffix === 'is' || suffix === '#' || suffix === 'isis' || suffix === '##') {
@@ -862,14 +898,22 @@ function drawChord(svg, x, notes, clefOff, yForStep, color) {
   return svg;
 }
 
-const SHARP_SIG_POS = [8,5,2,6,3,7,4];   // fis cis gis dis ais eis his (Violinschlüssel)
-const FLAT_SIG_POS  = [4,7,3,6,2,5,8];   // b es as des ges ces f (Violinschlüssel)
+/* Generalvorzeichen: pro Schlüssel und Vorzeichen-Typus korrekte Notenpositionen */
+const SHARP_SIG_NOTES = {
+  treble: [['f',5],['c',5],['g',4],['d',5],['a',4],['e',5],['h',4]],
+  bass:   [['f',3],['c',3],['g',3],['d',3],['a',2],['e',3],['h',2]]
+};
+const FLAT_SIG_NOTES = {
+  treble: [['h',4],['e',5],['a',4],['d',5],['g',4],['c',5],['f',4]],
+  bass:   [['h',2],['e',3],['a',2],['d',3],['g',2],['c',3],['f',2]]
+};
+
 function renderStaticScore(staff) {
   const ls = 10, topY = 50, botY = topY + 4*ls;
   const paddingX = 14, clefW = 48, noteW = 50;
   const stacked = !!staff.stacked;
   const sigCount = staff.keySig ? staff.keySig.count : 0;
-  const keySigW = sigCount * 9;
+  const keySigW = sigCount * 10;
   const contentW = stacked
     ? 70
     : Math.max(staff.notes.length * noteW, 40);
@@ -877,7 +921,7 @@ function renderStaticScore(staff) {
   const clefOff = staff.clef === 'treble' ? 2 : -10;
   const yForStep = s => botY - (s - clefOff) * (ls/2);
 
-  let svg = `<svg viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">`;
+  let svg = `<svg viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Notensystem">`;
   for (let i = 0; i < 5; i++) {
     const y = topY + i*ls;
     svg += `<line x1="${paddingX}" y1="${y}" x2="${W-paddingX}" y2="${y}" stroke="#222" stroke-width="1.1"/>`;
@@ -888,11 +932,12 @@ function renderStaticScore(staff) {
     svg += `<text x="${paddingX+8}" y="${topY+6}" font-size="46" fill="#222" font-family="Georgia,serif">𝄢</text>`;
 
   if (staff.keySig) {
-    const positions = staff.keySig.type === 'flat' ? FLAT_SIG_POS : SHARP_SIG_POS;
+    const table = staff.keySig.type === 'flat' ? FLAT_SIG_NOTES : SHARP_SIG_NOTES;
+    const positions = table[staff.clef] || table.treble;
     const sym = staff.keySig.type === 'flat' ? '♭' : '♯';
-    positions.slice(0, staff.keySig.count).forEach((sPos, i) => {
-      const x = paddingX + clefW - 10 + i * 9;
-      const y = yForStep(sPos + clefOff);
+    positions.slice(0, staff.keySig.count).forEach((pos, i) => {
+      const x = paddingX + clefW - 6 + i * 10;
+      const y = yForStep(absStep(pos[0], pos[1]));
       svg += `<text x="${x}" y="${y + 5}" font-size="17" fill="#222" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
     });
   }
@@ -946,7 +991,7 @@ function renderInteractive() {
   const fixedCount = (config.fixedNotes || []).length;
   const currentSlot = fixedCount + state.userNotes.length;
 
-  let svg = `<svg viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="touch-action: manipulation;">`;
+  let svg = `<svg viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="touch-action: manipulation;" role="img" aria-label="Interaktives Notensystem">`;
 
   for (let i = 0; i < 5; i++) {
     const y = topY + i*ls;
@@ -1002,7 +1047,6 @@ function drawRestInto(svg, x, note, clefOff, yForStep, color) {
     const yMid = yForStep(4 + clefOff);
     svg += `<rect x="${x-6}" y="${yMid - 5}" width="12" height="5" fill="${color}"/>`;
   } else {
-    // Viertelpause / Achtelpause / punktierte Viertelpause als stilisierte Form
     const yTop = yForStep(7 + clefOff);
     const path = v === 'reighth'
       ? `M ${x+2} ${yTop} c -4 3, 3 5, -1 8 c -5 3, 2 6, -2 9`
@@ -1063,13 +1107,8 @@ function drawNoteInto(svg, x, note, clefOff, yForStep, color, small) {
   return svg;
 }
 
-/* --- iPad: Pointer-Events statt click. Reagiert sofort beim Tippen,
-       verhindert Doppeltipp-Zoom, ignoriert Multi-Touch. --- */
 function handleStaffPointer(evt) {
-  // Nur primärer Pointer (Finger/Stift/Maus)
   if (!evt.isPrimary) return;
-  // Multi-Touch ignorieren (verhindert versehentliche Eingaben beim Scrollen)
-  if (evt.pointerType === 'touch' && evt.isPrimary === false) return;
 
   const { config, state, container } = staffCtx;
   if (state.checked) return;
@@ -1079,7 +1118,6 @@ function handleStaffPointer(evt) {
   const svg = container.querySelector('svg');
   if (!svg) return;
 
-  // Position relativ zum SVG berechnen
   const rect = svg.getBoundingClientRect();
   const viewBox = svg.viewBox.baseVal;
   const scaleX = viewBox.width / rect.width;
@@ -1090,7 +1128,6 @@ function handleStaffPointer(evt) {
   const ls = 10, topY = 50, botY = topY + 4*ls;
   const clefOff = config.clef === 'treble' ? 2 : -10;
 
-  // Y → diatonische Tonstufe (runden)
   let rel = (botY - locY) / (ls/2);
   rel = Math.round(rel);
   rel = Math.max(-9, Math.min(clefOff < 0 ? 17 : 15, rel));
@@ -1100,7 +1137,6 @@ function handleStaffPointer(evt) {
   const acc = state.selectedAcc === 'n' ? null : state.selectedAcc;
   state.userNotes.push({ name: pitch.name, octave: pitch.octave, accidental: acc });
 
-  // Kein Doppeltipp-Zoom / kein versehentliches Scrollen auslösen
   evt.preventDefault();
 
   renderInteractive();
@@ -1141,7 +1177,7 @@ function updateInteractiveControls() {
 }
 
 /* ============================================================
-   WEB AUDIO  (iOS: AudioContext braucht User-Geste)
+   WEB AUDIO
    ============================================================ */
 let audioCtx = null;
 function ensureAudio() {
@@ -1159,6 +1195,7 @@ function noteFreq(n) {
 function playTones(freqs, start, dur) {
   const ctx = ensureAudio();
   if (!ctx) return;
+  dur = Math.max(0.08, dur);
   freqs.forEach(f => {
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -1193,7 +1230,8 @@ function playRhythm(notes) {
   notes.forEach(n => {
     const key = (n.value || 'quarter').replace(/^r/, '');
     const val = BEAT_VALS[key] || 1;
-    if (!(n.value || '').charAt(0) === 'r') playTones([noteFreq(n)], t, val * 0.45 - 0.02);
+    const isRest = (n.value || '').charAt(0) === 'r';
+    if (!isRest) playTones([noteFreq(n)], t, val * 0.45 - 0.02);
     t += val * 0.45;
   });
 }
@@ -1207,7 +1245,9 @@ function playChordProgression(chords) {
 }
 function playMCNotes() {
   const q = state_questions[state_current];
-  if (!q || !q.staff) return;
+  if (!q) return;
+  if (q.playFn) { q.playFn(); return; }
+  if (!q.staff) return;
   if (q.staff.chords) playChordProgression(q.staff.chords);
   else if (q.staff.notes && q.staff.notes.length && q.staff.notes[0].value) playRhythm(q.staff.notes);
   else playNotes(q.staff.notes || [], false);
@@ -1232,7 +1272,7 @@ function renderHarmonyScore(prog) {
   const yTreble = s => tBot - (s - 2) * (ls / 2);
   const yBass = s => bBot - (s + 10) * (ls / 2);
 
-  let svg = `<svg viewBox="0 0 ${W} 168" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">`;
+  let svg = `<svg viewBox="0 0 ${W} 168" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Klaviersystem">`;
   for (let i = 0; i < 5; i++) {
     svg += `<line x1="${paddingX}" y1="${tTop + i * ls}" x2="${W - paddingX}" y2="${tTop + i * ls}" stroke="#222" stroke-width="1.1"/>`;
     svg += `<line x1="${paddingX}" y1="${bTop + i * ls}" x2="${W - paddingX}" y2="${bTop + i * ls}" stroke="#222" stroke-width="1.1"/>`;
@@ -1395,7 +1435,7 @@ function genNoteNameText() {
     mode: 'text',
     q: `Wie heißt dieser Ton im ${clef === 'treble' ? 'Violin' : 'Bass'}schlüssel? Schreibe Name + Oktave (z.B. "cis4", "es4", "h3").`,
     staff: { clef, notes: [target] },
-    hint: 'Hinweis: „b" allein steht für H♭ (z.B. "b3"). Für Kreuz „is" oder „#", für Bes „es" oder „b".',
+    hint: 'Hinweis: „b3" oder „bes3" bedeuten H♭3. Für Kreuz „is" oder „#", für Bes „es" oder „b".',
     checkFn: (input) => {
       const parsed = parseUserNote(input);
       if (!parsed) return false;
@@ -1455,7 +1495,7 @@ function genIntervallInteractive() {
     totalSlots: 2,
     expected: [target],
     acceptEnharmonic: false,
-    explanation: `${fullNoteName(rootName, 4)} → ${fullNoteName(target.name, target.octave, target.accidental)} = ${iv.name} (${iv.steps} Tonstufe(n), ${iv.semis} Halbtöne)`
+    explanation: `${fullNoteName(rootName, rootOct)} → ${fullNoteName(target.name, target.octave, target.accidental)} = ${iv.name} (${iv.steps} Tonstufe(n), ${iv.semis} Halbtöne)`
   };
 }
 function genIntervallBestimmenMC() {
@@ -1473,14 +1513,33 @@ function genIntervallBestimmenMC() {
     explanation: `${fullNoteName(rootName, 4)} → ${fullNoteName(target.name, target.octave, target.accidental)}: ${iv.steps} Tonstufe(n) und ${iv.semis} Halbtöne → ${iv.name}.`
   };
 }
+function genIntervallHören() {
+  const iv = R(INTERVALS);
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const rootOct = 4;
+  const target = noteFrom(rootName, null, rootOct, iv.steps, iv.semis);
+  const wrongs = shuffle(INTERVALS.filter(x => x.name !== iv.name).map(x => x.name)).slice(0, 3);
+  const opts = shuffle([iv.name, ...wrongs]);
+  return {
+    mode: 'mc',
+    q: '🎧 Welches Intervall hörst du? (Der tiefere Ton kommt zuerst.)',
+    options: opts,
+    correct: opts.indexOf(iv.name),
+    explanation: `${fullNoteName(rootName, rootOct)} → ${fullNoteName(target.name, target.octave, target.accidental)} = ${iv.name}.`,
+    playFn: () => playNotes(
+      [{ name:rootName, octave:rootOct, accidental:null }, target], true
+    )
+  };
+}
 
 function genDreiklangInteractive() {
   const rootName = R(['c','d','e','f','g','a','h']);
   const type = R(['dur','moll','vermindert','übermäßig']);
   const clef = pickClef();
+  // Bevorzugt: Bass tief, Diskant mittig – Triad soll im System lesbar bleiben.
   const rootOct = clef === 'bass'
-    ? ((rootName === 'a' || rootName === 'h') ? 2 : R([2,3]))
-    : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
+    ? ((rootName === 'a' || rootName === 'h') ? 2 : 3)
+    : 4;
   const semis = { dur:[4,7], moll:[3,7], vermindert:[3,6], 'übermäßig':[4,8] }[type];
   const triad = buildTriad(rootName, null, rootOct, semis[0], semis[1]);
   const typeName = { dur:'Dur', moll:'Moll', vermindert:'vermindert', 'übermäßig':'übermäßig' }[type];
@@ -1490,7 +1549,7 @@ function genDreiklangInteractive() {
     mode: 'staff',
     q: `Bilde einen ${capFirst(rootDisplay(rootName, null))}-${typeName}-Dreiklang in Grundstellung! Tippe Terz und Quinte über dem Grundton.`,
     clef,
-    fixedNotes: [{ name: rootName, octave: 4 }],
+    fixedNotes: [{ name: rootName, octave: rootOct }],
     totalSlots: 3,
     expected: [triad[1], triad[2]],
     acceptEnharmonic: false,
@@ -1506,8 +1565,6 @@ function genDreiklangBestimmenMC() {
   const rootOct = (rootName === 'a' || rootName === 'h') ? 3 : 4;
   const t = R(types);
   const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
-  const inversion = RI(0, 2);
-  const shown = invertTriad(triad, inversion);
   const chordRoot = capFirst(rootDisplay(rootName, null));
   const correct = (t[1] === 'Dur' ? chordRoot : chordRoot.toLowerCase()) + '-' + t[1];
   const pool = [];
@@ -1526,15 +1583,44 @@ function genDreiklangBestimmenMC() {
     if (!others.includes(w) && w !== correct) others.push(w);
   }
   const opts = shuffle([correct, ...others]);
-  const invName = ['Grundstellung', '1. Umkehrung (Sextakkord)', '2. Umkehrung (Quartsextakkord)'][inversion];
   const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
   return {
     mode: 'mc',
-    q: 'Welcher Dreiklang ist notiert? (Grundstellung oder eine Umkehrung – gestapelt als Akkord)',
+    q: 'Welcher Dreiklang ist notiert? (Grundstellung, gestapelt)',
+    staff: { clef: 'treble', notes: triad, stacked: true },
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `${correct} = ${names.join(' – ')} (Grundstellung: Grundton, Terz, Quinte von unten nach oben)`
+  };
+}
+function genDreiklangUmkehrungBestimmenMC() {
+  const types = [
+    ['dur','Dur',4,7], ['moll','Moll',3,7],
+    ['vermindert','vermindert',3,6], ['übermäßig','übermäßig',4,8]
+  ];
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const rootOct = (rootName === 'a' || rootName === 'h') ? 3 : 4;
+  const t = R(types);
+  const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
+  const inversion = RI(1, 2);
+  const shown = invertTriad(triad, inversion);
+  const invName = inversion === 1 ? '1. Umkehrung (Sextakkord)' : '2. Umkehrung (Quartsextakkord)';
+  const correct = invName;
+  const wrongs = ['Grundstellung', '1. Umkehrung (Sextakkord)', '2. Umkehrung (Quartsextakkord)']
+    .filter(x => x !== correct);
+  const opts = shuffle([correct, ...wrongs]);
+  const chordRoot = capFirst(rootDisplay(rootName, null));
+  const quality = t[1];
+  const chordName = (quality === 'Dur' ? chordRoot : chordRoot.toLowerCase()) + '-' + quality;
+  const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  const shownNames = shown.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  return {
+    mode: 'mc',
+    q: `Welche Umkehrung des ${chordName}-Akkords ist notiert?`,
     staff: { clef: 'treble', notes: shown, stacked: true },
     options: opts,
     correct: opts.indexOf(correct),
-    explanation: `${correct} = ${names.join(' – ')}. Notiert ist die ${invName}.`
+    explanation: `Notiert: ${shownNames.join(' – ')} → ${correct}. Der Akkord ${chordName} = ${names.join(' – ')}. (1. Umkehrung: Terz im Bass. 2. Umkehrung: Quinte im Bass.)`
   };
 }
 function genDreiklangUmkehrung() {
@@ -1543,7 +1629,7 @@ function genDreiklangUmkehrung() {
   const clef = pickClef();
   const rootOct = clef === 'bass'
     ? ((rootName === 'a' || rootName === 'h') ? 2 : 3)
-    : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
+    : 4;
   const triad = buildTriad(rootName, null, rootOct, type === 'dur' ? 4 : 3, 7);
   const inv = RI(1, 2);
   const shown = invertTriad(triad, inv);
@@ -1752,8 +1838,8 @@ function genSeptakkordInteractive() {
   const def = R(SEVENTH_DEFS);
   const clef = pickClef();
   const rootOct = clef === 'bass'
-    ? ((rootName === 'a' || rootName === 'h') ? 2 : R([2,3]))
-    : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
+    ? ((rootName === 'a' || rootName === 'h') ? 2 : 3)
+    : 4;
   const chord = buildFourthChord(rootName, rootAcc, rootOct, def);
   const symbol = chordSymbol(rootName, rootAcc, def);
   const names = chord.map(n => fullNoteName(n.name, n.octave, n.accidental));
@@ -1875,7 +1961,6 @@ function genQuintenzirkelMC() {
   }
 }
 
-/* Vorzeichenlesen: Tonart aus dem Generalvorzeichen am System bestimmen */
 const QZ_KEYS = [
   { key:'C',  acc:0 }, { key:'G',  acc:1 }, { key:'D',  acc:2 },
   { key:'A',  acc:3 }, { key:'E',  acc:4 }, { key:'H',  acc:5 },
@@ -1933,10 +2018,6 @@ function genKadenzMC() {
 
 const N = (name, octave, accidental = null) => ({ name, octave, accidental });
 
-/* Stimmführungs-Generator: erzeugt zufällige Akkordpaare (T→D bzw. D→T)
-   in zufälligen Tonarten und prüft sie automatisch. Fehlerarten:
-   parallele Quinten/Oktaven, versteckte Quinten/Oktaven,
-   nicht aufgelöster Leitton – oder korrektes Beispiel. */
 const STIMM_ERR_LABELS = {
   q:  'Parallele Quinten',
   o:  'Parallele Oktaven',
@@ -1953,8 +2034,6 @@ const STIMM_KEYS = [
   { name:'B',  steps:6, semis:10, pc:10 },
   { name:'Es', steps:2, semis:3,  pc:3 }
 ];
-/* Konstruktions-Vorlagen in C-Dur, Stimmen [Bass, Tenor, Alt, Sopran].
-   Sie werden transponiert und in bequeme Lagen verschoben. */
 const STIMM_BLUEPRINTS = [
   { prog:'T→D', err:'o',
     A:[N('c',3),N('e',3),N('g',4),N('c',5)],
@@ -1996,8 +2075,6 @@ function checkStimmfuehrung(ch1, ch2, isDToT, key) {
       else if (int1 === 7 && int2 === 7) errs.push({ type:'q', voices:[i,j] });
     }
   }
-  // Versteckte Quinten/Oktaven: nur Außenstimmen (Bass & Sopran),
-  // echte Parallelen haben Vorrang.
   const mb = pv(ch2[0]) - pv(ch1[0]);
   const ms = pv(ch2[3]) - pv(ch1[3]);
   const sameDirOut = (mb > 0 && ms > 0) || (mb < 0 && ms < 0);
@@ -2007,7 +2084,6 @@ function checkStimmfuehrung(ch1, ch2, isDToT, key) {
     if (intOut === 0) errs.push({ type:'ho', voices:[0,3] });
     else if (intOut === 7) errs.push({ type:'hq', voices:[0,3] });
   }
-  // Leitton-Auflösung (nur D→T)
   if (isDToT) {
     const ltPc = (key.pc + 11) % 12;
     for (let i = 1; i < 4; i++) {
@@ -2027,8 +2103,6 @@ function genStimmfuehrungMC() {
     const bp = R(STIMM_BLUEPRINTS);
     const tp = ch => ch.map(n => noteFrom(n.name, n.accidental, n.octave, key.steps, key.semis));
     const ch1 = tp(bp.A), ch2 = tp(bp.B);
-    // Je Stimme in bequeme Lage verschieben – beide Akkorde gemeinsam,
-    // damit Bewegungsrichtungen und Intervallklassen erhalten bleiben.
     for (let v = 0; v < 4; v++) {
       let d = 0;
       const cur = absStep(ch1[v].name, ch1[v].octave);
@@ -2036,7 +2110,6 @@ function genStimmfuehrungMC() {
       while (cur + d*7 < STIMM_RANGES[v][0]) d++;
       if (d !== 0) { ch1[v].octave += d; ch2[v].octave += d; }
     }
-    // Stimmenkreuzung verhindern (Verschiebung wirkt auf beide Akkorde)
     for (let v = 1; v < 4; v++) {
       while (absStep(ch1[v].name, ch1[v].octave) < absStep(ch1[v-1].name, ch1[v-1].octave)
         || absStep(ch2[v].name, ch2[v].octave) < absStep(ch2[v-1].name, ch2[v-1].octave)) {
@@ -2085,6 +2158,27 @@ function genStimmfuehrungMC() {
     };
   }
   return null;
+}
+
+function genDreiklangHören() {
+  const types = [
+    ['dur','Dur',4,7], ['moll','Moll',3,7],
+    ['vermindert','vermindert',3,6], ['übermäßig','übermäßig',4,8]
+  ];
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const rootOct = (rootName === 'a' || rootName === 'h') ? 3 : 4;
+  const t = R(types);
+  const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
+  const opts = shuffle(types.map(x => x[1]));
+  const correct = t[1];
+  return {
+    mode: 'mc',
+    q: '🎧 Welche Dreiklangsqualität hörst du? (alle Töne gleichzeitig)',
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `${capFirst(rootDisplay(rootName, null))}-${correct} = ${triad.map(n => fullNoteName(n.name, n.octave, n.accidental)).join(' – ')}`,
+    playFn: () => playNotes(triad, false)
+  };
 }
 
 const FUNC_LABELS = {
@@ -2136,23 +2230,175 @@ function genAnalyseMC() {
 }
 
 /* ============================================================
-   SECTIONS
+   SECTIONS  (mit Merke-Texten)
    ============================================================ */
 const SECTIONS = [
-  { id:'noten',       icon:'🎵', title:'Notennamen',                   desc:'benennen & setzen (mit korrekter Schreibweise)', gens:[genNotennameMC, genEnharmMC, genNotePlace, genNoteNameText] },
-  { id:'werte',       icon:'⏱️', title:'Noten- und Pausenwerte',        desc:'inkl. punktierter Werte & 6/8',                   gens:[genNotenwertMC, genPausenwertMC] },
-  { id:'halbgans',    icon:'📏', title:'Halb- und Ganztonschritte',     desc:'Zielnote in beiden Schlüsseln tippen',            gens:[genHalbGanz] },
-  { id:'intervalle',  icon:'📐', title:'Intervalle',                    desc:'bilden & bestimmen (inkl. Tritonus)',            gens:[genIntervallInteractive, genIntervallBestimmenMC] },
-  { id:'dreiklaenge', icon:'🎹', title:'Dreiklänge',                    desc:'bilden, bestimmen, Umkehrungen & Freitext',       gens:[genDreiklangInteractive, genDreiklangBestimmenMC, genDreiklangUmkehrung, genDreiklangText] },
-  { id:'tonleitern',  icon:'🪜', title:'Dur-Tonleitern',                desc:'in Violin- & Bassschlüssel tippen',              gens:[genDurTonleiter] },
-  { id:'moll',        icon:'🌙', title:'Molltonleitern',                desc:'natürlich, harmonisch & melodisch',              gens:[genMollTonleiter] },
-  { id:'chromatik',   icon:'🎨', title:'Chromatik & Ganztonleiter',     desc:'chromatische Skala & Ganztonleiter',             gens:[genChromatisch, genGanzton] },
-  { id:'funktionen',  icon:'🏛️', title:'Haupt- & Nebendreiklänge',      desc:'T, S, D und ihre Parallelen',                    gens:[genFunktionen] },
-  { id:'akkorde',     icon:'🎚️', title:'Weitere Akkorde',               desc:'Sept- & Sixte-ajoutée-Akkorde',                  gens:[genSeptakkordInteractive, genSeptakkordBestimmenMC] },
-  { id:'quinten',     icon:'🔄', title:'Quintenzirkel',                 desc:'Vorzeichen & Parallelen',                        gens:[genQuintenzirkelMC] },
-  { id:'vorzeichen',  icon:'🔑', title:'Vorzeichen lesen',             desc:'Tonart aus Generalvorzeichen bestimmen',          gens:[genVorzeichenMC] },
-  { id:'kadenz',      icon:'🎼', title:'Kadenz',                        desc:'T-S-D-T & Stimmführungsfehler',                  gens:[genKadenzMC, genStimmfuehrungMC] },
-  { id:'analyse',     icon:'🔍', title:'Harmonische Analyse',           desc:'Funktionen in Kadenzen bestimmen',               gens:[genAnalyseMC] },
+  {
+    id:'noten', icon:'🎵', title:'Notennamen',
+    desc:'benennen & setzen (mit korrekter Schreibweise)',
+    gens:[genNotennameMC, genEnharmMC, genNotePlace, genNoteNameText],
+    merke: `<ul>
+      <li><b>Violinschlüssel:</b> unterste Linie = <code>E4</code>, oberste Linie = <code>F5</code>. Zwischenräume: <code>F4 A4 C5 E5</code>.</li>
+      <li><b>Bassschlüssel:</b> unterste Linie = <code>G2</code>, oberste Linie = <code>A3</code>. Zwischenräume: <code>A2 C3 E3 G3</code>.</li>
+      <li>Die Oktavzahl wechselt immer beim <b>C</b>: C4 = mittleres C.</li>
+      <li>Enharmonisch: <code>cis = des</code>, <code>dis = es</code>, <code>fis = ges</code>, <code>gis = as</code>, <code>ais = b</code>, <code>his = c</code>.</li>
+      <li>In Deutschland heißt der Ton H (nicht B). <b>B</b> = H♭.</li>
+    </ul>`
+  },
+  {
+    id:'werte', icon:'⏱️', title:'Noten- und Pausenwerte',
+    desc:'inkl. punktierter Werte & 6/8',
+    gens:[genNotenwertMC, genPausenwertMC],
+    merke: `<ul>
+      <li>Ganze = 4 Viertel · Halbe = 2 · Viertel = 1 · Achtel = ½.</li>
+      <li>Punkt hinter Note/Pause verlängert um die Hälfte: punktierte Viertel = <code>1½</code>, punktierte Halbe = <code>3</code>.</li>
+      <li><b>Taktart:</b> <code>4/4</code> = 4 Viertel pro Takt; <code>3/4</code> = 3 Viertel; <code>6/8</code> = 6 Achtel = 2 punktierte Viertel.</li>
+      <li>Pausenwerte parallel zu Notenwerten: ganze Pause, halbe Pause usw.</li>
+    </ul>`
+  },
+  {
+    id:'halbgans', icon:'📏', title:'Halb- und Ganztonschritte',
+    desc:'Zielnote in beiden Schlüsseln tippen',
+    gens:[genHalbGanz],
+    merke: `<ul>
+      <li><b>Halbtonschritt (HTS)</b> = eine Klaviertaste weiter (auch schwarze!) = 1 Bund auf der Gitarre.</li>
+      <li><b>Ganztonschritt (GTS)</b> = 2 Halbtonschritte.</li>
+      <li>Zwischen <code>e–f</code> und <code>h–c</code> liegt jeweils nur <b>ein</b> Halbtonschritt – sonst sind alle Stammtonschritte Ganztonschritte.</li>
+    </ul>`
+  },
+  {
+    id:'intervalle', icon:'📐', title:'Intervalle',
+    desc:'bilden, bestimmen & hören (inkl. Tritonus)',
+    gens:[genIntervallInteractive, genIntervallBestimmenMC, genIntervallHören],
+    merke: `<ul>
+      <li><b>Stufe zuerst:</b> c→e = Terz (c,d,e), c→g = Quinte (c,d,e,f,g).</li>
+      <li><b>Qualität dann:</b> Prime, Quarte, Quinte, Oktave sind meist <i>rein</i>. Sekunden, Terzen, Sexten, Septimen sind <i>groß</i> oder <i>klein</i>.</li>
+      <li><b>Tritonus</b> = 3 Ganztöne = übermäßige Quarte <i>oder</i> verminderte Quinte.</li>
+      <li>Reine Quarte = 5 HT · Reine Quinte = 7 HT · Große Terz = 4 HT · Kleine Terz = 3 HT.</li>
+    </ul>`
+  },
+  {
+    id:'dreiklaenge', icon:'🎹', title:'Dreiklänge',
+    desc:'bilden, bestimmen, Umkehrungen & Freitext',
+    gens:[genDreiklangInteractive, genDreiklangBestimmenMC, genDreiklangUmkehrungBestimmenMC, genDreiklangUmkehrung, genDreiklangText],
+    merke: `<ul>
+      <li><b>Dur</b>: große Terz + kleine Terz (z.B. <code>c–e–g</code>).</li>
+      <li><b>Moll</b>: kleine Terz + große Terz (z.B. <code>a–c–e</code>).</li>
+      <li><b>Vermindert</b>: kleine Terz + kleine Terz (<code>h–d–f</code>). <b>Übermäßig</b>: große + große (<code>c–e–g♯</code>).</li>
+      <li><b>1. Umkehrung</b> = Terz im Bass (Sextakkord, Ziffer 6). <b>2. Umkehrung</b> = Quinte im Bass (Quartsextakkord, 6/4).</li>
+      <li>Schreibweise: Dur groß (C-Dur), Moll klein (a-Moll).</li>
+    </ul>`
+  },
+  {
+    id:'tonleitern', icon:'🪜', title:'Dur-Tonleitern',
+    desc:'in Violin- & Bassschlüssel tippen',
+    gens:[genDurTonleiter],
+    merke: `<ul>
+      <li>Dur-Struktur: <code>GTS GTS HTS GTS GTS GTS HTS</code>.</li>
+      <li>Jeder Stammton kommt <b>genau einmal</b> vor (mit Vorzeichen notiert).</li>
+      <li>Beispiele: C-Dur ohne Vorzeichen · G-Dur mit fis · F-Dur mit b · D-Dur mit fis & cis.</li>
+    </ul>`
+  },
+  {
+    id:'moll', icon:'🌙', title:'Molltonleitern',
+    desc:'natürlich, harmonisch & melodisch',
+    gens:[genMollTonleiter],
+    merke: `<ul>
+      <li><b>Natürlich Moll</b>: <code>GTS HTS GTS GTS HTS GTS GTS</code> (kleine Terz zur Dur-Tonleiter).</li>
+      <li><b>Harmonisch Moll</b>: 7. Stufe um einen Halbton erhöht → Leitton (z.B. a-Moll: g♯).</li>
+      <li><b>Melodisch Moll</b> aufwärts: 6. und 7. Stufe erhöht; abwärts wie natürliches Moll.</li>
+      <li>a-Moll ist die parallele Molltonart von C-Dur (gleiche Vorzeichen).</li>
+    </ul>`
+  },
+  {
+    id:'chromatik', icon:'🎨', title:'Chromatik & Ganztonleiter',
+    desc:'chromatische Skala & Ganztonleiter',
+    gens:[genChromatisch, genGanzton],
+    merke: `<ul>
+      <li><b>Chromatisch</b> = alle 12 Halbtöne einer Oktave.</li>
+      <li>Üblich: aufwärts mit Kreuzen, abwärts mit Bes notieren (oder in Dur: alle Stammtöne + Erhöhungen).</li>
+      <li><b>Ganztonleiter</b> = nur Ganztonschritte (6 Töne + Oktave). Es gibt nur zwei verschiedene.</li>
+      <li>Chromatische Tonleiter hat 13 Töne (12 Halbtonschritte + Oktave).</li>
+    </ul>`
+  },
+  {
+    id:'funktionen', icon:'🏛️', title:'Haupt- & Nebendreiklänge',
+    desc:'T, S, D und ihre Parallelen',
+    gens:[genFunktionen],
+    merke: `<ul>
+      <li>In Dur: <b>T</b> = I. Stufe · <b>S</b> = IV. Stufe · <b>D</b> = V. Stufe.</li>
+      <li>Parallelen: <b>Tp</b> (vi), <b>Sp</b> (ii), <b>Dp</b> (iii) – immer Moll-Dreiklänge, eine Terz unter der Dur-Stufe.</li>
+      <li>Beispiel C-Dur: T = C, S = F, D = G · Tp = a, Sp = d, Dp = e.</li>
+      <li>Beispiel G-Dur: T = G, S = C, D = D · Tp = e, Sp = a, Dp = h.</li>
+    </ul>`
+  },
+  {
+    id:'akkorde', icon:'🎚️', title:'Weitere Akkorde',
+    desc:'Sept- & Sixte-ajoutée-Akkorde',
+    gens:[genSeptakkordInteractive, genSeptakkordBestimmenMC],
+    merke: `<ul>
+      <li><b>Dominantseptakkord (7)</b>: Dur-Dreiklang + kleine Septime (z.B. g–h–d–f).</li>
+      <li><b>maj7</b>: Dur + große Septime. <b>m7</b>: Moll + kleine Septime.</li>
+      <li><b>Sixte ajoutée (6)</b>: Dur-Dreiklang + große Sexte (subdominantisch, z.B. C–E–G–A).</li>
+      <li>Achtung Verwechslungsgefahr: <i>Sextakkord</i> = 1. Umkehrung eines Dreiklangs, <i>Sixte ajoutée</i> = Vierklang!</li>
+    </ul>`
+  },
+  {
+    id:'quinten', icon:'🔄', title:'Quintenzirkel',
+    desc:'Vorzeichen & Parallelen',
+    gens:[genQuintenzirkelMC],
+    merke: `<ul>
+      <li>Im Uhrzeigersinn = aufwärts Quint: jeweils +1 Kreuz (C → G → D → A → E → H).</li>
+      <li>Gegen den Uhrzeigersinn: jeweils +1 B (C → F → B → Es → As → Des).</li>
+      <li>Merkhilfe Kreuze: <code>Fis Cis Gis Dis Ais Eis His</code>. Bs: <code>B Es As Des Ges Ces Fes</code>.</li>
+      <li>Jede Dur-Tonart hat eine parallele Molltonart eine kleine Terz tiefer (gleiche Vorzeichen): C/a, G/e, F/d.</li>
+    </ul>`
+  },
+  {
+    id:'vorzeichen', icon:'🔑', title:'Vorzeichen lesen',
+    desc:'Tonart aus Generalvorzeichen bestimmen',
+    gens:[genVorzeichenMC],
+    merke: `<ul>
+      <li>Generalvorzeichen stehen direkt nach dem Notenschlüssel und gelten für den ganzen Satz.</li>
+      <li><b>Kreuze:</b> letztes Kreuz + Halbton aufwärts = Dur-Tonart. Beispiel: fis & cis & gis → A-Dur.</li>
+      <li><b>Bs:</b> vorletztes B = Dur-Tonart. Bei nur 1 B: F-Dur.</li>
+      <li>Paralleltonart = kleine Terz tiefer (Dur → Moll) bzw. große Terz höher (Moll → Dur).</li>
+    </ul>`
+  },
+  {
+    id:'kadenz', icon:'🎼', title:'Kadenz',
+    desc:'T-S-D-T & Stimmführungsfehler',
+    gens:[genKadenzMC, genStimmfuehrungMC],
+    merke: `<ul>
+      <li>Kadenz in Dur: <b>T – S – D – T</b>. In Moll: <b>t – s – D – t</b> (Dur-Dominante durch Leitton!).</li>
+      <li><b>Parallele Quinten / Oktaven</b>: zwei Stimmen gehen in gleicher Richtung von Quinte zu Quinte bzw. Oktave zu Oktave.</li>
+      <li><b>Versteckte Quinten / Oktaven</b>: gleiche Richtung in den Außenstimmen, Sopran springt, beide landen auf Quinte/Oktave.</li>
+      <li>Der <b>Leitton</b> (7. Stufe) muss aufwärts zum Grundton aufgelöst werden.</li>
+      <li>Satzregel: Gegenbewegung zwischen Bass und Oberstimmen ist ideal.</li>
+    </ul>`
+  },
+  {
+    id:'analyse', icon:'🔍', title:'Harmonische Analyse',
+    desc:'Funktionen in Kadenzen bestimmen',
+    gens:[genAnalyseMC],
+    merke: `<ul>
+      <li>Schritte: 1) Tonart bestimmen 2) Bass und Akkordtöne lesen 3) Funktion zuordnen.</li>
+      <li>Dur-Stufen: I = T · ii = Sp · iii = Dp · IV = S · V = D · vi = Tp.</li>
+      <li>Moll: i = t · iv = s · V = D (Dur-Dominante!) · VI = tP.</li>
+      <li>Bass-Lage zeigt die Umkehrung: Terz im Bass = Sextakkord, Quinte im Bass = Quartsextakkord.</li>
+    </ul>`
+  },
+  {
+    id:'gehoer', icon:'🎧', title:'Gehörbildung',
+    desc:'Intervalle & Dreiklänge nur hören',
+    gens:[genIntervallHören, genDreiklangHören],
+    merke: `<ul>
+      <li>Klicke <b>🔊 Anhören</b>, um das Beispiel abzuspielen – mehrfaches Anhören ist erlaubt und erwünscht.</li>
+      <li><b>Intervalle:</b> erst tiefer Ton, dann höherer Ton.</li>
+      <li><b>Dreiklänge:</b> alle drei Töne gleichzeitig – achte auf die <i>Klangfarbe</i>: hell (Dur), dunkel (Moll), spannungsreich (vermindert/übermäßig).</li>
+      <li>Übe im Alltag: Melodien in Intervalle zerlegen („Somewhere over the rainbow" = Oktave).</li>
+    </ul>`
+  },
 ];
 
 /* ============================================================
@@ -2167,6 +2413,7 @@ let state_streak = 0;
 let state_bestStreak = 0;
 let state_answered = false;
 let state_roundLog = [];
+let state_merkeOpen = false;
 
 function buildMenu() {
   const grid = document.getElementById('sectionGrid');
@@ -2208,6 +2455,22 @@ function updateOverallSummary() {
   el.textContent = txt;
 }
 
+function toggleMerke() {
+  state_merkeOpen = !state_merkeOpen;
+  applyMerkeVisibility();
+}
+function applyMerkeVisibility() {
+  const box = document.getElementById('merkeBox');
+  const btn = document.getElementById('btnMerke');
+  if (!state_section) return;
+  box.style.display = state_merkeOpen ? 'block' : 'none';
+  btn.classList.toggle('active', state_merkeOpen);
+  if (state_merkeOpen) {
+    document.getElementById('merkeTitle').textContent = state_section.title;
+    document.getElementById('merkeContent').innerHTML = state_section.merke || '<i>Keine Merke-Notiz für dieses Thema.</i>';
+  }
+}
+
 function startSection(section) {
   state_section = section;
   state_questions = [];
@@ -2225,10 +2488,11 @@ function startSection(section) {
   state_bestStreak = 0;
   state_answered = false;
   state_roundLog = [];
+  state_merkeOpen = false;
   document.getElementById('menu').style.display = 'none';
   document.getElementById('results').classList.remove('show');
   document.getElementById('exercise').style.display = 'block';
-  // Zum Anfang scrollen
+  applyMerkeVisibility();
   window.scrollTo({ top: 0, behavior: 'auto' });
   showQuestion();
 }
@@ -2262,12 +2526,9 @@ function showQuestion() {
       b.classList.toggle('active', b.dataset.acc === '');
     });
     const container = document.getElementById('staffInteractive');
-    // Event-Listener entfernen: durch frisches Klonen
     container.replaceWith(container.cloneNode(false));
     const newContainer = document.getElementById('staffInteractive');
-    // iOS-optimiert: pointerdown (sofortiges Feedback, kein Doppeltipp-Zoom)
     newContainer.addEventListener('pointerdown', handleStaffPointer);
-    // Verhindert Long-Press-Kontextmenü / Callout auf iOS
     newContainer.addEventListener('contextmenu', e => e.preventDefault());
     initInteractiveStaff(newContainer, q);
   } else if (q.mode === 'mc') {
@@ -2279,12 +2540,12 @@ function showQuestion() {
     if (q.staff) {
       staffBox.innerHTML = q.staff.chords ? renderHarmonyScore(q.staff) : renderStaticScore(q.staff);
       staffBox.style.display = 'flex';
-      const playable = !!(q.staff.chords || (q.staff.notes && q.staff.notes.length));
-      listenBtn.style.display = playable ? 'inline-block' : 'none';
     } else {
       staffBox.style.display = 'none';
-      listenBtn.style.display = 'none';
     }
+    const playable = !!(q.playFn
+      || (q.staff && (q.staff.chords || (q.staff.notes && q.staff.notes.length))));
+    listenBtn.style.display = playable ? 'inline-block' : 'none';
     const optionsEl = document.getElementById('options');
     optionsEl.innerHTML = '';
     const letters = ['A','B','C','D'];
@@ -2312,8 +2573,6 @@ function showQuestion() {
     input.placeholder = q.placeholder || 'Antwort eingeben…';
     document.getElementById('btnTextCheck').disabled = false;
     document.getElementById('textHint').innerHTML = q.hint || '';
-    // Absichtlich kein automatischer Fokus: iPad würde die Tastatur aufpoppen
-    // und das Layout verschieben. Nutzer tippt selbst ins Feld.
   }
 }
 
@@ -2373,7 +2632,6 @@ function checkText() {
   const sEl = document.getElementById('streakBadge');
   if (state_streak >= 2) { sEl.textContent = `🔥 ${state_streak}`; sEl.classList.add('on'); }
   else sEl.classList.remove('on');
-  // iOS: Tastatur nach Prüfung ausblenden
   input.blur();
   const fb = document.getElementById('feedback');
   const display = q.correctDisplay || '';
@@ -2458,7 +2716,7 @@ function showMenu() {
 }
 
 /* ============================================================
-   EVENTS & INIT  (iPad-freundlich)
+   EVENTS & INIT
    ============================================================ */
 document.querySelectorAll('.acc-btn').forEach(btn => {
   btn.addEventListener('click', () => setAccidental(btn.dataset.acc));
@@ -2467,7 +2725,6 @@ document.getElementById('textInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') { e.preventDefault(); checkText(); }
 });
 
-// iOS: AudioContext beim ersten User-Kontakt entsperren
 ['touchstart', 'pointerdown', 'click'].forEach(evtName => {
   window.addEventListener(evtName, function unlockAudioOnce() {
     ensureAudio();
@@ -2475,7 +2732,6 @@ document.getElementById('textInput').addEventListener('keydown', e => {
   }, { passive: true });
 });
 
-// Doppeltipp-Zoom auf der gesamten App unterbinden (nur iOS Safari)
 let lastTouchEnd = 0;
 document.addEventListener('touchend', e => {
   const now = Date.now();
@@ -2483,7 +2739,6 @@ document.addEventListener('touchend', e => {
   lastTouchEnd = now;
 }, { passive: false });
 
-// Pinch-Zoom unterbinden (Doppelfinger)
 document.addEventListener('gesturestart', e => e.preventDefault());
 document.addEventListener('gesturechange', e => e.preventDefault());
 document.addEventListener('gestureend', e => e.preventDefault());
