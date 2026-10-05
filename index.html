@@ -1,0 +1,2494 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Musiktheorie">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="format-detection" content="telephone=no">
+<title>🎼 Musiktheorie – Interaktiv v2 (iPad)</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    height: 100%;
+    /* Verhindert Text-Reflow beim Drehen */
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    /* Dynamic viewport height: kein Springen, wenn die Adressleiste ein-/ausgeblendet wird */
+    min-height: 100vh;
+    min-height: 100dvh;
+    color: #e8e8e8;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+    /* iPad-Ränder: Safe-Area + Padding */
+    padding:
+      max(16px, env(safe-area-inset-top, 0px))
+      max(16px, env(safe-area-inset-right, 0px))
+      calc(16px + env(safe-area-inset-bottom, 0px))
+      max(16px, env(safe-area-inset-left, 0px));
+    /* Platz, damit das On-Screen-Keyboard die Eingabe nicht verdeckt */
+    scroll-padding-bottom: 40vh;
+  }
+
+  /* Buttons und Eingaben: kein Doppeltipp-Zoom, keine Textauswahl */
+  button, .section-btn, .option, .acc-btn, .btn, .text-input {
+    touch-action: manipulation;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .app { max-width: 900px; margin: 0 auto; }
+
+  .card {
+    background: rgba(255,255,255,0.05);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 2rem; text-align: center; margin-bottom: 8px;
+    background: linear-gradient(135deg, #e94560, #f5a623, #4ecdc4);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .subtitle { text-align: center; color: #a0a0b0; margin-bottom: 18px; font-size: .95rem; }
+
+  .section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 12px;
+  }
+  .section-btn {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 14px;
+    padding: 16px;
+    color: #e8e8e8; cursor: pointer;
+    transition: background .15s, border-color .15s, transform .15s;
+    font-family: inherit;
+    text-align: left; font-size: .9rem;
+    display: flex; flex-direction: column; gap: 5px;
+    min-height: 96px;
+  }
+  /* :active ersetzt :hover auf iPad – gibt sofortiges visuelles Feedback */
+  .section-btn:active {
+    background: rgba(233,69,96,0.25);
+    border-color: rgba(233,69,96,0.7);
+    transform: scale(0.98);
+  }
+  @media (hover: hover) {
+    .section-btn:hover {
+      background: rgba(233,69,96,0.15);
+      border-color: rgba(233,69,96,0.5);
+      transform: translateY(-2px);
+    }
+  }
+  .section-btn .icon { font-size: 1.4rem; }
+  .section-btn .title { font-weight: 600; }
+  .section-btn .desc { font-size: .74rem; color: #808090; }
+
+  .stats-mini {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 6px; padding-top: 7px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: .72rem;
+  }
+  .stats-mini .bar {
+    flex: 1; height: 4px; background: rgba(255,255,255,0.08);
+    border-radius: 2px; overflow: hidden;
+  }
+  .stats-mini .bar > div { height: 100%; border-radius: 2px; transition: width .4s; }
+  .stats-mini .val { font-weight: 700; min-width: 40px; text-align: right; }
+  .stats-mini .cnt { color: #606070; font-size: .68rem; }
+  .stats-good { color: #4ecdc4; }
+  .stats-ok   { color: #f5a623; }
+  .stats-bad  { color: #e94560; }
+  .stats-none { color: #505060; font-style: italic; }
+  .bar-good > div { background: #4ecdc4; }
+  .bar-ok   > div { background: #f5a623; }
+  .bar-bad  > div { background: #e94560; }
+
+  .legend {
+    display: flex; gap: 14px; justify-content: center;
+    flex-wrap: wrap; margin-top: 20px;
+    font-size: .74rem; color: #808090;
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .legend .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .menu-footer {
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; flex-wrap: wrap;
+  }
+  .menu-footer .summary { font-size: .8rem; color: #a0a0b0; }
+
+  .ex-header {
+    display: flex; justify-content: space-between;
+    align-items: center; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .ex-header .left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .btn-back {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    padding: 10px 16px;
+    color: #e8e8e8;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: .9rem;
+    transition: all .15s;
+    min-height: 44px;
+  }
+  .btn-back:active { background: rgba(255,255,255,0.22); transform: scale(0.97); }
+  .badge {
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px; padding: 6px 14px;
+    font-size: .8rem; color: #a0a0b0;
+  }
+  .badge.score { background: linear-gradient(135deg, #4ecdc4, #2d9c95); color: #fff; font-weight: 600; }
+  .badge.streak { background: linear-gradient(135deg, #f5a623, #e8860c); color: #fff; font-weight: 600; display: none; }
+  .badge.streak.on { display: inline-block; }
+
+  .progress-outer {
+    height: 5px; background: rgba(255,255,255,0.08);
+    border-radius: 3px; margin-bottom: 20px; overflow: hidden;
+  }
+  .progress-inner {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #e94560, #f5a623);
+    transition: width .4s;
+  }
+  .q-label {
+    display: inline-block;
+    background: rgba(78,205,196,0.15);
+    color: #4ecdc4;
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: .78rem; font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .q-text { font-size: 1.08rem; line-height: 1.5; margin-bottom: 18px; color: #fff; }
+  .hint { font-size: .82rem; color: #9090a0; margin-bottom: 10px; font-style: italic; }
+
+  .staff-box {
+    background: #fff; border-radius: 12px;
+    padding: 12px; margin-bottom: 14px;
+    display: flex; justify-content: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    /* Verhindert versehentliches Doppeltipp-Zoom im Notenbild */
+    touch-action: pan-x;
+  }
+  .staff-box svg { max-width: 100%; height: auto; }
+  .staff-interactive {
+    cursor: crosshair;
+    /* Wichtig: kein Doppeltipp-Zoom auf dem Notensystem */
+    touch-action: manipulation;
+  }
+  .staff-interactive svg {
+    cursor: crosshair;
+    /* Sanftes Antippen ohne Scroll-Interpretation */
+    touch-action: manipulation;
+  }
+
+  .acc-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin: 12px 0 16px; align-items: center;
+  }
+  .acc-row .label { color: #a0a0b0; font-size: .85rem; margin-right: 4px; }
+  .acc-btn {
+    width: 52px; height: 52px;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06);
+    color: #e8e8e8;
+    font-size: 1.4rem;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: Georgia, serif;
+    line-height: 1;
+    /* Apple empfehlen mindestens 44×44pt – hier großzügiger */
+  }
+  .acc-btn:active:not(:disabled) { transform: scale(0.92); background: rgba(255,255,255,0.22); }
+  .acc-btn.active {
+    background: rgba(233,69,96,0.35);
+    border-color: #e94560;
+    color: #fff;
+    box-shadow: 0 0 12px rgba(233,69,96,0.4);
+  }
+  .acc-btn:disabled { opacity: 0.4; cursor: default; }
+
+  .action-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .action-row .btn { flex: 1; min-width: 120px; }
+  .btn {
+    border: none; border-radius: 12px;
+    padding: 14px 20px; cursor: pointer;
+    font-family: inherit; font-size: .95rem;
+    font-weight: 600; transition: transform .1s, background .15s, box-shadow .15s;
+    min-height: 48px;
+  }
+  .btn:active:not(:disabled) { transform: scale(0.97); }
+  .btn-check { background: linear-gradient(135deg, #4ecdc4, #2d9c95); color: #fff; }
+  .btn-check:disabled { opacity: 0.4; cursor: not-allowed; }
+  @media (hover: hover) {
+    .btn-check:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(78,205,196,0.3); }
+  }
+  .btn-undo {
+    background: rgba(255,255,255,0.08);
+    color: #e8e8e8;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .btn-clear {
+    background: rgba(231,76,60,0.15);
+    color: #e74c3c;
+    border: 1px solid rgba(231,76,60,0.3);
+  }
+  .btn-undo:disabled, .btn-clear:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-primary {
+    background: linear-gradient(135deg, #4ecdc4, #2d9c95);
+    color: #fff; width: 100%;
+    display: none;
+    min-height: 52px;
+    font-size: 1rem;
+  }
+  .btn-primary.show { display: block; }
+  .btn-reset {
+    background: rgba(231,76,60,0.12);
+    color: #e74c3c;
+    border: 1px solid rgba(231,76,60,0.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer; font-family: inherit;
+    font-size: .82rem; font-weight: 600;
+    transition: background .15s, transform .1s;
+    min-height: 44px;
+  }
+  .btn-reset:active { background: rgba(231,76,60,0.32); transform: scale(0.97); }
+  .btn-export {
+    background: rgba(78,205,196,0.12);
+    color: #4ecdc4;
+    border: 1px solid rgba(78,205,196,0.3);
+    border-radius: 10px;
+    padding: 10px 16px;
+    cursor: pointer; font-family: inherit;
+    font-size: .82rem; font-weight: 600;
+    transition: background .15s, transform .1s;
+    min-height: 44px;
+  }
+  .btn-export:active { background: rgba(78,205,196,0.32); transform: scale(0.97); }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .option {
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 12px; padding: 16px;
+    color: #e8e8e8; cursor: pointer;
+    transition: background .15s, border-color .15s, transform .1s;
+    font-family: inherit;
+    font-size: .98rem; text-align: left;
+    display: flex; align-items: center; gap: 10px;
+    min-height: 60px;
+  }
+  .option:active:not(:disabled) { transform: scale(0.98); background: rgba(255,255,255,0.14); }
+  .option:disabled { cursor: default; }
+  @media (hover: hover) {
+    .option:hover:not(:disabled) { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
+  }
+  .option .letter {
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    font-weight: 700; font-size: .82rem; flex-shrink: 0;
+  }
+  .option.correct { background: rgba(46,204,113,0.2); border-color: #2ecc71; }
+  .option.correct .letter { background: #2ecc71; color: #fff; }
+  .option.wrong { background: rgba(231,76,60,0.2); border-color: #e74c3c; }
+  .option.wrong .letter { background: #e74c3c; color: #fff; }
+
+  .text-row { display: flex; gap: 10px; margin-bottom: 12px; align-items: stretch; flex-wrap: wrap; }
+  .text-input {
+    flex: 1; min-width: 200px;
+    padding: 15px 16px; border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.06); color: #e8e8e8;
+    font-family: inherit; font-size: 1.05rem;
+    transition: border-color 0.15s, background 0.15s;
+    min-height: 52px;
+    /* iOS: Standard-Textfeld-Styling zurücksetzen */
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .text-input:focus { outline: none; border-color: #4ecdc4; background: rgba(255,255,255,0.10); }
+  .text-input:disabled { opacity: 0.5; }
+  .text-row .btn { flex-shrink: 0; min-width: 120px; }
+
+  .feedback {
+    border-radius: 12px; padding: 14px 18px;
+    margin-bottom: 14px; display: none;
+    animation: slideUp .3s ease;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: rgba(46,204,113,0.12); border: 1px solid rgba(46,204,113,0.3); }
+  .feedback.err { background: rgba(231,76,60,0.12); border: 1px solid rgba(231,76,60,0.3); }
+  .feedback-title { font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .feedback.ok .feedback-title { color: #2ecc71; }
+  .feedback.err .feedback-title { color: #e74c3c; }
+  .feedback-text { font-size: .9rem; color: #c0c0d0; line-height: 1.5; }
+  .feedback-text b { color: #fff; }
+
+  .results { display: none; text-align: center; }
+  .results.show { display: block; }
+  .results h2 {
+    font-size: 1.8rem; margin-bottom: 8px;
+    background: linear-gradient(135deg, #4ecdc4, #f5a623);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .results .big { font-size: 3rem; font-weight: 800; margin: 12px 0; color: #fff; }
+  .results .bar {
+    height: 10px; background: rgba(255,255,255,0.08);
+    border-radius: 5px; margin: 18px 0 24px; overflow: hidden;
+  }
+  .results .bar-inner {
+    height: 100%; width: 0%;
+    background: linear-gradient(90deg, #e94560, #f5a623, #4ecdc4);
+    border-radius: 5px; transition: width 1s;
+  }
+  .results .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+
+  .cum-stats {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin: 10px 0 20px;
+    text-align: left;
+  }
+  .cum-stats h3 {
+    font-size: .82rem; font-weight: 700; color: #a0a0b0;
+    letter-spacing: .5px; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .cum-row { display: flex; align-items: center; gap: 12px; font-size: .88rem; }
+  .cum-row .label { flex: 1; color: #e8e8e8; }
+  .cum-row .bar { width: 130px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; flex-shrink: 0; }
+  .cum-row .bar > div { height: 100%; border-radius: 3px; transition: width 1s; }
+  .cum-row .val { font-weight: 700; min-width: 52px; text-align: right; }
+  .cum-row .cnt { font-size: .74rem; color: #808090; min-width: 58px; text-align: right; }
+
+  .round-breakdown {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin: 12px 0 18px;
+    text-align: left;
+  }
+  .round-breakdown h3 {
+    font-size: .78rem; font-weight: 700; color: #a0a0b0;
+    letter-spacing: .5px; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .rb-line {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .82rem; margin: 4px 0;
+  }
+  .rb-line .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .rb-line .ok { background: #2ecc71; }
+  .rb-line .bad { background: #e74c3c; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ================= iPad-Optimierungen ================= */
+
+  /* iPad portrait (768–1024px): mehr Luft, größere Schrift */
+  @media (min-width: 768px) {
+    body { font-size: 16px; }
+    .app { max-width: 860px; }
+    h1 { font-size: 2.2rem; }
+    .q-text { font-size: 1.15rem; }
+    .section-btn { padding: 18px; font-size: .95rem; }
+    .option { padding: 18px; font-size: 1rem; }
+    .staff-box { padding: 16px; }
+  }
+
+  /* iPad Pro / landscape: etwas breitere Spalte */
+  @media (min-width: 1024px) {
+    .app { max-width: 1000px; }
+    h1 { font-size: 2.4rem; }
+    .subtitle { font-size: 1rem; }
+  }
+
+  /* Sehr kleine iPhones – bleiben trotzdem benutzbar */
+  @media (max-width: 520px) {
+    .options { grid-template-columns: 1fr; }
+    h1 { font-size: 1.5rem; }
+    .acc-btn { width: 46px; height: 46px; font-size: 1.2rem; }
+    .cum-row .bar { width: 70px; }
+    .cum-row .cnt { min-width: auto; font-size: .68rem; }
+    .action-row .btn { min-width: 100%; }
+  }
+
+  /* Reduzierte Bewegung respektieren */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ============ MENU ============ -->
+  <div id="menu" class="card">
+    <h1>🎼 Musiktheorie – Interaktiv</h1>
+    <p class="subtitle">14 Kapitel – vom Notennamen bis zur harmonischen Analyse. Klicke Noten direkt ins System – jetzt auch im Bassschlüssel! Mit Vorzeichen ♯ ♭ ♮, Live-Prüfung, Klang 🔊 und Statistik-Export 📤.<br>Deine Ergebnisse werden <b>pro Thema gespeichert</b>.</p>
+    <div class="section-grid" id="sectionGrid"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:#4ecdc4"></span>≥ 80 % sitzt</span>
+      <span><span class="dot" style="background:#f5a623"></span>60–79 % unsicher</span>
+      <span><span class="dot" style="background:#e94560"></span>&lt; 60 % üben</span>
+    </div>
+    <div class="menu-footer">
+      <span class="summary" id="overallSummary">Noch keine Daten – starte ein Kapitel!</span>
+      <button class="btn-export" onclick="exportStats()">📤 Statistik exportieren (CSV)</button>
+      <button class="btn-reset" onclick="resetStats()">🗑 Statistik zurücksetzen</button>
+    </div>
+  </div>
+
+  <!-- ============ EXERCISE ============ -->
+  <div id="exercise" class="card" style="display:none;">
+    <div class="ex-header">
+      <div class="left">
+        <button class="btn-back" onclick="showMenu()">← Menü</button>
+        <span class="badge" id="qCounter">Frage 1/8</span>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <span class="badge streak" id="streakBadge">🔥 0</span>
+        <span class="badge score" id="scoreBadge">0 Punkte</span>
+      </div>
+    </div>
+    <div class="progress-outer"><div class="progress-inner" id="progressBar"></div></div>
+    <span class="q-label" id="sectionLabel">…</span>
+    <div class="q-text" id="qText">…</div>
+
+    <!-- Interactive staff mode -->
+    <div id="staffMode" style="display:none;">
+      <div class="hint">💡 Tippe ins Notensystem, um eine Note zu setzen. Achte auf die <b>korrekte Schreibweise</b> (Stammton + Vorzeichen)!</div>
+      <div class="staff-box staff-interactive" id="staffInteractive"></div>
+      <div class="acc-row">
+        <span class="label">Vorzeichen:</span>
+        <button class="acc-btn" data-acc="#" title="Kreuz">♯</button>
+        <button class="acc-btn" data-acc="b" title="Bes">♭</button>
+        <button class="acc-btn" data-acc="n" title="Auflösungszeichen">♮</button>
+        <button class="acc-btn active" data-acc="" title="Kein Vorzeichen">—</button>
+      </div>
+      <div class="action-row">
+        <button class="btn btn-check" id="btnCheck" onclick="checkStaff()">✓ Prüfen</button>
+        <button class="btn btn-undo" id="btnUndo" onclick="undoStaff()">↩ Rückgängig</button>
+        <button class="btn btn-clear" id="btnClear" onclick="clearStaff()">🗑 Löschen</button>
+      </div>
+    </div>
+
+    <!-- MC mode -->
+    <div id="mcMode" style="display:none;">
+      <div class="staff-box" id="staffDisplay" style="display:none;"></div>
+      <button class="btn btn-undo" id="btnListen" style="display:none; margin-bottom:16px; width:100%;" onclick="playMCNotes()">🔊 Anhören</button>
+      <div class="options" id="options"></div>
+    </div>
+
+    <!-- Text input mode -->
+    <div id="textMode" style="display:none;">
+      <div class="staff-box" id="textStaffDisplay" style="display:none;"></div>
+      <div class="text-row">
+        <input type="text" id="textInput" class="text-input" placeholder="Antwort eingeben…"
+               autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+               inputmode="text" enterkeyhint="done">
+        <button class="btn btn-check" id="btnTextCheck" onclick="checkText()">✓ Prüfen</button>
+      </div>
+      <div class="hint" id="textHint"></div>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Weiter →</button>
+  </div>
+
+  <!-- ============ RESULTS ============ -->
+  <div id="results" class="card results">
+    <h2 id="resultsTitle">🎉 Geschafft!</h2>
+    <div class="big" id="resultsScore">0/8</div>
+    <div style="color:#a0a0b0;font-size:.9rem;">richtige Antworten in dieser Runde</div>
+    <div class="bar"><div class="bar-inner" id="resultsBar"></div></div>
+    <p id="resultsMsg" style="color:#e8e8e8;margin-bottom:12px;"></p>
+
+    <div class="round-breakdown" id="roundBreakdown" style="display:none;">
+      <h3>🔍 Diese Runde im Detail</h3>
+      <div id="roundBreakdownContent"></div>
+    </div>
+
+    <div class="cum-stats" id="cumStats" style="display:none;">
+      <h3>📊 Kumulativ für dieses Thema</h3>
+      <div id="cumStatsContent"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary show" style="width:auto;padding:16px 32px;" onclick="showMenu()">🔄 Zurück zum Menü</button>
+      <button class="btn btn-undo" style="width:auto;padding:16px 24px;" onclick="repeatSection()">🔁 Dieses Thema wiederholen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   GLOBAL UTILITIES
+   ============================================================ */
+const NOTE_STEPS = { c:0, d:1, e:2, f:3, g:4, a:5, h:6 };
+const STEP_NAMES = ['c','d','e','f','g','a','h'];
+const SHARP = { c:'cis', d:'dis', e:'eis', f:'fis', g:'gis', a:'ais', h:'his' };
+const FLAT  = { c:'ces', d:'des', e:'es',  f:'fes', g:'ges', a:'as',  h:'b'   };
+const SUPER = { 0:'₀', 1:'₁', 2:'', 3:'', 4:'¹', 5:'²', 6:'³' };
+const CHROM = { c:0, d:2, e:4, f:5, g:7, a:9, h:11 };
+
+function absStep(name, octave) { return (octave - 4) * 7 + NOTE_STEPS[name]; }
+function stepToPitch(step) {
+  return { name: STEP_NAMES[((step % 7) + 7) % 7], octave: Math.floor(step / 7) + 4 };
+}
+function pitchValue(name, octave, acc) {
+  let v = octave * 12 + CHROM[name];
+  if (acc === '#') v++;
+  else if (acc === 'b') v--;
+  else if (acc === '##') v += 2;
+  else if (acc === 'bb') v -= 2;
+  return v;
+}
+function fullNoteName(name, octave, acc) {
+  let base = name;
+  if (acc === '#') base = SHARP[name];
+  else if (acc === 'b') base = FLAT[name];
+  else if (acc === '##') base = SHARP[name] + 'is';
+  else if (acc === 'bb') base = FLAT[name] + 'es';
+  if (octave <= 2) return base.toUpperCase() + (SUPER[octave] || '');
+  return base + (SUPER[octave] || '');
+}
+const R = arr => arr[Math.floor(Math.random() * arr.length)];
+const RI = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+function shuffle(a) {
+  a = [...a];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = RI(0, i); [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+const capFirst = s => s.charAt(0).toUpperCase() + s.slice(1);
+function pickClef() { return Math.random() < 0.5 ? 'treble' : 'bass'; }
+
+function parseUserNote(input) {
+  if (!input) return null;
+  let s = input.trim().toLowerCase().replace(/\s+/g, '');
+  s = s.replace(/♯/g, '#').replace(/♭/g, 'b');
+  s = s.replace(/⁰/g, '0').replace(/¹/g, '4').replace(/²/g, '5').replace(/³/g, '6');
+  s = s.replace(/₀/g, '0').replace(/₁/g, '1');
+  const m = s.match(/^([a-h])(isis|eses|is|es|s|##|bb|#|b)?(\d)$/);
+  if (!m) return null;
+  const letter = m[1];
+  const suffix = m[2] || '';
+  const octave = parseInt(m[3], 10);
+  let name = letter, accidental = null;
+  if (letter === 'b') {
+    if (suffix) return null;
+    name = 'h'; accidental = 'b';
+  } else {
+    if (suffix === 'is' || suffix === '#' || suffix === 'isis' || suffix === '##') {
+      accidental = (suffix === 'isis' || suffix === '##') ? '##' : '#';
+    } else if (suffix === 'es' || suffix === 's' || suffix === 'b' || suffix === 'eses' || suffix === 'bb') {
+      accidental = (suffix === 'eses' || suffix === 'bb') ? 'bb' : 'b';
+    }
+  }
+  return { name, octave, accidental };
+}
+
+/* ============================================================
+   MUSIKALISCHE HILFSFUNKTIONEN
+   ============================================================ */
+function accOffset(acc) {
+  if (acc === '#') return 1;
+  if (acc === 'b') return -1;
+  if (acc === '##') return 2;
+  if (acc === 'bb') return -2;
+  return 0;
+}
+function accFromDiff(diff) {
+  if (diff === 0) return null;
+  if (diff === 1) return '#';
+  if (diff === 11) return 'b';
+  if (diff === 2) return '##';
+  if (diff === 10) return 'bb';
+  return null;
+}
+function noteFrom(rootName, rootAcc, rootOct, stepDelta, semis) {
+  const rootPC = CHROM[rootName] + accOffset(rootAcc);
+  const stepIdx = NOTE_STEPS[rootName] + stepDelta;
+  const name = STEP_NAMES[((stepIdx % 7) + 7) % 7];
+  const octave = rootOct + Math.floor(stepIdx / 7);
+  const targetPC = (((rootPC + semis) % 12) + 12) % 12;
+  const accidental = accFromDiff(((targetPC - CHROM[name]) % 12 + 12) % 12);
+  return { name, octave, accidental };
+}
+function buildScale(rootName, rootAcc, rootOct, pattern) {
+  return pattern.map((semis, i) => noteFrom(rootName, rootAcc, rootOct, i, semis));
+}
+function buildTriad(rootName, rootAcc, rootOct, thirdSemis, fifthSemis) {
+  return [
+    noteFrom(rootName, rootAcc, rootOct, 0, 0),
+    noteFrom(rootName, rootAcc, rootOct, 2, thirdSemis),
+    noteFrom(rootName, rootAcc, rootOct, 4, fifthSemis)
+  ];
+}
+function invertTriad(notes, times) {
+  const arr = notes.map(n => ({ ...n }));
+  for (let t = 0; t < times; t++) {
+    const lowest = arr.shift();
+    lowest.octave += 1;
+    arr.push(lowest);
+  }
+  return arr;
+}
+function parseNoteStr(str) {
+  const m = str.match(/^([a-h])(is|es|s)?(\d)$/);
+  if (!m) return null;
+  const [, letter, suffix, octStr] = m;
+  const octave = parseInt(octStr, 10);
+  if (letter === 'b' && !suffix) return { name: 'h', octave, accidental: 'b' };
+  const accidental = suffix ? (suffix === 'is' ? '#' : 'b') : null;
+  return { name: letter, octave, accidental };
+}
+function rootDisplay(name, accidental) {
+  if (!accidental) return name;
+  if (accidental === '#') return name + 'is';
+  if (accidental === 'b') {
+    if (name === 'e') return 'es';
+    if (name === 'a') return 'as';
+    if (name === 'h') return 'b';
+    return name + 'es';
+  }
+  return name;
+}
+function enharmonicName(name, octave, accidental) {
+  if (!accidental) return null;
+  const step = absStep(name, octave);
+  if (accidental === '#') {
+    const nxt = stepToPitch(step + 1);
+    return fullNoteName(nxt.name, nxt.octave, (nxt.name === 'f' || nxt.name === 'c') ? null : 'b');
+  }
+  if (accidental === 'b') {
+    const prv = stepToPitch(step - 1);
+    return fullNoteName(prv.name, prv.octave, (prv.name === 'h' || prv.name === 'e') ? null : '#');
+  }
+  return null;
+}
+function fillBeats(amount, allowed) {
+  const vals = [['whole',4],['half',2],['dotq',1.5],['doth',3],['quarter',1],['eighth',0.5]]
+    .filter(([k]) => !allowed || allowed.indexOf(k) >= 0);
+  const out = [];
+  let rem = amount;
+  while (rem > 0.01) {
+    let pool = vals.filter(([,v]) => v <= rem + 0.01 && (rem - v < 0.01 || rem - v >= 0.49));
+    if (pool.length === 0) pool = [['eighth', 0.5]];
+    const pick = R(pool);
+    out.push(pick[0]);
+    rem -= pick[1];
+  }
+  return out;
+}
+function describeStaffPosition(note, clef) {
+  const clefOff = clef === 'treble' ? 2 : -10;
+  const s = absStep(note.name, note.octave) - clefOff;
+  const nm = fullNoteName(note.name, note.octave, note.accidental);
+  if (s < 0) return s % 2 === 0
+    ? `Das ${nm} liegt auf einer Hilfslinie unter dem Notensystem.`
+    : `Das ${nm} liegt in einem Zwischenraum unter dem Notensystem.`;
+  if (s > 8) return s % 2 === 0
+    ? `Das ${nm} liegt auf einer Hilfslinie über dem Notensystem.`
+    : `Das ${nm} liegt in einem Zwischenraum über dem Notensystem.`;
+  return s % 2 === 0
+    ? `Das ${nm} liegt auf einer Notenlinie des Systems.`
+    : `Das ${nm} liegt in einem Zwischenraum des Systems.`;
+}
+
+/* ============================================================
+   STATISTIK
+   ============================================================ */
+const STATS_KEY = 'musiktheorie_stats_v4';
+let globalStats = loadStats();
+
+function loadStats() {
+  try {
+    const raw = localStorage.getItem(STATS_KEY);
+    if (!raw) return {};
+    const obj = JSON.parse(raw);
+    return (obj && typeof obj === 'object') ? obj : {};
+  } catch (e) { return {}; }
+}
+function saveStats() {
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(globalStats)); } catch (e) {}
+}
+function recordAnswer(sectionId, correct) {
+  if (!globalStats[sectionId]) globalStats[sectionId] = { correct: 0, total: 0 };
+  globalStats[sectionId].total++;
+  if (correct) globalStats[sectionId].correct++;
+  saveStats();
+}
+function resetStats() {
+  if (!confirm('Alle gespeicherten Ergebnisse werden gelöscht. Fortfahren?')) return;
+  globalStats = {};
+  saveStats();
+  buildMenu();
+}
+function exportStats() {
+  let totalC = 0, totalQ = 0;
+  const rows = [['Thema', 'Richtig', 'Gesamt', 'Prozent']];
+  SECTIONS.forEach(s => {
+    const st = globalStats[s.id];
+    if (st && st.total > 0) {
+      const p = Math.round((st.correct / st.total) * 100);
+      rows.push([s.title, String(st.correct), String(st.total), p + ' %']);
+      totalC += st.correct; totalQ += st.total;
+    } else {
+      rows.push([s.title, '0', '0', '–']);
+    }
+  });
+  const pct = totalQ ? Math.round((totalC / totalQ) * 100) : 0;
+  rows.push(['Gesamt', String(totalC), String(totalQ), totalQ ? pct + ' %' : '–']);
+  const csv = '\uFEFF' + rows.map(r => r.join(';')).join('\r\n')
+    + '\r\n\r\n' + 'Exportiert am;' + new Date().toLocaleDateString('de-DE');
+  try {
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'musiktheorie-statistik-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+  } catch (e) {
+    alert('Export fehlgeschlagen: ' + e.message);
+  }
+}
+function statsClass(pct) {
+  if (pct >= 80) return { cls: 'stats-good', bar: 'bar-good' };
+  if (pct >= 60) return { cls: 'stats-ok',   bar: 'bar-ok'   };
+  return { cls: 'stats-bad', bar: 'bar-bad' };
+}
+function statsMiniHtml(sectionId) {
+  const st = globalStats[sectionId];
+  if (!st || st.total === 0) {
+    return `<span class="stats-mini stats-none">noch nicht geübt</span>`;
+  }
+  const pct = Math.round((st.correct / st.total) * 100);
+  const { cls, bar } = statsClass(pct);
+  return `<span class="stats-mini">
+    <span class="bar ${bar}"><div style="width:${pct}%"></div></span>
+    <span class="val ${cls}">${pct}%</span>
+    <span class="cnt">${st.correct}/${st.total}</span>
+  </span>`;
+}
+
+/* ============================================================
+   STATIC SCORE RENDERER
+   ============================================================ */
+function drawChord(svg, x, notes, clefOff, yForStep, color) {
+  const drawn = new Set();
+  const accNotes = notes.filter(n => n.accidental)
+    .sort((a, b) => absStep(b.name, b.octave) - absStep(a.name, a.octave));
+  notes.forEach(note => {
+    const step = absStep(note.name, note.octave);
+    const s = step - clefOff;
+    const y = yForStep(step);
+    if (s < 0) {
+      const lowest = s % 2 === 0 ? s : s + 1;
+      for (let k = -2; k >= lowest; k -= 2) {
+        if (drawn.has('u' + k)) continue;
+        drawn.add('u' + k);
+        const ly = yForStep(k + clefOff);
+        svg += `<line x1="${x-13}" y1="${ly}" x2="${x+13}" y2="${ly}" stroke="#222" stroke-width="1"/>`;
+      }
+    }
+    if (s > 8) {
+      const highest = s % 2 === 0 ? s : s - 1;
+      for (let k = 10; k <= highest; k += 2) {
+        if (drawn.has('o' + k)) continue;
+        drawn.add('o' + k);
+        const ly = yForStep(k + clefOff);
+        svg += `<line x1="${x-13}" y1="${ly}" x2="${x+13}" y2="${ly}" stroke="#222" stroke-width="1"/>`;
+      }
+    }
+    svg += `<ellipse cx="${x}" cy="${y}" rx="7" ry="5" transform="rotate(-20 ${x} ${y})" fill="${color}"/>`;
+  });
+  accNotes.forEach((n, i) => {
+    const step = absStep(n.name, n.octave);
+    const y = yForStep(step);
+    const sym = { '#':'♯', 'b':'♭', 'n':'♮', '##':'𝄪', 'bb':'𝄫' }[n.accidental] || '♯';
+    svg += `<text x="${x - 19 - i * 11}" y="${y+5}" font-size="18" fill="${color}" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
+  });
+  const steps = notes.map(n => absStep(n.name, n.octave));
+  const minStep = Math.min(...steps);
+  const maxStep = Math.max(...steps);
+  const midStep = (minStep + maxStep) / 2;
+  const stemUp = midStep - clefOff < 4;
+  const yTop = yForStep(maxStep);
+  const yBot = yForStep(minStep);
+  if (stemUp) {
+    svg += `<line x1="${x+6.5}" y1="${yBot}" x2="${x+6.5}" y2="${yTop-30}" stroke="${color}" stroke-width="1.5"/>`;
+  } else {
+    svg += `<line x1="${x-6.5}" y1="${yTop}" x2="${x-6.5}" y2="${yBot+30}" stroke="${color}" stroke-width="1.5"/>`;
+  }
+  return svg;
+}
+
+const SHARP_SIG_POS = [8,5,2,6,3,7,4];   // fis cis gis dis ais eis his (Violinschlüssel)
+const FLAT_SIG_POS  = [4,7,3,6,2,5,8];   // b es as des ges ces f (Violinschlüssel)
+function renderStaticScore(staff) {
+  const ls = 10, topY = 50, botY = topY + 4*ls;
+  const paddingX = 14, clefW = 48, noteW = 50;
+  const stacked = !!staff.stacked;
+  const sigCount = staff.keySig ? staff.keySig.count : 0;
+  const keySigW = sigCount * 9;
+  const contentW = stacked
+    ? 70
+    : Math.max(staff.notes.length * noteW, 40);
+  const W = paddingX + clefW + keySigW + contentW + paddingX;
+  const clefOff = staff.clef === 'treble' ? 2 : -10;
+  const yForStep = s => botY - (s - clefOff) * (ls/2);
+
+  let svg = `<svg viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">`;
+  for (let i = 0; i < 5; i++) {
+    const y = topY + i*ls;
+    svg += `<line x1="${paddingX}" y1="${y}" x2="${W-paddingX}" y2="${y}" stroke="#222" stroke-width="1.1"/>`;
+  }
+  if (staff.clef === 'treble')
+    svg += `<text x="${paddingX+4}" y="${botY+6}" font-size="58" fill="#222" font-family="Georgia,serif">𝄞</text>`;
+  else
+    svg += `<text x="${paddingX+8}" y="${topY+6}" font-size="46" fill="#222" font-family="Georgia,serif">𝄢</text>`;
+
+  if (staff.keySig) {
+    const positions = staff.keySig.type === 'flat' ? FLAT_SIG_POS : SHARP_SIG_POS;
+    const sym = staff.keySig.type === 'flat' ? '♭' : '♯';
+    positions.slice(0, staff.keySig.count).forEach((sPos, i) => {
+      const x = paddingX + clefW - 10 + i * 9;
+      const y = yForStep(sPos + clefOff);
+      svg += `<text x="${x}" y="${y + 5}" font-size="17" fill="#222" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
+    });
+  }
+
+  if (staff.timeSig) {
+    const tx = paddingX + clefW - 16;
+    svg += `<text x="${tx}" y="${topY+10}" font-size="21" font-weight="700" fill="#222" font-family="Georgia,serif" text-anchor="middle">${staff.timeSig[0]}</text>`;
+    svg += `<text x="${tx}" y="${botY+2}" font-size="21" font-weight="700" fill="#222" font-family="Georgia,serif" text-anchor="middle">${staff.timeSig[1]}</text>`;
+  }
+  if (stacked) {
+    const x = paddingX + clefW + keySigW + 35;
+    svg = drawChord(svg, x, staff.notes, clefOff, yForStep, '#222');
+  } else {
+    staff.notes.forEach((note, i) => {
+      const x = paddingX + clefW + keySigW + (i + 0.5) * noteW;
+      svg = drawNoteInto(svg, x, note, clefOff, yForStep, '#222');
+    });
+  }
+  svg += `</svg>`;
+  return svg;
+}
+
+/* ============================================================
+   INTERACTIVE STAFF
+   ============================================================ */
+let staffCtx = null;
+
+function initInteractiveStaff(container, config) {
+  const state = {
+    userNotes: [],
+    selectedAcc: null,
+    checked: false,
+    results: [],
+  };
+  staffCtx = { container, config, state };
+  renderInteractive();
+  updateInteractiveControls();
+}
+
+function renderInteractive() {
+  const { container, config, state } = staffCtx;
+  const ls = 10, topY = 50, botY = topY + 4*ls;
+  const paddingX = 14, clefW = 48, gap = 8;
+  const slotW = config.slotW || 52;
+  const clefOff = config.clef === 'treble' ? 2 : -10;
+  const cursorX = paddingX + clefW + gap;
+  const W = cursorX + config.totalSlots * slotW + paddingX;
+  const slotX = i => cursorX + (i + 0.5) * slotW;
+  const yForStep = s => botY - (s - clefOff) * (ls/2);
+
+  const fixedCount = (config.fixedNotes || []).length;
+  const currentSlot = fixedCount + state.userNotes.length;
+
+  let svg = `<svg viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="touch-action: manipulation;">`;
+
+  for (let i = 0; i < 5; i++) {
+    const y = topY + i*ls;
+    svg += `<line x1="${paddingX}" y1="${y}" x2="${W-paddingX}" y2="${y}" stroke="#222" stroke-width="1.1"/>`;
+  }
+  if (config.clef === 'treble')
+    svg += `<text x="${paddingX+4}" y="${botY+6}" font-size="58" fill="#222" font-family="Georgia,serif">𝄞</text>`;
+  else
+    svg += `<text x="${paddingX+8}" y="${topY+6}" font-size="46" fill="#222" font-family="Georgia,serif">𝄢</text>`;
+
+  if (!state.checked && currentSlot < config.totalSlots) {
+    const x = slotX(currentSlot) - slotW/2 + 4;
+    svg += `<rect x="${x}" y="${topY-6}" width="${slotW-8}" height="${botY-topY+12}" fill="rgba(78,205,196,0.10)" rx="6"/>`;
+  }
+
+  (config.fixedNotes || []).forEach((n, i) => {
+    svg = drawNoteInto(svg, slotX(i), n, clefOff, yForStep, '#555');
+  });
+
+  state.userNotes.forEach((n, i) => {
+    const ok = state.results[i];
+    const color = state.checked
+      ? (ok ? '#2ecc71' : '#e74c3c')
+      : '#e94560';
+    const nx = slotX(fixedCount + i);
+    svg = drawNoteInto(svg, nx, n, clefOff, yForStep, color);
+    if (state.checked) {
+      const y = yForStep(absStep(n.name, n.octave));
+      svg += `<text x="${nx + 15}" y="${y + 4}" font-size="13" font-weight="700" fill="${ok ? '#2ecc71' : '#e74c3c'}" font-family="inherit" text-anchor="middle">${ok ? '✓' : '✕'}</text>`;
+    }
+  });
+
+  if (state.checked) {
+    config.expected.forEach((exp, i) => {
+      if (state.results[i] === false) {
+        const x = slotX(fixedCount + i) + 20;
+        svg = drawNoteInto(svg, x, exp, clefOff, yForStep, 'rgba(46,204,113,0.55)', true);
+      }
+    });
+  }
+
+  svg += `</svg>`;
+  container.innerHTML = svg;
+}
+
+function drawRestInto(svg, x, note, clefOff, yForStep, color) {
+  const v = note.value || 'rquarter';
+  if (v === 'rwhole' || v === 'rdoth') {
+    const y = yForStep(6 + clefOff);
+    svg += `<rect x="${x-6}" y="${y}" width="12" height="5" fill="${color}"/>`;
+    if (v === 'rdoth') svg += `<circle cx="${x+11}" cy="${y + 2.5}" r="2.2" fill="${color}"/>`;
+  } else if (v === 'rhalf') {
+    const yMid = yForStep(4 + clefOff);
+    svg += `<rect x="${x-6}" y="${yMid - 5}" width="12" height="5" fill="${color}"/>`;
+  } else {
+    // Viertelpause / Achtelpause / punktierte Viertelpause als stilisierte Form
+    const yTop = yForStep(7 + clefOff);
+    const path = v === 'reighth'
+      ? `M ${x+2} ${yTop} c -4 3, 3 5, -1 8 c -5 3, 2 6, -2 9`
+      : `M ${x+2} ${yTop} c -4 3, 3 5, -1 8 c -5 3, 2 6, -2 10`;
+    svg += `<path d="${path}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round"/>`;
+    if (v === 'reighth') svg += `<circle cx="${x-1}" cy="${yTop + 18}" r="2.2" fill="${color}"/>`;
+    if (v === 'rdotq') svg += `<circle cx="${x+11}" cy="${yForStep(5 + clefOff)}" r="2.2" fill="${color}"/>`;
+  }
+  return svg;
+}
+
+function drawNoteInto(svg, x, note, clefOff, yForStep, color, small) {
+  if ((note.value || '').charAt(0) === 'r') return drawRestInto(svg, x, note, clefOff, yForStep, color);
+  const dotted = note.value === 'dotq' || note.value === 'doth';
+  const value = dotted ? (note.value === 'dotq' ? 'quarter' : 'half') : (note.value || 'quarter');
+  const step = absStep(note.name, note.octave);
+  const s = step - clefOff;
+  const y = yForStep(step);
+
+  if (s < 0) {
+    const lowest = s % 2 === 0 ? s : s + 1;
+    for (let k = -2; k >= lowest; k -= 2) {
+      const ly = yForStep(k + clefOff);
+      svg += `<line x1="${x-13}" y1="${ly}" x2="${x+13}" y2="${ly}" stroke="#222" stroke-width="1"/>`;
+    }
+  }
+  if (s > 8) {
+    const highest = s % 2 === 0 ? s : s - 1;
+    for (let k = 10; k <= highest; k += 2) {
+      const ly = yForStep(k + clefOff);
+      svg += `<line x1="${x-13}" y1="${ly}" x2="${x+13}" y2="${ly}" stroke="#222" stroke-width="1"/>`;
+    }
+  }
+  if (note.accidental) {
+    const sym = { '#':'♯', 'b':'♭', 'n':'♮', '##':'𝄪', 'bb':'𝄫' }[note.accidental] || '♯';
+    svg += `<text x="${x-19}" y="${y+5}" font-size="18" fill="${color}" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
+  }
+  const hollow = value === 'whole' || value === 'half';
+  const rx = small ? 5 : (value === 'whole' ? 8.5 : 7);
+  const ry = small ? 3.5 : (value === 'whole' ? 6 : 5);
+  if (hollow)
+    svg += `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(-20 ${x} ${y})" fill="none" stroke="${color}" stroke-width="1.7"/>`;
+  else
+    svg += `<ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" transform="rotate(-20 ${x} ${y})" fill="${color}"/>`;
+  if (!small && value !== 'whole') {
+    const stemUp = s < 4;
+    if (stemUp) {
+      svg += `<line x1="${x+6.5}" y1="${y}" x2="${x+6.5}" y2="${y-30}" stroke="${color}" stroke-width="1.5"/>`;
+      if (value === 'eighth')
+        svg += `<path d="M ${x+6.5} ${y-30} c 8 3, 7 9, 3 15" fill="none" stroke="${color}" stroke-width="2"/>`;
+    } else {
+      svg += `<line x1="${x-6.5}" y1="${y}" x2="${x-6.5}" y2="${y+30}" stroke="${color}" stroke-width="1.5"/>`;
+      if (value === 'eighth')
+        svg += `<path d="M ${x-6.5} ${y+30} c -8 -3, -7 -9, -3 -15" fill="none" stroke="${color}" stroke-width="2"/>`;
+    }
+  }
+  if (dotted) svg += `<circle cx="${x+11}" cy="${y}" r="2.2" fill="${color}"/>`;
+  return svg;
+}
+
+/* --- iPad: Pointer-Events statt click. Reagiert sofort beim Tippen,
+       verhindert Doppeltipp-Zoom, ignoriert Multi-Touch. --- */
+function handleStaffPointer(evt) {
+  // Nur primärer Pointer (Finger/Stift/Maus)
+  if (!evt.isPrimary) return;
+  // Multi-Touch ignorieren (verhindert versehentliche Eingaben beim Scrollen)
+  if (evt.pointerType === 'touch' && evt.isPrimary === false) return;
+
+  const { config, state, container } = staffCtx;
+  if (state.checked) return;
+  const fixedCount = (config.fixedNotes || []).length;
+  if (state.userNotes.length >= config.totalSlots - fixedCount) return;
+
+  const svg = container.querySelector('svg');
+  if (!svg) return;
+
+  // Position relativ zum SVG berechnen
+  const rect = svg.getBoundingClientRect();
+  const viewBox = svg.viewBox.baseVal;
+  const scaleX = viewBox.width / rect.width;
+  const scaleY = viewBox.height / rect.height;
+  const locX = (evt.clientX - rect.left) * scaleX;
+  const locY = (evt.clientY - rect.top)  * scaleY;
+
+  const ls = 10, topY = 50, botY = topY + 4*ls;
+  const clefOff = config.clef === 'treble' ? 2 : -10;
+
+  // Y → diatonische Tonstufe (runden)
+  let rel = (botY - locY) / (ls/2);
+  rel = Math.round(rel);
+  rel = Math.max(-9, Math.min(clefOff < 0 ? 17 : 15, rel));
+  const step = rel + clefOff;
+  const pitch = stepToPitch(step);
+
+  const acc = state.selectedAcc === 'n' ? null : state.selectedAcc;
+  state.userNotes.push({ name: pitch.name, octave: pitch.octave, accidental: acc });
+
+  // Kein Doppeltipp-Zoom / kein versehentliches Scrollen auslösen
+  evt.preventDefault();
+
+  renderInteractive();
+  updateInteractiveControls();
+}
+
+function setAccidental(acc) {
+  if (!staffCtx || staffCtx.state.checked) return;
+  staffCtx.state.selectedAcc = acc;
+  document.querySelectorAll('.acc-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.acc === (acc || ''));
+  });
+}
+
+function undoStaff() {
+  if (!staffCtx || staffCtx.state.checked) return;
+  staffCtx.state.userNotes.pop();
+  renderInteractive();
+  updateInteractiveControls();
+}
+
+function clearStaff() {
+  if (!staffCtx || staffCtx.state.checked) return;
+  staffCtx.state.userNotes = [];
+  renderInteractive();
+  updateInteractiveControls();
+}
+
+function updateInteractiveControls() {
+  if (!staffCtx) return;
+  const { config, state } = staffCtx;
+  const fixedCount = (config.fixedNotes || []).length;
+  const ready = state.userNotes.length === config.totalSlots - fixedCount;
+  document.getElementById('btnCheck').disabled = !ready || state.checked;
+  document.getElementById('btnUndo').disabled = state.checked || state.userNotes.length === 0;
+  document.getElementById('btnClear').disabled = state.checked || state.userNotes.length === 0;
+  document.querySelectorAll('.acc-btn').forEach(b => b.disabled = state.checked);
+}
+
+/* ============================================================
+   WEB AUDIO  (iOS: AudioContext braucht User-Geste)
+   ============================================================ */
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    audioCtx = new Ctx();
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+function noteFreq(n) {
+  return 440 * Math.pow(2, (pitchValue(n.name, n.octave, n.accidental) - 57) / 12);
+}
+function playTones(freqs, start, dur) {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  freqs.forEach(f => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = f;
+    gain.gain.setValueAtTime(0, start);
+    gain.gain.linearRampToValueAtTime(0.22, start + 0.02);
+    gain.gain.setValueAtTime(0.22, start + dur - 0.1);
+    gain.gain.linearRampToValueAtTime(0, start + dur);
+    osc.connect(gain); gain.connect(ctx.destination);
+    osc.start(start); osc.stop(start + dur);
+  });
+}
+function playNotes(notes, melodic) {
+  if (!notes || !notes.length) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime + 0.05;
+  const isScale = notes.length > 3;
+  if (melodic || isScale) {
+    const step = isScale ? Math.min(0.35, 2.4 / notes.length) : 0.45;
+    notes.forEach((n, i) => playTones([noteFreq(n)], now + i * step, step + 0.1));
+  } else {
+    playTones(notes.map(noteFreq), now, notes.length === 1 ? 0.7 : 0.95);
+  }
+}
+function playRhythm(notes) {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime + 0.05;
+  let t = now;
+  notes.forEach(n => {
+    const key = (n.value || 'quarter').replace(/^r/, '');
+    const val = BEAT_VALS[key] || 1;
+    if (!(n.value || '').charAt(0) === 'r') playTones([noteFreq(n)], t, val * 0.45 - 0.02);
+    t += val * 0.45;
+  });
+}
+function playChordProgression(chords) {
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const now = ctx.currentTime + 0.05;
+  chords.forEach((ch, i) => {
+    playTones([...ch.treble, ...ch.bass].map(noteFreq), now + i * 0.85, 0.75);
+  });
+}
+function playMCNotes() {
+  const q = state_questions[state_current];
+  if (!q || !q.staff) return;
+  if (q.staff.chords) playChordProgression(q.staff.chords);
+  else if (q.staff.notes && q.staff.notes.length && q.staff.notes[0].value) playRhythm(q.staff.notes);
+  else playNotes(q.staff.notes || [], false);
+}
+function playStaffSolution() {
+  if (!staffCtx) return;
+  const cfg = staffCtx.config;
+  playNotes([...(cfg.fixedNotes || []), ...(cfg.expected || [])], (cfg.expected || []).length > 3);
+}
+
+/* ============================================================
+   KLAVIER-NOTATION
+   ============================================================ */
+function renderHarmonyScore(prog) {
+  const ls = 10;
+  const tTop = 34, tBot = tTop + 4 * ls;
+  const bTop = 104, bBot = bTop + 4 * ls;
+  const paddingX = 16, clefW = 52, chordW = 70;
+  const n = prog.chords.length;
+  const W = paddingX + clefW + n * chordW + paddingX;
+  const xFor = i => paddingX + clefW + (i + 0.5) * chordW;
+  const yTreble = s => tBot - (s - 2) * (ls / 2);
+  const yBass = s => bBot - (s + 10) * (ls / 2);
+
+  let svg = `<svg viewBox="0 0 ${W} 168" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">`;
+  for (let i = 0; i < 5; i++) {
+    svg += `<line x1="${paddingX}" y1="${tTop + i * ls}" x2="${W - paddingX}" y2="${tTop + i * ls}" stroke="#222" stroke-width="1.1"/>`;
+    svg += `<line x1="${paddingX}" y1="${bTop + i * ls}" x2="${W - paddingX}" y2="${bTop + i * ls}" stroke="#222" stroke-width="1.1"/>`;
+  }
+  svg += `<line x1="${paddingX}" y1="${tTop}" x2="${paddingX}" y2="${bBot}" stroke="#222" stroke-width="2"/>`;
+  svg += `<text x="${paddingX + 4}" y="${tBot + 6}" font-size="58" fill="#222" font-family="Georgia,serif">𝄞</text>`;
+  svg += `<text x="${paddingX + 8}" y="${bTop + 6}" font-size="46" fill="#222" font-family="Georgia,serif">𝄢</text>`;
+  prog.chords.forEach((ch, i) => {
+    const x = xFor(i);
+    svg = drawChord(svg, x, ch.treble, 2, yTreble, '#222');
+    svg = drawChord(svg, x, ch.bass, -10, yBass, '#222');
+  });
+  if (prog.highlight !== undefined && prog.highlight !== null) {
+    svg += `<ellipse cx="${xFor(prog.highlight)}" cy="${(tTop + bBot) / 2}" rx="${chordW / 2 - 2}" ry="${(bBot - tTop) / 2 + 6}" fill="none" stroke="#e94560" stroke-width="2.5" stroke-dasharray="7 5"/>`;
+  }
+  svg += `</svg>`;
+  return svg;
+}
+
+/* ============================================================
+   PRÜFUNG
+   ============================================================ */
+function checkStaff() {
+  if (!staffCtx) return;
+  const { config, state } = staffCtx;
+  state.checked = true;
+  state_answered = true;
+  const strict = !config.acceptEnharmonic;
+
+  state.results = state.userNotes.map((u, i) => {
+    const exp = config.expected[i];
+    if (!exp) return false;
+    if (strict) {
+      return u.name === exp.name
+        && u.octave === exp.octave
+        && (u.accidental || null) === (exp.accidental || null);
+    }
+    return pitchValue(u.name, u.octave, u.accidental) === pitchValue(exp.name, exp.octave, exp.accidental);
+  });
+  const allCorrect = state.results.every(r => r);
+
+  recordAnswer(state_section.id, allCorrect);
+  state_roundLog.push({ correct: allCorrect });
+
+  renderInteractive();
+  updateInteractiveControls();
+
+  if (allCorrect) { state_score++; state_streak++; if (state_streak > state_bestStreak) state_bestStreak = state_streak; }
+  else state_streak = 0;
+  document.getElementById('scoreBadge').textContent = `${state_score} Punkte`;
+  const sEl = document.getElementById('streakBadge');
+  if (state_streak >= 2) { sEl.textContent = `🔥 ${state_streak}`; sEl.classList.add('on'); }
+  else sEl.classList.remove('on');
+
+  const fb = document.getElementById('feedback');
+  const solution = config.expected.map(n => fullNoteName(n.name, n.octave, n.accidental)).join(' – ');
+  const hintText = config.acceptEnharmonic ? '' : '<br><i style="color:#a0a0b0;">Hinweis: Enharmonisch gleiche Töne zählen hier nur, wenn auch der Stammton stimmt.</i>';
+  if (allCorrect) {
+    fb.className = 'feedback show ok';
+    fb.innerHTML = `<div class="feedback-title">✅ Perfekt!</div>
+      <div class="feedback-text">${config.explanation}${hintText}</div>
+      <div style="margin-top:10px;"><button class="btn btn-undo" onclick="playStaffSolution()">🔊 Lösung anhören</button></div>`;
+  } else {
+    const nCorrect = state.results.filter(r => r).length;
+    fb.className = 'feedback show err';
+    fb.innerHTML = `<div class="feedback-title">❌ Noch nicht ganz (${nCorrect}/${state.results.length} richtig)</div>
+      <div class="feedback-text">Korrekte Lösung: <b>${solution}</b><br>${config.explanation}${hintText}</div>
+      <div style="margin-top:10px;"><button class="btn btn-undo" onclick="playStaffSolution()">🔊 Lösung anhören</button></div>`;
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+/* ============================================================
+   QUESTION GENERATORS
+   ============================================================ */
+function genNotennameMC() {
+  const clef = Math.random() < 0.6 ? 'treble' : 'bass';
+  const names = ['c','d','e','f','g','a','h'];
+  const octaves = clef === 'treble' ? [4,5] : [2,3];
+  const name = R(names);
+  const octave = R(octaves);
+  const r = Math.random();
+  const accidental = r < 0.15 ? '#' : r < 0.3 ? 'b' : null;
+  const correct = fullNoteName(name, octave, accidental);
+  const pool = new Set([correct]);
+  for (let i = 0; i < 40 && pool.size < 4; i++) {
+    const n2 = R(names), a2 = R(['#','b',null]);
+    const opt = fullNoteName(n2, octave, a2);
+    if (opt !== correct) pool.add(opt);
+  }
+  const opts = shuffle(Array.from(pool).slice(0, 4));
+  return {
+    mode: 'mc',
+    q: `Wie heißt dieser Ton im ${clef === 'treble' ? 'Violin' : 'Bass'}schlüssel?`,
+    staff: { clef, notes: [{ name, octave, accidental }] },
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: accidental ? `${correct} – enharmonisch verwechselt: ${enharmonicName(name, octave, accidental)}` : `${correct} ist ein Basiston ohne Vorzeichen.`
+  };
+}
+
+function genEnharmMC() {
+  const pairs = [['cis','des'],['dis','es'],['fis','ges'],['gis','as'],['ais','b'],['eis','f'],['his','c']];
+  const p = R(pairs);
+  const flip = Math.random() < 0.5;
+  const from = flip ? p[1] : p[0];
+  const to = flip ? p[0] : p[1];
+  const wrongPool = pairs.flat().filter(n => n !== to && n !== from);
+  const wrongs = [];
+  while (wrongs.length < 3) { const w = R(wrongPool); if (!wrongs.includes(w)) wrongs.push(w); }
+  const opts = shuffle([to, ...wrongs]);
+  return {
+    mode: 'mc',
+    q: `Welcher Ton ist die enharmonische Verwechslung von „${from}"?`,
+    options: opts,
+    correct: opts.indexOf(to),
+    explanation: `${from} = ${to} (klingen identisch)`
+  };
+}
+
+function genNotePlace() {
+  const clef = pickClef();
+  const options = clef === 'treble' ? [
+    { name:'c', octave:4, accidental:null }, { name:'c', octave:4, accidental:'#' },
+    { name:'d', octave:4, accidental:null }, { name:'e', octave:4, accidental:'b' },
+    { name:'f', octave:4, accidental:'#' }, { name:'g', octave:4, accidental:null },
+    { name:'a', octave:4, accidental:'b' }, { name:'h', octave:4, accidental:null },
+    { name:'c', octave:5, accidental:null },
+  ] : [
+    { name:'c', octave:3, accidental:null }, { name:'c', octave:3, accidental:'#' },
+    { name:'d', octave:3, accidental:null }, { name:'e', octave:3, accidental:'b' },
+    { name:'f', octave:3, accidental:'#' }, { name:'g', octave:3, accidental:null },
+    { name:'a', octave:3, accidental:'b' }, { name:'h', octave:3, accidental:null },
+    { name:'c', octave:4, accidental:null },
+  ];
+  const target = R(options);
+  return {
+    mode: 'staff',
+    q: `Setze die Note ${fullNoteName(target.name, target.octave, target.accidental)} ins Notensystem!`,
+    clef,
+    fixedNotes: [],
+    totalSlots: 1,
+    expected: [target],
+    acceptEnharmonic: false,
+    explanation: describeStaffPosition(target, clef)
+  };
+}
+
+function genNoteNameText() {
+  const clef = Math.random() < 0.6 ? 'treble' : 'bass';
+  const names = ['c','d','e','f','g','a','h'];
+  const octaves = clef === 'treble' ? [4,5] : [2,3];
+  const name = R(names);
+  const octave = R(octaves);
+  const r = Math.random();
+  const accidental = r < 0.2 ? '#' : r < 0.4 ? 'b' : null;
+  const target = { name, octave, accidental };
+  const canonical = fullNoteName(name, octave, accidental);
+  return {
+    mode: 'text',
+    q: `Wie heißt dieser Ton im ${clef === 'treble' ? 'Violin' : 'Bass'}schlüssel? Schreibe Name + Oktave (z.B. "cis4", "es4", "h3").`,
+    staff: { clef, notes: [target] },
+    hint: 'Hinweis: „b" allein steht für H♭ (z.B. "b3"). Für Kreuz „is" oder „#", für Bes „es" oder „b".',
+    checkFn: (input) => {
+      const parsed = parseUserNote(input);
+      if (!parsed) return false;
+      return parsed.name === name && parsed.octave === octave
+        && (parsed.accidental || null) === (accidental || null);
+    },
+    explanation: `Der Ton heißt ${canonical}.`,
+    correctDisplay: canonical
+  };
+}
+
+function genHalbGanz() {
+  const names = ['c','d','e','f','g','a','h'];
+  const name = R(names);
+  const clef = pickClef();
+  const octave = clef === 'treble' ? 4 : R([2,3]);
+  const isHTS = Math.random() < 0.5;
+  const target = noteFrom(name, null, octave, 1, isHTS ? 1 : 2);
+  return {
+    mode: 'staff',
+    q: `Gehe von ${fullNoteName(name, octave, null)} einen ${isHTS ? 'Halbtonschritt' : 'Ganztonschritt'} nach oben. Tippe die Zielnote ins System! (Enharmonische Verwechslung zählt hier als richtig.)`,
+    clef,
+    fixedNotes: [{ name, octave }],
+    totalSlots: 2,
+    expected: [target],
+    acceptEnharmonic: true,
+    explanation: `${fullNoteName(name, octave)} + ${isHTS ? 'HTS' : 'GTS'} = ${fullNoteName(target.name, target.octave, target.accidental)} (enharmonisch verwechselt ebenfalls richtig).`
+  };
+}
+
+const INTERVALS = [
+  { steps:1, semis:1, name:'Kleine Sekunde' },
+  { steps:1, semis:2, name:'Große Sekunde' },
+  { steps:2, semis:3, name:'Kleine Terz' },
+  { steps:2, semis:4, name:'Große Terz' },
+  { steps:3, semis:5, name:'Reine Quarte' },
+  { steps:3, semis:6, name:'Übermäßige Quarte (Tritonus)' },
+  { steps:4, semis:6, name:'Verminderte Quinte (Tritonus)' },
+  { steps:4, semis:7, name:'Reine Quinte' },
+  { steps:5, semis:8, name:'Kleine Sexte' },
+  { steps:5, semis:9, name:'Große Sexte' },
+  { steps:6, semis:10, name:'Kleine Septime' },
+  { steps:6, semis:11, name:'Große Septime' },
+  { steps:7, semis:12, name:'Reine Oktave' }
+];
+function genIntervallInteractive() {
+  const iv = R(INTERVALS);
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const clef = pickClef();
+  const rootOct = clef === 'treble' ? 4 : R([2,3]);
+  const target = noteFrom(rootName, null, rootOct, iv.steps, iv.semis);
+  return {
+    mode: 'staff',
+    q: `Bilde vom ${fullNoteName(rootName, rootOct, null)} aus eine ${iv.name} aufwärts. Tippe die zweite Note ins System!`,
+    clef,
+    fixedNotes: [{ name: rootName, octave: rootOct }],
+    totalSlots: 2,
+    expected: [target],
+    acceptEnharmonic: false,
+    explanation: `${fullNoteName(rootName, 4)} → ${fullNoteName(target.name, target.octave, target.accidental)} = ${iv.name} (${iv.steps} Tonstufe(n), ${iv.semis} Halbtöne)`
+  };
+}
+function genIntervallBestimmenMC() {
+  const iv = R(INTERVALS);
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const target = noteFrom(rootName, null, 4, iv.steps, iv.semis);
+  const wrongs = shuffle(INTERVALS.filter(x => x.name !== iv.name).map(x => x.name)).slice(0, 3);
+  const opts = shuffle([iv.name, ...wrongs]);
+  return {
+    mode: 'mc',
+    q: 'Welches Intervall ist notiert? (untere → obere Note)',
+    staff: { clef: 'treble', notes: [{ name: rootName, octave: 4 }, target] },
+    options: opts,
+    correct: opts.indexOf(iv.name),
+    explanation: `${fullNoteName(rootName, 4)} → ${fullNoteName(target.name, target.octave, target.accidental)}: ${iv.steps} Tonstufe(n) und ${iv.semis} Halbtöne → ${iv.name}.`
+  };
+}
+
+function genDreiklangInteractive() {
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const type = R(['dur','moll','vermindert','übermäßig']);
+  const clef = pickClef();
+  const rootOct = clef === 'bass'
+    ? ((rootName === 'a' || rootName === 'h') ? 2 : R([2,3]))
+    : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
+  const semis = { dur:[4,7], moll:[3,7], vermindert:[3,6], 'übermäßig':[4,8] }[type];
+  const triad = buildTriad(rootName, null, rootOct, semis[0], semis[1]);
+  const typeName = { dur:'Dur', moll:'Moll', vermindert:'vermindert', 'übermäßig':'übermäßig' }[type];
+  const chordRoot = capFirst(rootDisplay(rootName, null)) + '-' + typeName;
+  const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  return {
+    mode: 'staff',
+    q: `Bilde einen ${capFirst(rootDisplay(rootName, null))}-${typeName}-Dreiklang in Grundstellung! Tippe Terz und Quinte über dem Grundton.`,
+    clef,
+    fixedNotes: [{ name: rootName, octave: 4 }],
+    totalSlots: 3,
+    expected: [triad[1], triad[2]],
+    acceptEnharmonic: false,
+    explanation: `${chordRoot} = ${names.join(' – ')}`
+  };
+}
+function genDreiklangBestimmenMC() {
+  const types = [
+    ['dur','Dur',4,7], ['moll','Moll',3,7],
+    ['vermindert','vermindert',3,6], ['übermäßig','übermäßig',4,8]
+  ];
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const rootOct = (rootName === 'a' || rootName === 'h') ? 3 : 4;
+  const t = R(types);
+  const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
+  const inversion = RI(0, 2);
+  const shown = invertTriad(triad, inversion);
+  const chordRoot = capFirst(rootDisplay(rootName, null));
+  const correct = (t[1] === 'Dur' ? chordRoot : chordRoot.toLowerCase()) + '-' + t[1];
+  const pool = [];
+  types.filter(x => x !== t).forEach(x => {
+    const disp = x[1] === 'Dur' ? chordRoot : chordRoot.toLowerCase();
+    pool.push(disp + '-' + x[1]);
+  });
+  ['c','d','e','f','g','a','h'].filter(n => n !== rootName).forEach(n => {
+    const x = R(types);
+    const disp = x[1] === 'Dur' ? capFirst(n) : n;
+    pool.push(disp + '-' + x[1]);
+  });
+  const others = [];
+  while (others.length < 3) {
+    const w = R(pool);
+    if (!others.includes(w) && w !== correct) others.push(w);
+  }
+  const opts = shuffle([correct, ...others]);
+  const invName = ['Grundstellung', '1. Umkehrung (Sextakkord)', '2. Umkehrung (Quartsextakkord)'][inversion];
+  const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  return {
+    mode: 'mc',
+    q: 'Welcher Dreiklang ist notiert? (Grundstellung oder eine Umkehrung – gestapelt als Akkord)',
+    staff: { clef: 'treble', notes: shown, stacked: true },
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `${correct} = ${names.join(' – ')}. Notiert ist die ${invName}.`
+  };
+}
+function genDreiklangUmkehrung() {
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const type = R(['dur','moll']);
+  const clef = pickClef();
+  const rootOct = clef === 'bass'
+    ? ((rootName === 'a' || rootName === 'h') ? 2 : 3)
+    : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
+  const triad = buildTriad(rootName, null, rootOct, type === 'dur' ? 4 : 3, 7);
+  const inv = RI(1, 2);
+  const shown = invertTriad(triad, inv);
+  const typeName = type === 'dur' ? 'Dur' : 'Moll';
+  const chordRoot = (type === 'dur' ? capFirst(rootDisplay(rootName, null)) : rootDisplay(rootName, null)) + '-' + typeName;
+  const names = shown.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  const invName = inv === 1 ? '1. Umkehrung (Sextakkord)' : '2. Umkehrung (Quartsextakkord)';
+  const ziffer = inv === 1 ? 'Generalbassziffer 6' : 'Generalbassziffer 6/4';
+  return {
+    mode: 'staff',
+    q: `Bilde einen ${capFirst(rootDisplay(rootName, null))}-${typeName}-Dreiklang als ${invName}! Tippe alle drei Töne von unten nach oben.`,
+    clef,
+    fixedNotes: [],
+    totalSlots: 3,
+    slotW: 50,
+    expected: shown,
+    acceptEnharmonic: false,
+    explanation: `${chordRoot} als ${invName} = ${names.join(' – ')} (${ziffer})`
+  };
+}
+function genDreiklangText() {
+  const types = [
+    ['dur','Dur',4,7], ['moll','Moll',3,7],
+    ['vermindert','vermindert',3,6], ['übermäßig','übermäßig',4,8]
+  ];
+  const rootName = R(['c','d','e','f','g','a','h']);
+  const rootOct = (rootName === 'a' || rootName === 'h') ? 3 : 4;
+  const t = R(types);
+  const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
+  const chordRoot = capFirst(rootDisplay(rootName, null));
+  const correct = (t[1] === 'Dur' ? chordRoot : chordRoot.toLowerCase()) + '-' + t[1];
+  const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  const norm = s => s.trim().toLowerCase().replace(/[\s\-–_.,]/g, '');
+  return {
+    mode: 'text',
+    q: 'Welcher Dreiklang ist notiert? Schreibe z.B. "C-Dur", "a-Moll", "h-vermindert", "Fis-Dur".',
+    staff: { clef: 'treble', notes: triad, stacked: true },
+    hint: 'Dur = großer Buchstabe (C-Dur), Moll = kleiner Buchstabe (a-Moll).',
+    checkFn: (input) => norm(input) === norm(correct),
+    explanation: `${correct} = ${names.join(' – ')}`,
+    correctDisplay: correct
+  };
+}
+
+const KEYS_DUR = [
+  ['c',null,'C'], ['g',null,'G'], ['d',null,'D'], ['a',null,'A'],
+  ['e',null,'E'], ['f',null,'F'], ['h','b','B'], ['e','b','Es']
+];
+const KEYS_MOLL = [
+  ['a',null,'a'], ['e',null,'e'], ['d',null,'d'], ['g',null,'g'],
+  ['c',null,'c'], ['h',null,'h'], ['f',null,'f']
+];
+const DUR_PATTERN = [0,2,4,5,7,9,11,12];
+const MOLL_NAT   = [0,2,3,5,7,8,10,12];
+const MOLL_HARM  = [0,2,3,5,7,8,11,12];
+const MOLL_MEL   = [0,2,3,5,7,9,11,12];
+const CHROMATIC_DATA = {
+  'c¹': ['c4','cis4','d4','dis4','e4','f4','fis4','g4','gis4','a4','ais4','h4','c5'],
+  'f¹': ['f4','fis4','g4','gis4','a4','ais4','h4','c5','cis5','d5','dis5','e5','f5'],
+  'a¹': ['a4','ais4','h4','c5','cis5','d5','dis5','e5','f5','fis5','g5','gis5','a5']
+};
+const GANZTON_DATA = {
+  'c¹': ['c4','d4','e4','fis4','gis4','ais4','c5'],
+  'f¹': ['f4','g4','a4','h4','cis5','dis5','f5'],
+  'a¹': ['a4','h4','cis5','dis5','f5','g5','a5']
+};
+function genDurTonleiter() {
+  const [rootName, rootAcc, keyName] = R(KEYS_DUR);
+  const clef = pickClef();
+  const notes = buildScale(rootName, rootAcc, clef === 'bass' ? 2 : 4, DUR_PATTERN);
+  return {
+    mode: 'staff',
+    q: `Schreibe die ${keyName}-Dur-Tonleiter aufwärts (8 Töne, mit Vorzeichen)!`,
+    clef,
+    fixedNotes: [],
+    totalSlots: 8,
+    slotW: 46,
+    expected: notes,
+    acceptEnharmonic: false,
+    explanation: `${keyName}-Dur: ${notes.map(n => fullNoteName(n.name, n.octave, n.accidental)).join(' – ')}`
+  };
+}
+function genMollTonleiter() {
+  const [rootName, rootAcc, keyName] = R(KEYS_MOLL);
+  const clef = pickClef();
+  const rootOct = clef === 'bass' ? 2 : 4;
+  const form = R(['natürlich','harmonisch','melodisch']);
+  const pattern = form === 'harmonisch' ? MOLL_HARM : form === 'melodisch' ? MOLL_MEL : MOLL_NAT;
+  const notes = buildScale(rootName, rootAcc, rootOct, pattern);
+  const hint = form === 'harmonisch'
+    ? ' – die 7. Stufe ist zum Leitton erhöht.'
+    : form === 'melodisch'
+      ? ' – aufwärts sind die 6. und 7. Stufe erhöht (abwärts gelten wieder die natürlichen Stufen).'
+      : '';
+  return {
+    mode: 'staff',
+    q: `Schreibe die ${keyName}-Moll-Tonleiter aufwärts (${form}, 8 Töne)!`,
+    clef,
+    fixedNotes: [],
+    totalSlots: 8,
+    slotW: 46,
+    expected: notes,
+    acceptEnharmonic: false,
+    explanation: `${keyName}-Moll (${form}): ${notes.map(n => fullNoteName(n.name, n.octave, n.accidental)).join(' – ')}${hint}`
+  };
+}
+function genChromatisch() {
+  const key = R(Object.keys(CHROMATIC_DATA));
+  const clef = pickClef();
+  const notes = CHROMATIC_DATA[key].map(parseNoteStr)
+    .map(n => ({ ...n, octave: clef === 'bass' ? n.octave - 2 : n.octave }));
+  return {
+    mode: 'staff',
+    q: `Schreibe die chromatische Tonleiter ab ${key} aufwärts (13 Töne, jeder Schritt ein Halbton)!`,
+    clef,
+    fixedNotes: [],
+    totalSlots: 13,
+    slotW: 38,
+    expected: notes,
+    acceptEnharmonic: false,
+    explanation: `Chromatische Tonleiter ab ${key}: ${notes.map(n => fullNoteName(n.name, n.octave, n.accidental)).join(' – ')}`
+  };
+}
+function genGanzton() {
+  const key = R(Object.keys(GANZTON_DATA));
+  const clef = pickClef();
+  const notes = GANZTON_DATA[key].map(parseNoteStr)
+    .map(n => ({ ...n, octave: clef === 'bass' ? n.octave - 2 : n.octave }));
+  return {
+    mode: 'staff',
+    q: `Schreibe die Ganztonleiter ab ${key} aufwärts (7 Töne, jeder Schritt ein Ganzton)!`,
+    clef,
+    fixedNotes: [],
+    totalSlots: 7,
+    expected: notes,
+    acceptEnharmonic: false,
+    explanation: `Ganztonleiter ab ${key}: ${notes.map(n => fullNoteName(n.name, n.octave, n.accidental)).join(' – ')} – alle Schritte sind Ganztonschritte.`
+  };
+}
+
+const FUNC_DEFS = [
+  { sym:'T',  label:'Tonika',               off:0, semi:0, dur:true  },
+  { sym:'S',  label:'Subdominante',         off:3, semi:5, dur:true  },
+  { sym:'D',  label:'Dominante',            off:4, semi:7, dur:true  },
+  { sym:'Tp', label:'Tonikaparallele',      off:5, semi:9, dur:false },
+  { sym:'Sp', label:'Subdominantparallele', off:1, semi:2, dur:false },
+  { sym:'Dp', label:'Dominantparallele',    off:2, semi:4, dur:false }
+];
+const FUNC_KEYS = [
+  ['c',null,'C'], ['g',null,'G'], ['d',null,'D'],
+  ['f',null,'F'], ['h','b','B'], ['e','b','Es']
+];
+function genFunktionen() {
+  const [tonName, tonAcc, keyName] = R(FUNC_KEYS);
+  const f = R(FUNC_DEFS);
+  const clef = pickClef();
+  const root = noteFrom(tonName, tonAcc, 4, f.off, f.semi);
+  let oct = root.octave;
+  const maxStep = clef === 'treble' ? 8 : -1;
+  const minStep = clef === 'treble' ? -2 : -14;
+  while (absStep(root.name, oct) > maxStep) oct--;
+  while (absStep(root.name, oct) < minStep) oct++;
+  const triad = buildTriad(root.name, root.accidental, oct, f.dur ? 4 : 3, 7);
+  const quality = f.dur ? 'Dur' : 'Moll';
+  const disp = rootDisplay(root.name, root.accidental);
+  const chordRoot = (f.dur ? capFirst(disp) : disp) + '-' + quality;
+  const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  return {
+    mode: 'staff',
+    q: `Schreibe in ${keyName}-Dur den Akkord ${f.sym} (${f.label}) als Dreiklang! Tippe alle drei Töne.`,
+    clef,
+    fixedNotes: [],
+    totalSlots: 3,
+    slotW: 50,
+    expected: triad,
+    acceptEnharmonic: false,
+    explanation: `${f.sym} in ${keyName}-Dur = ${chordRoot} = ${names.join(' – ')}`
+  };
+}
+
+const SEVENTH_DEFS = [
+  { id:'dom',   sym:'7',    steps:[2,4,6], semis:[4,7,10], upper:'Terz, Quinte und Septime',
+    name:'Dominantseptakkord', hint:'Dur-Dreiklang + kleine Septime' },
+  { id:'maj7',  sym:'maj7', steps:[2,4,6], semis:[4,7,11], upper:'Terz, Quinte und Septime',
+    name:'Dur-Septakkord', hint:'Dur-Dreiklang + große Septime' },
+  { id:'moll7', sym:'m7',   steps:[2,4,6], semis:[3,7,10], upper:'Terz, Quinte und Septime',
+    name:'moll-Septakkord', hint:'Moll-Dreiklang + kleine Septime' },
+  { id:'sixte', sym:'6',    steps:[2,4,5], semis:[4,7,9],  upper:'Terz, Quinte und Sexte',
+    name:'Sixte ajoutée', hint:'Dur-Dreiklang + große Sexte (nicht zu verwechseln mit dem Sextakkord = 1. Umkehrung!)' }
+];
+const SEVENTH_ROOTS = [
+  ['c',null],['f',null],['d',null],['g',null],['a',null],
+  ['h','b'],['e','b'],['f','#']
+];
+function chordSymbol(rootName, rootAcc, def) {
+  const disp = rootDisplay(rootName, rootAcc);
+  return def.id === 'moll7' ? disp + def.sym : capFirst(disp) + def.sym;
+}
+function buildFourthChord(rootName, rootAcc, rootOct, def) {
+  const notes = [noteFrom(rootName, rootAcc, rootOct, 0, 0)];
+  def.steps.forEach((st, i) => notes.push(noteFrom(rootName, rootAcc, rootOct, st, def.semis[i])));
+  return notes;
+}
+function genSeptakkordInteractive() {
+  const [rootName, rootAcc] = R(SEVENTH_ROOTS);
+  const def = R(SEVENTH_DEFS);
+  const clef = pickClef();
+  const rootOct = clef === 'bass'
+    ? ((rootName === 'a' || rootName === 'h') ? 2 : R([2,3]))
+    : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
+  const chord = buildFourthChord(rootName, rootAcc, rootOct, def);
+  const symbol = chordSymbol(rootName, rootAcc, def);
+  const names = chord.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  return {
+    mode: 'staff',
+    q: `Bilde einen ${def.name} über „${rootDisplay(rootName, rootAcc)}" (${def.hint})! Tippe ${def.upper}.`,
+    clef,
+    fixedNotes: [chord[0]],
+    totalSlots: 4,
+    slotW: 46,
+    expected: [chord[1], chord[2], chord[3]],
+    acceptEnharmonic: false,
+    explanation: `${symbol} = ${names.join(' – ')} (${def.name}: ${def.hint})`
+  };
+}
+function genSeptakkordBestimmenMC() {
+  const [rootName, rootAcc] = R(SEVENTH_ROOTS);
+  const rootOct = (rootName === 'a' || rootName === 'h') ? 3 : 4;
+  const def = R(SEVENTH_DEFS);
+  const chord = buildFourthChord(rootName, rootAcc, rootOct, def);
+  const correct = `${chordSymbol(rootName, rootAcc, def)} – ${def.name}`;
+  const wrongs = SEVENTH_DEFS.filter(d => d !== def)
+    .map(d => `${chordSymbol(rootName, rootAcc, d)} – ${d.name}`);
+  const opts = shuffle([correct, ...wrongs]);
+  const names = chord.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  return {
+    mode: 'mc',
+    q: 'Welcher Vierklang ist notiert? (Grundstellung, gestapelt)',
+    staff: { clef: 'treble', notes: chord, stacked: true },
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `${correct} = ${names.join(' – ')} (${def.hint})`
+  };
+}
+
+const BEAT_VALS = { whole:4, half:2, doth:3, dotq:1.5, quarter:1, eighth:0.5 };
+const NOTE_VALUE_NAMES = { whole:'ganze Note', half:'halbe Note', doth:'punktierte halbe Note', dotq:'punktierte Viertelnote', quarter:'Viertelnote', eighth:'Achtelnote' };
+const REST_NAMES = { whole:'ganze Pause', half:'halbe Pause', doth:'punktierte halbe Pause', dotq:'punktierte Viertelpause', quarter:'Viertelpause', eighth:'Achtelpause' };
+function genTaktErgaenzung(rest) {
+  const [top, bot] = R([[4,4],[3,4],[2,4],[6,8]]);
+  const beats = top * (4/bot);
+  const vals = BEAT_VALS;
+  const isCompound = bot === 8;
+  const names = rest ? REST_NAMES : NOTE_VALUE_NAMES;
+  let missing;
+  if (isCompound) {
+    missing = R(['eighth','dotq'].filter(v => beats - vals[v] >= 0.5));
+  } else if (beats === 4 && Math.random() < 0.2) {
+    missing = 'whole';
+  } else {
+    missing = R(['half','doth','dotq','quarter','eighth'].filter(v => beats - vals[v] >= 0.5));
+  }
+  const used = missing === 'whole' ? [] : fillBeats(beats - vals[missing], isCompound ? ['eighth','dotq'] : undefined);
+  const shown = used.map(v => {
+    const base = { name: R(['c','d','e','f','g','a','h']), octave: 4 };
+    return rest ? Object.assign(base, { value: 'r' + v }) : Object.assign(base, { value: v });
+  });
+  const label = names[missing];
+  const wrongs = shuffle(Object.keys(names).filter(k => k !== missing).map(k => names[k])).slice(0, 3);
+  const opts = shuffle([label, ...wrongs]);
+  const sum = used.reduce((acc, v) => acc + vals[v], 0);
+  const q = missing === 'whole'
+    ? (rest ? `Der ${top}/${bot}-Takt ist leer. Welche Pause füllt ihn vollständig?`
+            : `Der ${top}/${bot}-Takt ist leer. Welcher Notenwert füllt ihn vollständig?`)
+    : (rest ? `Welches Pausenzeichen vervollständigt den ${top}/${bot}-Takt?`
+            : `Welcher Notenwert vervollständigt den ${top}/${bot}-Takt?`);
+  const taktInfo = isCompound
+    ? `Der ${top}/${bot}-Takt zählt ${top} Achtel (= 2 punktierte Viertel-Schläge)`
+    : `Der Takt hat ${beats} Schläge`;
+  return {
+    mode: 'mc',
+    q,
+    staff: { clef: 'treble', timeSig: [top, bot], notes: shown },
+    options: opts,
+    correct: opts.indexOf(label),
+    explanation: `${taktInfo}, die gezeigten Zeichen dauern ${sum}. Es fehlen ${vals[missing]} Zählzeit(en) → ${label}.`
+  };
+}
+function genNotenwertMC() { return genTaktErgaenzung(false); }
+function genPausenwertMC() { return genTaktErgaenzung(true); }
+
+function genQuintenzirkelMC() {
+  const data = [
+    { key:'C', acc:0, parallel:'a' }, { key:'G', acc:1, parallel:'e' },
+    { key:'D', acc:2, parallel:'h' }, { key:'A', acc:3, parallel:'fis' },
+    { key:'E', acc:4, parallel:'cis' }, { key:'H', acc:5, parallel:'gis' },
+    { key:'Fis', acc:6, parallel:'dis' }, { key:'F', acc:-1, parallel:'d' },
+    { key:'B', acc:-2, parallel:'g' }, { key:'Es', acc:-3, parallel:'c' },
+    { key:'As', acc:-4, parallel:'f' }, { key:'Des', acc:-5, parallel:'b' },
+  ];
+  const d = R(data);
+  const vorzStr = d.acc === 0 ? 'keine Vorzeichen'
+    : d.acc > 0
+      ? `${d.acc} ${d.acc === 1 ? 'Kreuz' : 'Kreuze'}`
+      : `${Math.abs(d.acc)} ${Math.abs(d.acc) === 1 ? 'B' : 'Bs'}`;
+  if (Math.random() < 0.5) {
+    const correct = d.parallel + '-Moll';
+    const wrongs = shuffle(data.filter(x => x.parallel !== d.parallel).map(x => x.parallel + '-Moll')).slice(0, 3);
+    const opts = shuffle([correct, ...wrongs]);
+    return {
+      mode: 'mc',
+      q: `Wie heißt die parallele Molltonart von ${d.key}-Dur?`,
+      options: opts,
+      correct: opts.indexOf(correct),
+      explanation: `${d.key}-Dur und ${correct} haben ${vorzStr}.`
+    };
+  } else {
+    const correct = vorzStr;
+    const all = ['keine Vorzeichen','1 Kreuz','2 Kreuze','3 Kreuze','4 Kreuze','5 Kreuze','6 Kreuze','1 B','2 Bs','3 Bs','4 Bs','5 Bs'];
+    const wrongs = shuffle(all.filter(a => a !== correct)).slice(0, 3);
+    const opts = shuffle([correct, ...wrongs]);
+    return {
+      mode: 'mc',
+      q: `Wie viele Vorzeichen hat ${d.key}-Dur?`,
+      options: opts,
+      correct: opts.indexOf(correct),
+      explanation: `${d.key}-Dur hat ${correct}.`
+    };
+  }
+}
+
+/* Vorzeichenlesen: Tonart aus dem Generalvorzeichen am System bestimmen */
+const QZ_KEYS = [
+  { key:'C',  acc:0 }, { key:'G',  acc:1 }, { key:'D',  acc:2 },
+  { key:'A',  acc:3 }, { key:'E',  acc:4 }, { key:'H',  acc:5 },
+  { key:'Fis', acc:6 },
+  { key:'F',  acc:-1 }, { key:'B',  acc:-2 }, { key:'Es', acc:-3 },
+  { key:'As', acc:-4 }, { key:'Des', acc:-5 }
+];
+const QZ_PARALLEL = { '0':'a', '1':'e', '2':'h', '3':'fis', '4':'cis', '5':'gis', '6':'dis', '-1':'d', '-2':'g', '-3':'c', '-4':'f', '-5':'b' };
+function genVorzeichenMC() {
+  const d = R(QZ_KEYS);
+  const askDur = Math.random() < 0.5;
+  const correct = askDur ? d.key + '-Dur' : QZ_PARALLEL[String(d.acc)] + '-Moll';
+  const wrongPool = QZ_KEYS
+    .filter(x => x.key !== d.key)
+    .map(x => (askDur ? x.key + '-Dur' : QZ_PARALLEL[String(x.acc)] + '-Moll'));
+  const wrongs = shuffle(wrongPool).slice(0, 3);
+  const opts = shuffle([correct, ...wrongs]);
+  const vorzStr = d.acc === 0 ? 'kein Vorzeichen'
+    : d.acc > 0
+      ? `${d.acc} ${d.acc === 1 ? 'Kreuz' : 'Kreuze'}`
+      : `${-d.acc} ${-d.acc === 1 ? 'B' : 'Bs'}`;
+  const parallelName = askDur ? QZ_PARALLEL[String(d.acc)] + '-Moll' : d.key + '-Dur';
+  return {
+    mode: 'mc',
+    q: `Welche ${askDur ? 'Dur' : 'Moll'}tonart passt zu diesem Generalvorzeichen?`,
+    staff: { clef: 'treble', keySig: { type: d.acc >= 0 ? 'sharp' : 'flat', count: Math.abs(d.acc) }, notes: [] },
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `${vorzStr} → ${correct}. (Paralleltonart: ${parallelName}.)`
+  };
+}
+
+function genKadenzMC() {
+  const keys = [
+    { key:'C-Dur', chords:['C','F','G','C'] },
+    { key:'G-Dur', chords:['G','C','D','G'] },
+    { key:'D-Dur', chords:['D','G','A','D'] },
+    { key:'F-Dur', chords:['F','B','C','F'] },
+    { key:'a-Moll', chords:['a','d','E','a'] },
+    { key:'d-Moll', chords:['d','g','A','d'] },
+    { key:'e-Moll', chords:['e','a','H','e'] },
+  ];
+  const k = R(keys);
+  const correct = k.chords.join(' – ');
+  const wrongs = shuffle(keys.filter(x => x.key !== k.key).map(x => x.chords.join(' – '))).slice(0, 3);
+  const opts = shuffle([correct, ...wrongs]);
+  return {
+    mode: 'mc',
+    q: `Wie lautet die Kadenz (T-S-D-T) in ${k.key}?`,
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `Kadenz in ${k.key}: ${correct}`
+  };
+}
+
+const N = (name, octave, accidental = null) => ({ name, octave, accidental });
+
+/* Stimmführungs-Generator: erzeugt zufällige Akkordpaare (T→D bzw. D→T)
+   in zufälligen Tonarten und prüft sie automatisch. Fehlerarten:
+   parallele Quinten/Oktaven, versteckte Quinten/Oktaven,
+   nicht aufgelöster Leitton – oder korrektes Beispiel. */
+const STIMM_ERR_LABELS = {
+  q:  'Parallele Quinten',
+  o:  'Parallele Oktaven',
+  hq: 'Versteckte Quinten',
+  ho: 'Versteckte Oktaven',
+  lt: 'Der Leitton wird nicht aufgelöst',
+  n:  'Kein Stimmführungsfehler'
+};
+const STIMM_KEYS = [
+  { name:'C',  steps:0, semis:0,  pc:0 },
+  { name:'G',  steps:4, semis:7,  pc:7 },
+  { name:'D',  steps:1, semis:2,  pc:2 },
+  { name:'F',  steps:3, semis:5,  pc:5 },
+  { name:'B',  steps:6, semis:10, pc:10 },
+  { name:'Es', steps:2, semis:3,  pc:3 }
+];
+/* Konstruktions-Vorlagen in C-Dur, Stimmen [Bass, Tenor, Alt, Sopran].
+   Sie werden transponiert und in bequeme Lagen verschoben. */
+const STIMM_BLUEPRINTS = [
+  { prog:'T→D', err:'o',
+    A:[N('c',3),N('e',3),N('g',4),N('c',5)],
+    B:[N('g',3),N('h',3),N('d',4),N('g',5)] },
+  { prog:'T→D', err:'q',
+    A:[N('c',3),N('g',3),N('c',4),N('e',4)],
+    B:[N('g',2),N('d',3),N('h',4),N('d',5)] },
+  { prog:'T→D', err:'ho',
+    A:[N('c',3),N('g',3),N('c',4),N('e',5)],
+    B:[N('g',3),N('h',3),N('d',4),N('g',5)] },
+  { prog:'T→D', err:'hq',
+    A:[N('c',3),N('g',3),N('c',4),N('e',4)],
+    B:[N('g',3),N('h',3),N('d',4),N('d',5)] },
+  { prog:'D→T', err:'lt',
+    A:[N('g',2),N('d',3),N('d',4),N('h',4)],
+    B:[N('c',3),N('e',3),N('c',4),N('g',4)] },
+  { prog:'D→T', err:'n',
+    A:[N('g',2),N('d',3),N('d',4),N('h',4)],
+    B:[N('c',3),N('e',3),N('g',4),N('c',5)] },
+  { prog:'T→D', err:'n',
+    A:[N('c',3),N('e',3),N('g',4),N('c',5)],
+    B:[N('g',3),N('h',3),N('d',4),N('d',5)] }
+];
+const STIMM_RANGES = [[-17,-8],[-11,-4],[0,5],[2,11]];
+const STIMM_VOICE_NAMES = ['Bass','Tenor','Alt','Sopran'];
+
+function checkStimmfuehrung(ch1, ch2, isDToT, key) {
+  const pv = n => pitchValue(n.name, n.octave, n.accidental);
+  const errs = [];
+  for (let i = 0; i < 4; i++) {
+    for (let j = i+1; j < 4; j++) {
+      const mv1 = pv(ch2[i]) - pv(ch1[i]);
+      const mv2 = pv(ch2[j]) - pv(ch1[j]);
+      const sameDir = (mv1 > 0 && mv2 > 0) || (mv1 < 0 && mv2 < 0);
+      if (!sameDir) continue;
+      const int1 = Math.abs(pv(ch1[j]) - pv(ch1[i])) % 12;
+      const int2 = Math.abs(pv(ch2[j]) - pv(ch2[i])) % 12;
+      if (int1 === 0 && int2 === 0) errs.push({ type:'o', voices:[i,j] });
+      else if (int1 === 7 && int2 === 7) errs.push({ type:'q', voices:[i,j] });
+    }
+  }
+  // Versteckte Quinten/Oktaven: nur Außenstimmen (Bass & Sopran),
+  // echte Parallelen haben Vorrang.
+  const mb = pv(ch2[0]) - pv(ch1[0]);
+  const ms = pv(ch2[3]) - pv(ch1[3]);
+  const sameDirOut = (mb > 0 && ms > 0) || (mb < 0 && ms < 0);
+  const outerParallel = errs.some(e => e.voices[0] === 0 && e.voices[1] === 3);
+  if (sameDirOut && !outerParallel && Math.abs(ms) > 2) {
+    const intOut = Math.abs(pv(ch2[3]) - pv(ch2[0])) % 12;
+    if (intOut === 0) errs.push({ type:'ho', voices:[0,3] });
+    else if (intOut === 7) errs.push({ type:'hq', voices:[0,3] });
+  }
+  // Leitton-Auflösung (nur D→T)
+  if (isDToT) {
+    const ltPc = (key.pc + 11) % 12;
+    for (let i = 1; i < 4; i++) {
+      if (pv(ch1[i]) % 12 === ltPc) {
+        if (pv(ch2[i]) !== pv(ch1[i]) + 1) {
+          errs.push({ type:'lt', voice:i, note:ch1[i] });
+        }
+      }
+    }
+  }
+  return errs;
+}
+
+function genStimmfuehrungMC() {
+  for (let attempt = 0; attempt < 40; attempt++) {
+    const key = R(STIMM_KEYS);
+    const bp = R(STIMM_BLUEPRINTS);
+    const tp = ch => ch.map(n => noteFrom(n.name, n.accidental, n.octave, key.steps, key.semis));
+    const ch1 = tp(bp.A), ch2 = tp(bp.B);
+    // Je Stimme in bequeme Lage verschieben – beide Akkorde gemeinsam,
+    // damit Bewegungsrichtungen und Intervallklassen erhalten bleiben.
+    for (let v = 0; v < 4; v++) {
+      let d = 0;
+      const cur = absStep(ch1[v].name, ch1[v].octave);
+      while (cur + d*7 > STIMM_RANGES[v][1]) d--;
+      while (cur + d*7 < STIMM_RANGES[v][0]) d++;
+      if (d !== 0) { ch1[v].octave += d; ch2[v].octave += d; }
+    }
+    // Stimmenkreuzung verhindern (Verschiebung wirkt auf beide Akkorde)
+    for (let v = 1; v < 4; v++) {
+      while (absStep(ch1[v].name, ch1[v].octave) < absStep(ch1[v-1].name, ch1[v-1].octave)
+        || absStep(ch2[v].name, ch2[v].octave) < absStep(ch2[v-1].name, ch2[v-1].octave)) {
+        ch1[v].octave++; ch2[v].octave++;
+      }
+    }
+    const errs = checkStimmfuehrung(ch1, ch2, bp.prog === 'D→T', key);
+    const expectedErrs = bp.err === 'n' ? [] : [bp.err];
+    const gotErrs = errs.map(e => e.type);
+    if (gotErrs.length !== expectedErrs.length || gotErrs.some((t, i) => t !== expectedErrs[i])) continue;
+    const correct = STIMM_ERR_LABELS[bp.err];
+    const others = Object.keys(STIMM_ERR_LABELS).filter(k => k !== bp.err).map(k => STIMM_ERR_LABELS[k]);
+    const opts = shuffle([correct, ...shuffle(others).slice(0, 3)]);
+    const fn = n => fullNoteName(n.name, n.octave, n.accidental);
+    let why;
+    if (bp.err === 'n') {
+      why = bp.prog === 'D→T'
+        ? 'Korrekt: Der Leitton wird aufwärts zum Grundton aufgelöst, Bass und Oberstimmen bewegen sich gegenläufig – keine Parallelen.'
+        : 'Korrekt: Die Stimmen schreiten überwiegend schrittig und gegenläufig – weder parallele noch versteckte Quinten oder Oktaven.';
+    } else {
+      const e = errs[0];
+      if (e.type === 'o' || e.type === 'q') {
+        const iv = e.type === 'o' ? 'Oktave' : 'Quinte';
+        const v0 = STIMM_VOICE_NAMES[e.voices[0]], v1 = STIMM_VOICE_NAMES[e.voices[1]];
+        why = `${v0} (${fn(ch1[e.voices[0]])} → ${fn(ch2[e.voices[0]])}) und ${v1} (${fn(ch1[e.voices[1]])} → ${fn(ch2[e.voices[1]])}) schreiten in gleicher Richtung – zweimal die ${iv}: parallele ${iv}n.`;
+      } else if (e.type === 'ho' || e.type === 'hq') {
+        const iv = e.type === 'ho' ? 'Oktave' : 'Quinte';
+        why = `Bass (${fn(ch1[0])} → ${fn(ch2[0])}) und Sopran (${fn(ch1[3])} → ${fn(ch2[3])}) schreiten gleichgerichtet, der Sopran springt dabei – beide landen auf der ${iv}: versteckte ${iv}n.`;
+      } else {
+        why = `Der Leitton ${fn(e.note)} in der ${STIMM_VOICE_NAMES[e.voice]}-Stimme müsste aufwärts zum Grundton aufgelöst werden – stattdessen geht er nach ${fn(ch2[e.voice])}: Leitton nicht aufgelöst.`;
+      }
+    }
+    return {
+      mode: 'mc',
+      q: `Vergleiche die beiden Akkorde (${key.name}-Dur, ${bp.prog}): Welcher Stimmführungsfehler liegt vor?`,
+      staff: {
+        chords: [
+          { treble: [ch1[2], ch1[3]], bass: [ch1[0], ch1[1]] },
+          { treble: [ch2[2], ch2[3]], bass: [ch2[0], ch2[1]] }
+        ],
+        highlight: null
+      },
+      options: opts,
+      correct: opts.indexOf(correct),
+      explanation: `${why} Stimmlage: Bass & Tenor im unteren System, Alt & Sopran im oberen System.`
+    };
+  }
+  return null;
+}
+
+const FUNC_LABELS = {
+  T: 'Tonika (T)', S: 'Subdominante (S)', D: 'Dominante (D)',
+  Tp: 'Tonikaparallele (Tp)', Sp: 'Subdominantparallele (Sp)', Dp: 'Dominantparallele (Dp)'
+};
+const ANALYSE_KEYS = [
+  { name: 'C', ton: ['c', null] },
+  { name: 'G', ton: ['g', null] },
+  { name: 'F', ton: ['f', null] },
+  { name: 'D', ton: ['d', null] },
+  { name: 'B', ton: ['h', 'b'] }
+];
+const ANALYSE_PROGS = [
+  ['T','S','D','T'], ['T','Sp','D','T'], ['T','Tp','S','D'],
+  ['T','D','T','S'], ['T','S','Tp','D'], ['T','Dp','S','D']
+];
+function genAnalyseMC() {
+  const key = R(ANALYSE_KEYS);
+  const prog = R(ANALYSE_PROGS);
+  const circled = RI(0, prog.length - 1);
+  const chords = prog.map(sym => {
+    const f = FUNC_DEFS.find(x => x.sym === sym);
+    let root = noteFrom(key.ton[0], key.ton[1], 4, f.off, f.semi);
+    while (absStep(root.name, root.octave) > 4) root.octave--;
+    while (absStep(root.name, root.octave) < 0) root.octave++;
+    const triad = buildTriad(root.name, root.accidental, root.octave, f.dur ? 4 : 3, 7);
+    let bass = { ...root };
+    while (absStep(bass.name, bass.octave) > -3) bass.octave--;
+    while (absStep(bass.name, bass.octave) < -10) bass.octave++;
+    return { treble: triad, bass: [bass], sym };
+  });
+  const ch = chords[circled];
+  const fDef = FUNC_DEFS.find(x => x.sym === ch.sym);
+  const correct = FUNC_LABELS[ch.sym];
+  const wrongs = shuffle(Object.keys(FUNC_LABELS).filter(s => s !== ch.sym).map(s => FUNC_LABELS[s])).slice(0, 3);
+  const opts = shuffle([correct, ...wrongs]);
+  const disp = rootDisplay(ch.bass[0].name, ch.bass[0].accidental);
+  const chordName = (fDef.dur ? capFirst(disp) : disp) + '-' + (fDef.dur ? 'Dur' : 'Moll');
+  const names = ch.treble.map(n => fullNoteName(n.name, n.octave, n.accidental)).join(' – ');
+  return {
+    mode: 'mc',
+    q: `Harmonische Analyse in ${key.name}-Dur: Welche Funktion hat der eingekreiste Akkord?`,
+    staff: { chords: chords.map(c => ({ treble: c.treble, bass: c.bass })), highlight: circled },
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `Der eingekreiste Akkord (${names}, Bass ${fullNoteName(ch.bass[0].name, ch.bass[0].octave, ch.bass[0].accidental)}) = ${chordName} = ${correct}. Kadenz: ${prog.join(' – ')}.`
+  };
+}
+
+/* ============================================================
+   SECTIONS
+   ============================================================ */
+const SECTIONS = [
+  { id:'noten',       icon:'🎵', title:'Notennamen',                   desc:'benennen & setzen (mit korrekter Schreibweise)', gens:[genNotennameMC, genEnharmMC, genNotePlace, genNoteNameText] },
+  { id:'werte',       icon:'⏱️', title:'Noten- und Pausenwerte',        desc:'inkl. punktierter Werte & 6/8',                   gens:[genNotenwertMC, genPausenwertMC] },
+  { id:'halbgans',    icon:'📏', title:'Halb- und Ganztonschritte',     desc:'Zielnote in beiden Schlüsseln tippen',            gens:[genHalbGanz] },
+  { id:'intervalle',  icon:'📐', title:'Intervalle',                    desc:'bilden & bestimmen (inkl. Tritonus)',            gens:[genIntervallInteractive, genIntervallBestimmenMC] },
+  { id:'dreiklaenge', icon:'🎹', title:'Dreiklänge',                    desc:'bilden, bestimmen, Umkehrungen & Freitext',       gens:[genDreiklangInteractive, genDreiklangBestimmenMC, genDreiklangUmkehrung, genDreiklangText] },
+  { id:'tonleitern',  icon:'🪜', title:'Dur-Tonleitern',                desc:'in Violin- & Bassschlüssel tippen',              gens:[genDurTonleiter] },
+  { id:'moll',        icon:'🌙', title:'Molltonleitern',                desc:'natürlich, harmonisch & melodisch',              gens:[genMollTonleiter] },
+  { id:'chromatik',   icon:'🎨', title:'Chromatik & Ganztonleiter',     desc:'chromatische Skala & Ganztonleiter',             gens:[genChromatisch, genGanzton] },
+  { id:'funktionen',  icon:'🏛️', title:'Haupt- & Nebendreiklänge',      desc:'T, S, D und ihre Parallelen',                    gens:[genFunktionen] },
+  { id:'akkorde',     icon:'🎚️', title:'Weitere Akkorde',               desc:'Sept- & Sixte-ajoutée-Akkorde',                  gens:[genSeptakkordInteractive, genSeptakkordBestimmenMC] },
+  { id:'quinten',     icon:'🔄', title:'Quintenzirkel',                 desc:'Vorzeichen & Parallelen',                        gens:[genQuintenzirkelMC] },
+  { id:'vorzeichen',  icon:'🔑', title:'Vorzeichen lesen',             desc:'Tonart aus Generalvorzeichen bestimmen',          gens:[genVorzeichenMC] },
+  { id:'kadenz',      icon:'🎼', title:'Kadenz',                        desc:'T-S-D-T & Stimmführungsfehler',                  gens:[genKadenzMC, genStimmfuehrungMC] },
+  { id:'analyse',     icon:'🔍', title:'Harmonische Analyse',           desc:'Funktionen in Kadenzen bestimmen',               gens:[genAnalyseMC] },
+];
+
+/* ============================================================
+   APP STATE
+   ============================================================ */
+const QUESTIONS_PER_ROUND = 8;
+let state_section = null;
+let state_questions = [];
+let state_current = 0;
+let state_score = 0;
+let state_streak = 0;
+let state_bestStreak = 0;
+let state_answered = false;
+let state_roundLog = [];
+
+function buildMenu() {
+  const grid = document.getElementById('sectionGrid');
+  grid.innerHTML = '';
+  SECTIONS.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'section-btn';
+    btn.innerHTML = `
+      <span class="icon">${s.icon}</span>
+      <span class="title">${s.title}</span>
+      <span class="desc">${s.desc}</span>
+      ${statsMiniHtml(s.id)}
+    `;
+    btn.onclick = () => startSection(s);
+    grid.appendChild(btn);
+  });
+  updateOverallSummary();
+}
+
+function updateOverallSummary() {
+  let totalC = 0, totalQ = 0, weakest = null, weakestPct = 101;
+  SECTIONS.forEach(s => {
+    const st = globalStats[s.id];
+    if (!st || st.total === 0) return;
+    totalC += st.correct; totalQ += st.total;
+    const pct = (st.correct / st.total) * 100;
+    if (pct < weakestPct) { weakestPct = pct; weakest = s; }
+  });
+  const el = document.getElementById('overallSummary');
+  if (totalQ === 0) {
+    el.textContent = 'Noch keine Daten – starte ein Kapitel!';
+    return;
+  }
+  const pct = Math.round((totalC / totalQ) * 100);
+  let txt = `📊 Gesamt: ${totalC}/${totalQ} richtig (${pct} %)`;
+  if (weakest && weakestPct < 80) {
+    txt += ` · Schwächstes Thema: ${weakest.icon} ${weakest.title} (${Math.round(weakestPct)} %)`;
+  }
+  el.textContent = txt;
+}
+
+function startSection(section) {
+  state_section = section;
+  state_questions = [];
+  for (let i = 0; i < QUESTIONS_PER_ROUND; i++) {
+    let q = null, tries = 0;
+    while (!q && tries < 80) {
+      const gen = R(section.gens);
+      try { q = gen(); } catch(e) { tries++; }
+    }
+    if (q) state_questions.push(q);
+  }
+  state_current = 0;
+  state_score = 0;
+  state_streak = 0;
+  state_bestStreak = 0;
+  state_answered = false;
+  state_roundLog = [];
+  document.getElementById('menu').style.display = 'none';
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('exercise').style.display = 'block';
+  // Zum Anfang scrollen
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  showQuestion();
+}
+
+function repeatSection() {
+  if (state_section) startSection(state_section);
+}
+
+function showQuestion() {
+  const q = state_questions[state_current];
+  state_answered = false;
+  document.getElementById('qCounter').textContent = `Frage ${state_current+1}/${state_questions.length}`;
+  document.getElementById('scoreBadge').textContent = `${state_score} Punkte`;
+  const sEl = document.getElementById('streakBadge');
+  if (state_streak >= 2) { sEl.textContent = `🔥 ${state_streak}`; sEl.classList.add('on'); }
+  else sEl.classList.remove('on');
+  document.getElementById('progressBar').style.width = `${(state_current / state_questions.length) * 100}%`;
+  document.getElementById('sectionLabel').textContent = state_section.title;
+  document.getElementById('qText').textContent = q.q;
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('nextBtn').classList.remove('show');
+  document.getElementById('nextBtn').textContent = state_current === state_questions.length-1 ? 'Ergebnis anzeigen 🏁' : 'Weiter →';
+
+  if (q.mode === 'staff') {
+    document.getElementById('staffMode').style.display = 'block';
+    document.getElementById('mcMode').style.display = 'none';
+    document.getElementById('textMode').style.display = 'none';
+    document.querySelectorAll('.acc-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.acc === '');
+    });
+    const container = document.getElementById('staffInteractive');
+    // Event-Listener entfernen: durch frisches Klonen
+    container.replaceWith(container.cloneNode(false));
+    const newContainer = document.getElementById('staffInteractive');
+    // iOS-optimiert: pointerdown (sofortiges Feedback, kein Doppeltipp-Zoom)
+    newContainer.addEventListener('pointerdown', handleStaffPointer);
+    // Verhindert Long-Press-Kontextmenü / Callout auf iOS
+    newContainer.addEventListener('contextmenu', e => e.preventDefault());
+    initInteractiveStaff(newContainer, q);
+  } else if (q.mode === 'mc') {
+    document.getElementById('staffMode').style.display = 'none';
+    document.getElementById('mcMode').style.display = 'block';
+    document.getElementById('textMode').style.display = 'none';
+    const staffBox = document.getElementById('staffDisplay');
+    const listenBtn = document.getElementById('btnListen');
+    if (q.staff) {
+      staffBox.innerHTML = q.staff.chords ? renderHarmonyScore(q.staff) : renderStaticScore(q.staff);
+      staffBox.style.display = 'flex';
+      const playable = !!(q.staff.chords || (q.staff.notes && q.staff.notes.length));
+      listenBtn.style.display = playable ? 'inline-block' : 'none';
+    } else {
+      staffBox.style.display = 'none';
+      listenBtn.style.display = 'none';
+    }
+    const optionsEl = document.getElementById('options');
+    optionsEl.innerHTML = '';
+    const letters = ['A','B','C','D'];
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option';
+      btn.innerHTML = `<span class="letter">${letters[i]}</span><span>${opt}</span>`;
+      btn.onclick = () => checkMC(i);
+      optionsEl.appendChild(btn);
+    });
+  } else if (q.mode === 'text') {
+    document.getElementById('staffMode').style.display = 'none';
+    document.getElementById('mcMode').style.display = 'none';
+    document.getElementById('textMode').style.display = 'block';
+    const staffBox = document.getElementById('textStaffDisplay');
+    if (q.staff) {
+      staffBox.innerHTML = q.staff.chords ? renderHarmonyScore(q.staff) : renderStaticScore(q.staff);
+      staffBox.style.display = 'flex';
+    } else {
+      staffBox.style.display = 'none';
+    }
+    const input = document.getElementById('textInput');
+    input.value = '';
+    input.disabled = false;
+    input.placeholder = q.placeholder || 'Antwort eingeben…';
+    document.getElementById('btnTextCheck').disabled = false;
+    document.getElementById('textHint').innerHTML = q.hint || '';
+    // Absichtlich kein automatischer Fokus: iPad würde die Tastatur aufpoppen
+    // und das Layout verschieben. Nutzer tippt selbst ins Feld.
+  }
+}
+
+function checkMC(idx) {
+  if (state_answered) return;
+  state_answered = true;
+  const q = state_questions[state_current];
+  const btns = document.querySelectorAll('.option');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    const label = b.querySelector('span:last-child');
+    if (i === q.correct) {
+      b.classList.add('correct');
+      if (label) label.innerHTML += ' <b style="color:#2ecc71;">✓</b>';
+    }
+    if (i === idx && i !== q.correct) {
+      b.classList.add('wrong');
+      if (label) label.innerHTML += ' <b style="color:#e74c3c;">✕</b>';
+    }
+  });
+  const ok = idx === q.correct;
+  if (ok) { state_score++; state_streak++; if (state_streak > state_bestStreak) state_bestStreak = state_streak; }
+  else state_streak = 0;
+  recordAnswer(state_section.id, ok);
+  state_roundLog.push({ correct: ok });
+  document.getElementById('scoreBadge').textContent = `${state_score} Punkte`;
+  const sEl = document.getElementById('streakBadge');
+  if (state_streak >= 2) { sEl.textContent = `🔥 ${state_streak}`; sEl.classList.add('on'); }
+  else sEl.classList.remove('on');
+  const fb = document.getElementById('feedback');
+  const letter = ['A','B','C','D'][q.correct];
+  if (ok) {
+    fb.className = 'feedback show ok';
+    fb.innerHTML = `<div class="feedback-title">✅ Richtig!</div><div class="feedback-text">${q.explanation}</div>`;
+  } else {
+    fb.className = 'feedback show err';
+    fb.innerHTML = `<div class="feedback-title">❌ Leider falsch</div><div class="feedback-text">Richtig ist <b>${letter}) ${q.options[q.correct]}</b>.<br>${q.explanation}</div>`;
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function checkText() {
+  if (state_answered) return;
+  const q = state_questions[state_current];
+  const input = document.getElementById('textInput');
+  const raw = input.value.trim();
+  if (!raw) return;
+  state_answered = true;
+  input.disabled = true;
+  document.getElementById('btnTextCheck').disabled = true;
+  const ok = q.checkFn(raw);
+  if (ok) { state_score++; state_streak++; if (state_streak > state_bestStreak) state_bestStreak = state_streak; }
+  else state_streak = 0;
+  recordAnswer(state_section.id, ok);
+  state_roundLog.push({ correct: ok });
+  document.getElementById('scoreBadge').textContent = `${state_score} Punkte`;
+  const sEl = document.getElementById('streakBadge');
+  if (state_streak >= 2) { sEl.textContent = `🔥 ${state_streak}`; sEl.classList.add('on'); }
+  else sEl.classList.remove('on');
+  // iOS: Tastatur nach Prüfung ausblenden
+  input.blur();
+  const fb = document.getElementById('feedback');
+  const display = q.correctDisplay || '';
+  if (ok) {
+    fb.className = 'feedback show ok';
+    fb.innerHTML = `<div class="feedback-title">✅ Richtig!</div><div class="feedback-text">${q.explanation}</div>`;
+  } else {
+    fb.className = 'feedback show err';
+    fb.innerHTML = `<div class="feedback-title">❌ Leider falsch</div><div class="feedback-text">Richtig ist <b>${display}</b>.<br>${q.explanation}</div>`;
+  }
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion() {
+  state_current++;
+  if (state_current >= state_questions.length) showResults();
+  else showQuestion();
+}
+
+function showResults() {
+  document.getElementById('exercise').style.display = 'none';
+  const r = document.getElementById('results');
+  r.classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  const total = state_questions.length;
+  const pct = (state_score / total) * 100;
+  document.getElementById('resultsScore').textContent = `${state_score}/${total}`;
+  document.getElementById('resultsBar').style.width = `${pct}%`;
+  let title, msg;
+  if (pct >= 90) { title = '🏆 Ausgezeichnet!'; msg = 'Du bist ein Musiktheorie-Profi!'; }
+  else if (pct >= 70) { title = '🎉 Sehr gut!'; msg = 'Nur noch kleine Lücken – weiter so!'; }
+  else if (pct >= 50) { title = '👍 Gut gemacht!'; msg = 'Wiederhole einige Themen gezielt.'; }
+  else { title = '📚 Übungsbedarf'; msg = 'Arbeite die Skripte nochmal durch und versuche es erneut!'; }
+  if (state_bestStreak >= 3) msg += ` Längste Serie: 🔥 ${state_bestStreak}`;
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('resultsMsg').textContent = msg;
+
+  const rb = document.getElementById('roundBreakdown');
+  const rbc = document.getElementById('roundBreakdownContent');
+  if (state_roundLog.length > 0) {
+    rb.style.display = 'block';
+    rbc.innerHTML = state_roundLog.map((log, i) => {
+      const cls = log.correct ? 'ok' : 'bad';
+      const label = log.correct ? 'richtig' : 'falsch';
+      return `<div class="rb-line"><span class="dot ${cls}"></span>Frage ${i+1}: <b>${label}</b></div>`;
+    }).join('');
+  } else {
+    rb.style.display = 'none';
+  }
+
+  const cum = document.getElementById('cumStats');
+  const cumContent = document.getElementById('cumStatsContent');
+  const st = globalStats[state_section.id];
+  if (st && st.total > 0) {
+    cum.style.display = 'block';
+    const p = Math.round((st.correct / st.total) * 100);
+    const { cls, bar } = statsClass(p);
+    cumContent.innerHTML = `
+      <div class="cum-row">
+        <span class="label">${state_section.icon} ${state_section.title}</span>
+        <span class="bar ${bar}"><div style="width:${p}%"></div></span>
+        <span class="val ${cls}">${p} %</span>
+        <span class="cnt">${st.correct}/${st.total}</span>
+      </div>
+      <div style="font-size:.78rem;color:#808090;margin-top:8px;">
+        ${p >= 80 ? '✅ Dieses Thema sitzt – weiter mit dem nächsten!' :
+          p >= 60 ? '⚠️ Fast! Wiederhole dieses Thema noch einmal.' :
+                    '🔴 Hier lohnt sich gezieltes Üben – wiederhole das Kapitel im Skript und starte eine neue Runde.'}
+      </div>
+    `;
+  } else {
+    cum.style.display = 'none';
+  }
+}
+
+function showMenu() {
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('exercise').style.display = 'none';
+  document.getElementById('menu').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  buildMenu();
+}
+
+/* ============================================================
+   EVENTS & INIT  (iPad-freundlich)
+   ============================================================ */
+document.querySelectorAll('.acc-btn').forEach(btn => {
+  btn.addEventListener('click', () => setAccidental(btn.dataset.acc));
+});
+document.getElementById('textInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); checkText(); }
+});
+
+// iOS: AudioContext beim ersten User-Kontakt entsperren
+['touchstart', 'pointerdown', 'click'].forEach(evtName => {
+  window.addEventListener(evtName, function unlockAudioOnce() {
+    ensureAudio();
+    ['touchstart', 'pointerdown', 'click'].forEach(n => window.removeEventListener(n, unlockAudioOnce));
+  }, { passive: true });
+});
+
+// Doppeltipp-Zoom auf der gesamten App unterbinden (nur iOS Safari)
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if (now - lastTouchEnd <= 350) e.preventDefault();
+  lastTouchEnd = now;
+}, { passive: false });
+
+// Pinch-Zoom unterbinden (Doppelfinger)
+document.addEventListener('gesturestart', e => e.preventDefault());
+document.addEventListener('gesturechange', e => e.preventDefault());
+document.addEventListener('gestureend', e => e.preventDefault());
+
+buildMenu();
+</script>
+</body>
+</html>
