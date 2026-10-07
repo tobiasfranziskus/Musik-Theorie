@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="Musiktheorie">
 <meta name="theme-color" content="#1a1a2e">
 <meta name="format-detection" content="telephone=no">
-<title>&#127932; Musiktheorie &#8211; Interaktiv v14</title>
+<title>&#127932; Musiktheorie &#8211; Interaktiv v16</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -630,10 +630,11 @@
 .duel-action.primary{background:#ffd166}.duel-answer.picked{background:var(--c);color:#111}.duel-panel.done .duel-answer:not(.picked){opacity:.45}
 .duel-answer.correct{background:#49df98;color:#111}.duel-answer.wrong{background:#ff7777;color:#111}.duel-answer:disabled{cursor:default}
 .duel-progress{height:9px;background:#ffffff30;border-radius:9px}.duel-progress i{display:block;height:100%;background:#ffd166}.duel-muted{opacity:.78}.duel-help{font-size:13px;opacity:.8}
+.dq-staff{display:flex;justify-content:center;min-height:0}.dq-staff:empty{display:none}.dq-staff svg{max-width:100%;max-height:19vh;width:auto;height:auto;background:#fff;border-radius:10px;padding:2px}
 @media(max-width:700px){.duel-answers{gap:5px}.duel-panel{padding:6px}}
 </style>
 </head>
-<body><button onclick="startMusicDuel()" style="position:fixed;right:16px;top:16px;z-index:1000;padding:12px;border:0;border-radius:12px;background:#ffd166;font-weight:700">🎼 Musikduell</button><div id="duelOverlay" aria-hidden="true"><div class="duel-wrap"><div class="duel-top"><h1>🎼 Musikduell</h1><button class="duel-action" id="duelClose">Zur Übung</button></div><div id="duelSetup" class="duel-settings"><label>Spieler<select id="duelPlayers"><option selected>2</option><option>3</option><option>4</option></select></label><label>Fragen<select id="duelCount"><option>10</option><option selected>15</option><option>20</option></select></label><label>Zeit pro Frage<select id="duelSeconds"><option value="5">5 Sekunden</option><option value="8" selected>8 Sekunden</option><option value="12">12 Sekunden</option></select></label><label id="duelNameWrap1">Spieler 1<input id="duelName1" value="Spieler 1"></label><label id="duelNameWrap2">Spieler 2<input id="duelName2" value="Spieler 2"></label><label id="duelNameWrap3" hidden>Spieler 3<input id="duelName3" value="Spieler 3"></label><label id="duelNameWrap4" hidden>Spieler 4<input id="duelName4" value="Spieler 4"></label><button class="duel-action primary" id="duelStart">Duell starten</button><div class="duel-help">Legt das Gerät flach auf den Tisch: Jeder antwortet gleichzeitig auf seiner eigenen Fläche, die zu ihm hin ausgerichtet ist. 2 Spieler: gegenüber, 3–4 Spieler: je zwei pro Längsseite. Punkte: 100 pro Treffer, schnellster Treffer +50, Serie ab 3 Treffern +100. Die Antwortreihenfolge ist für jeden Spieler anders gemischt.</div></div></div><div id="duelGame" hidden><div class="duel-half top" id="duelTopHalf"></div><div class="duel-mid"><div class="qblock flip"><div class="dq-round"></div><div class="dq-prompt"></div><div class="dq-explain duel-muted"></div></div><div class="duel-ctrl"><div class="duel-progress"><i id="duelTime"></i></div><button class="duel-action primary" id="duelNext" hidden>Nächste Frage</button><button class="duel-action primary" id="duelRematch" hidden>Revanche</button><button class="duel-action" id="duelSetupBtn" hidden>Neu einrichten</button><button class="duel-action" id="duelQuit">Beenden</button></div><div class="qblock"><div class="dq-round"></div><div class="dq-prompt"></div><div class="dq-explain duel-muted"></div></div></div><div class="duel-half bottom" id="duelBottomHalf"></div></div></div>
+<body><button onclick="startMusicDuel()" style="position:fixed;right:16px;top:16px;z-index:1000;padding:12px;border:0;border-radius:12px;background:#ffd166;font-weight:700">🎼 Musikduell</button><div id="duelOverlay" aria-hidden="true"><div class="duel-wrap"><div class="duel-top"><h1>🎼 Musikduell</h1><button class="duel-action" id="duelClose">Zur Übung</button></div><div id="duelSetup" class="duel-settings"><label>Spieler<select id="duelPlayers"><option selected>2</option><option>3</option><option>4</option></select></label><label>Fragen<select id="duelCount"><option>10</option><option selected>15</option><option>20</option></select></label><label>Zeit pro Frage<select id="duelSeconds"><option value="5">5 Sekunden</option><option value="8">8 Sekunden</option><option value="12" selected>12 Sekunden</option><option value="20">20 Sekunden</option></select></label><label>Thema<select id="duelTopic"></select></label><label id="duelNameWrap1">Spieler 1<input id="duelName1" value="Spieler 1"></label><label id="duelNameWrap2">Spieler 2<input id="duelName2" value="Spieler 2"></label><label id="duelNameWrap3" hidden>Spieler 3<input id="duelName3" value="Spieler 3"></label><label id="duelNameWrap4" hidden>Spieler 4<input id="duelName4" value="Spieler 4"></label><button class="duel-action primary" id="duelStart">Duell starten</button><div class="duel-help">Legt das Gerät flach auf den Tisch: Jeder antwortet gleichzeitig auf seiner eigenen Fläche, die zu ihm hin ausgerichtet ist. 2 Spieler: gegenüber, 3–4 Spieler: je zwei pro Längsseite. Punkte: 100 pro Treffer, schnellster Treffer +50, Serie ab 3 Treffern +100. Die Antwortreihenfolge ist für jeden Spieler anders gemischt.</div></div></div><div id="duelGame" hidden><div class="duel-half top" id="duelTopHalf"></div><div class="duel-mid"><div class="qblock flip"><div class="dq-round"></div><div class="dq-prompt"></div><div class="dq-staff"></div><div class="dq-explain duel-muted"></div></div><div class="duel-ctrl"><div class="duel-progress"><i id="duelTime"></i></div><button class="duel-action primary" id="duelNext" hidden>Nächste Frage</button><button class="duel-action primary" id="duelRematch" hidden>Revanche</button><button class="duel-action" id="duelSetupBtn" hidden>Neu einrichten</button><button class="duel-action" id="duelQuit">Beenden</button></div><div class="qblock"><div class="dq-round"></div><div class="dq-prompt"></div><div class="dq-staff"></div><div class="dq-explain duel-muted"></div></div></div><div class="duel-half bottom" id="duelBottomHalf"></div></div></div>
 
 <div class="app">
   <!-- ============ MENU ============ -->
@@ -644,7 +645,8 @@
       <legend>Notenschl&#252;ssel w&#228;hlen</legend>
       <label><input type="radio" name="clefChoice" value="treble"> Violinschl&#252;ssel</label>
       <label><input type="radio" name="clefChoice" value="bass"> Bassschl&#252;ssel</label>
-      <label><input type="radio" name="clefChoice" value="mixed" checked> Beide gemischt</label>
+      <label><input type="radio" name="clefChoice" value="alto"> Altschl&#252;ssel (nur Notennamen, sonst gemischt)</label>
+      <label><input type="radio" name="clefChoice" value="mixed" checked> Gemischt (bei Notennamen auch Altschl&#252;ssel)</label>
       <p>Gilt f&#252;r Aufgaben mit einem Notensystem. Klavieraufgaben behalten ihre zwei Systeme; Geh&#246;rbildung erfolgt ohne Notenbild.</p>
     </fieldset>
     <div class="section-grid" id="sectionGrid"></div>
@@ -693,6 +695,7 @@
         <span class="label">Vorzeichen:</span>
         <button class="acc-btn" data-acc="#" title="Kreuz">&#9839;</button>
         <button class="acc-btn" data-acc="b" title="Bes">&#9837;</button>
+        <button class="acc-btn" data-acc="##" title="Doppelkreuz" aria-label="Doppelkreuz"><svg viewBox="0 0 12 12" width="20" height="20" aria-hidden="true"><path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" fill="none"/></svg></button>
         <button class="acc-btn" data-acc="n" title="Aufl&#246;sungszeichen">&#9838;</button>
         <button class="acc-btn active" data-acc="" title="Kein Vorzeichen">&#8212;</button>
       </div>
@@ -819,11 +822,40 @@ const CLEF_KEY = 'musiktheorie_clef';
 let clefChoice = 'mixed';
 try {
   const saved = localStorage.getItem(CLEF_KEY);
-  if (['treble', 'bass', 'mixed'].includes(saved)) clefChoice = saved;
+  if (['treble', 'bass', 'alto', 'mixed'].includes(saved)) clefChoice = saved;
 } catch (e) {}
 function pickClef() {
+  if (clefChoice === 'alto') return Math.random() < 0.5 ? 'treble' : 'bass';
   return clefChoice === 'mixed' ? (Math.random() < 0.5 ? 'treble' : 'bass') : clefChoice;
 }
+const ROOT_SHARP_OK = ['c','d','f','g','a'];
+const ROOT_FLAT_OK  = ['d','e','g','a','h'];
+function pickRootAcc(p) {
+  const r = Math.random();
+  if (r < p / 2) return [R(ROOT_SHARP_OK), '#'];
+  if (r < p)     return [R(ROOT_FLAT_OK), 'b'];
+  return [R(['c','d','e','f','g','a','h']), null];
+}
+function noDouble(notes) {
+  return notes.every(n => n.accidental !== '##' && n.accidental !== 'bb');
+}
+function clefOffFor(clef) { return clef === 'treble' ? 2 : clef === 'alto' ? -4 : -10; }
+function clefLabel(clef) { return clef === 'treble' ? 'Violinschl\u00fcssel' : clef === 'alto' ? 'Altschl\u00fcssel' : 'Bassschl\u00fcssel'; }
+function pickClefNoten() {
+  if (clefChoice === 'mixed') return R(['treble','bass','alto']);
+  if (clefChoice === 'alto') return 'alto';
+  return clefChoice;
+}
+function altoClefSvg(paddingX, topY, botY) {
+  const ls = (botY - topY) / 4, m = (topY + botY) / 2, x1 = paddingX + 15, c = '#222';
+  const half = sgn => {
+    const y0 = m + sgn * 0.6;
+    return `<path d="M ${x1} ${y0} C ${x1 + 11} ${y0 - sgn * 0.4}, ${x1 + 15} ${m + sgn * ls * 0.75}, ${x1 + 9} ${m + sgn * ls * 1.25} C ${x1 + 6} ${m + sgn * ls * 1.55}, ${x1 + 2} ${m + sgn * ls * 1.5}, ${x1 + 2} ${m + sgn * ls * 1.15}" fill="none" stroke="${c}" stroke-width="3.2" stroke-linecap="round"/>`
+         + `<path d="M ${x1} ${m + sgn * ls * 1.85} C ${x1 + 9} ${m + sgn * ls * 1.85}, ${x1 + 14} ${m + sgn * ls * 1.55}, ${x1 + 14} ${m + sgn * ls * 1.1}" fill="none" stroke="${c}" stroke-width="1.3" stroke-linecap="round"/>`;
+  };
+  return `<g aria-label="Altschl\u00fcssel"><rect x="${paddingX + 5}" y="${topY}" width="5" height="${botY - topY}" fill="${c}"/><line x1="${x1 - 0.5}" y1="${topY}" x2="${x1 - 0.5}" y2="${botY}" stroke="${c}" stroke-width="1.4"/>${half(-1)}${half(1)}</g>`;
+}
+
 function triadSymbol(name, accidental, type) {
   const suffix = {dur:'', moll:'m', vermindert:'v', '\u00fcberm\u00e4\u00dfig':'\u00fc'}[type.toLowerCase()];
   return capFirst(rootDisplay(name, accidental)) + suffix;
@@ -995,7 +1027,7 @@ function fillBeats(amount, allowed) {
   return out;
 }
 function describeStaffPosition(note, clef) {
-  const clefOff = clef === 'treble' ? 2 : -10;
+  const clefOff = clefOffFor(clef);
   const s = absStep(note.name, note.octave) - clefOff;
   const nm = fullNoteName(note.name, note.octave, note.accidental);
   if (s < 0) return s % 2 === 0
@@ -1059,6 +1091,7 @@ function questionSig(q) {
   if (q.staff && q.staff.notes) parts.push(JSON.stringify(q.staff.notes));
   if (q.staff && q.staff.chords) parts.push(JSON.stringify(q.staff.chords));
   if (q.staff && q.staff.timeSig) parts.push(q.staff.timeSig.join('/'));
+  if (q.staff && q.staff.timeSym) parts.push(q.staff.timeSym);
   if (q.expected) parts.push(JSON.stringify(q.expected));
   if (q.fixedNotes) parts.push(JSON.stringify(q.fixedNotes));
   if (q.clef) parts.push(q.clef);
@@ -1365,6 +1398,9 @@ function bassClefSvg(paddingX, clefW, topY, botY) {
 /* ============================================================
    STATIC SCORE RENDERER
    ============================================================ */
+function dblSharpSvg(cx, cy, color) {
+  return `<path d="M ${cx-5} ${cy-5} L ${cx+5} ${cy+5} M ${cx+5} ${cy-5} L ${cx-5} ${cy+5}" stroke="${color}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
+}
 function drawChord(svg, x, notes, clefOff, yForStep, color) {
   const drawn = new Set();
   const accNotes = notes.filter(n => n.accidental)
@@ -1397,7 +1433,8 @@ function drawChord(svg, x, notes, clefOff, yForStep, color) {
     const step = absStep(n.name, n.octave);
     const y = yForStep(step);
     const sym = { '#':'\u266f', 'b':'\u266d', 'n':'\u266e', '##':'\ud834\udd2a', 'bb':'\ud834\udd2b' }[n.accidental] || '\u266f';
-    svg += `<text x="${x - 19 - i * 11}" y="${y+5}" font-size="18" fill="${color}" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
+    if (n.accidental === '##') svg += dblSharpSvg(x - 19 - i * 11, y, color);
+    else svg += `<text x="${x - 19 - i * 11}" y="${y+5}" font-size="18" fill="${color}" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
   });
   const steps = notes.map(n => absStep(n.name, n.octave));
   const minStep = Math.min(...steps);
@@ -1429,10 +1466,10 @@ function renderStaticScore(staff) {
   const stacked = !!staff.stacked;
   const sigCount = staff.keySig ? staff.keySig.count : 0;
   const keySigW = sigCount * 10;
-  const timeSigW = staff.timeSig ? 24 : 0;
+  const timeSigW = (staff.timeSig || staff.timeSym) ? 24 : 0;
   const contentW = stacked ? 70 : Math.max(staff.notes.length * noteW, 40);
   const W = paddingX + clefW + keySigW + timeSigW + contentW + paddingX;
-  const clefOff = staff.clef === 'treble' ? 2 : -10;
+  const clefOff = clefOffFor(staff.clef);
   const yForStep = s => botY - (s - clefOff) * (ls/2);
 
   let svg = `<svg width="${W}" height="160" viewBox="0 0 ${W} 160" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" style="--score-width: ${W}px;" role="img" aria-label="Notensystem">`;
@@ -1442,6 +1479,8 @@ function renderStaticScore(staff) {
   }
   if (staff.clef === 'treble')
     svg += trebleClefSvg(paddingX, topY, botY);
+  else if (staff.clef === 'alto')
+    svg += altoClefSvg(paddingX, topY, botY);
   else
     svg += bassClefSvg(paddingX, clefW, topY, botY);
 
@@ -1456,7 +1495,11 @@ function renderStaticScore(staff) {
     });
   }
 
-  if (staff.timeSig) {
+  if (staff.timeSym) {
+    const tx = paddingX + clefW + keySigW + 10;
+    svg += `<text x="${tx}" y="${(topY+botY)/2+11}" font-size="32" font-weight="700" fill="#222" font-family="Georgia,serif" text-anchor="middle">C</text>`;
+    if (staff.timeSym === 'alla') svg += `<line x1="${tx+1}" y1="${topY-2}" x2="${tx+1}" y2="${botY+2}" stroke="#222" stroke-width="2"/>`;
+  } else if (staff.timeSig) {
     const tx = paddingX + clefW + keySigW + 10;
     svg += `<text x="${tx}" y="${(topY+botY)/2-2}" font-size="24" font-weight="700" fill="#222" font-family="Georgia,serif" text-anchor="middle">${staff.timeSig[0]}</text>`;
     svg += `<text x="${tx}" y="${(topY+botY)/2+18}" font-size="24" font-weight="700" fill="#222" font-family="Georgia,serif" text-anchor="middle">${staff.timeSig[1]}</text>`;
@@ -1465,10 +1508,26 @@ function renderStaticScore(staff) {
     const x = paddingX + clefW + keySigW + timeSigW + 35;
     svg = drawChord(svg, x, staff.notes, clefOff, yForStep, '#222');
   } else {
+    const xOf = i => paddingX + clefW + keySigW + timeSigW + (i + 0.5) * noteW;
     staff.notes.forEach((note, i) => {
-      const x = paddingX + clefW + keySigW + timeSigW + (i + 0.5) * noteW;
-      svg = drawNoteInto(svg, x, note, clefOff, yForStep, '#222');
+      svg = drawNoteInto(svg, xOf(i), note, clefOff, yForStep, '#222');
+      if (staff.numbered) {
+        svg += `<text x="${xOf(i)}" y="146" font-size="12" fill="#667" font-family="inherit" text-anchor="middle">${i + 1}</text>`;
+      }
     });
+    // Triolenklammern: aufeinanderfolgende Noten mit trip:true
+    let ti = 0;
+    while (ti < staff.notes.length) {
+      if (!staff.notes[ti].trip) { ti++; continue; }
+      let tj = ti;
+      while (tj + 1 < staff.notes.length && staff.notes[tj + 1].trip) tj++;
+      const ys = staff.notes.slice(ti, tj + 1).map(n => yForStep(absStep(n.name, n.octave)));
+      const by = Math.max(10, Math.min(...ys) - 36);
+      const x1 = xOf(ti) - 8, x2 = xOf(tj) + 8, mid = (x1 + x2) / 2;
+      svg += `<path d="M ${x1} ${by + 6} V ${by} H ${mid - 9} M ${mid + 9} ${by} H ${x2} V ${by + 6}" fill="none" stroke="#222" stroke-width="1.3"/>`;
+      svg += `<text x="${mid}" y="${by + 5}" font-size="14" font-style="italic" font-weight="700" fill="#222" font-family="Georgia,serif" text-anchor="middle">3</text>`;
+      ti = tj + 1;
+    }
   }
   svg += `</svg>`;
   return svg;
@@ -1496,7 +1555,7 @@ function renderInteractive() {
   const ls = 10, topY = 50, botY = topY + 4*ls;
   const paddingX = 14, clefW = 52, gap = 8;
   const slotW = config.slotW || 52;
-  const clefOff = config.clef === 'treble' ? 2 : -10;
+  const clefOff = clefOffFor(config.clef);
   const cursorX = paddingX + clefW + gap;
   const W = cursorX + (config.stacked ? 110 : config.totalSlots * slotW) + paddingX;
   const slotX = i => cursorX + (config.stacked ? 55 : (i + 0.5) * slotW);
@@ -1610,7 +1669,8 @@ function drawNoteInto(svg, x, note, clefOff, yForStep, color, small) {
   }
   if (note.accidental) {
     const sym = { '#':'\u266f', 'b':'\u266d', 'n':'\u266e', '##':'\ud834\udd2a', 'bb':'\ud834\udd2b' }[note.accidental] || '\u266f';
-    svg += `<text x="${x-19}" y="${y+5}" font-size="18" fill="${color}" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
+    if (note.accidental === '##') svg += dblSharpSvg(x-19, y, color);
+    else svg += `<text x="${x-19}" y="${y+5}" font-size="18" fill="${color}" font-family="Georgia,serif" text-anchor="middle">${sym}</text>`;
   }
   const hollow = value === 'whole' || value === 'half';
   const rx = small ? 5 : (value === 'whole' ? 8.5 : 7);
@@ -1659,7 +1719,7 @@ function handleStaffPointer(evt) {
   const locY = local.y;
 
   const ls = 10, topY = 50, botY = topY + 4*ls;
-  const clefOff = config.clef === 'treble' ? 2 : -10;
+  const clefOff = clefOffFor(config.clef);
 
   let rel = (botY - locY) / (ls/2);
   rel = Math.round(rel);
@@ -1934,12 +1994,13 @@ function checkStaff() {
    QUESTION GENERATORS
    ============================================================ */
 function genNotennameMC() {
-  const clef = pickClef();
+  const clef = pickClefNoten();
   const names = ['c','d','e','f','g','a','h'];
-  const name = R(names);
-  const octave = clef === 'treble'
+  let name = R(names);
+  let octave = clef === 'treble'
     ? ((name === 'c' || name === 'd') ? 5 : 4)
     : ((name === 'c' || name === 'd' || name === 'e' || name === 'f') ? 3 : 2);
+  if (clef === 'alto') { const ap = stepToPitch(RI(-5, 6)); name = ap.name; octave = ap.octave; }
   const r = Math.random();
   const accidental = r < 0.15 ? '#' : r < 0.3 ? 'b' : null;
   const correct = fullNoteName(name, octave, accidental);
@@ -1952,7 +2013,7 @@ function genNotennameMC() {
   const opts = shuffle(Array.from(pool).slice(0, 4));
   return {
     mode: 'mc',
-    q: `Wie hei\u00dft dieser Ton im ${clef === 'treble' ? 'Violin' : 'Bass'}schl\u00fcssel?`,
+    q: `Wie hei\u00dft dieser Ton im ${clefLabel(clef)}?`,
     staff: { clef, notes: [{ name, octave, accidental }] },
     options: opts,
     correct: opts.indexOf(correct),
@@ -2008,19 +2069,20 @@ function genNotePlace() {
 }
 
 function genNoteNameText() {
-  const clef = pickClef();
+  const clef = pickClefNoten();
   const names = ['c','d','e','f','g','a','h'];
-  const name = R(names);
-  const octave = clef === 'treble'
+  let name = R(names);
+  let octave = clef === 'treble'
     ? ((name === 'c' || name === 'd') ? 5 : 4)
     : ((name === 'c' || name === 'd' || name === 'e' || name === 'f') ? 3 : 2);
+  if (clef === 'alto') { const ap = stepToPitch(RI(-5, 6)); name = ap.name; octave = ap.octave; }
   const r = Math.random();
   const accidental = r < 0.2 ? '#' : r < 0.4 ? 'b' : null;
   const target = { name, octave, accidental };
   const canonical = fullNoteName(name, octave, accidental);
   return {
     mode: 'text',
-    q: `Wie hei\u00dft dieser Ton im ${clef === 'treble' ? 'Violin' : 'Bass'}schl\u00fcssel? Schreibe den Notennamen in deutscher Schreibweise (z.B. "c", "C", "c\u00b9", "es").`,
+    q: `Wie hei\u00dft dieser Ton im ${clefLabel(clef)}? Schreibe den Notennamen in deutscher Schreibweise (z.B. "c", "C", "c\u00b9", "es").`,
     staff: { clef, notes: [target] },
     hint: 'Kleinbuchstabe = kleine Oktave (c) \u00b7 Gro\u00dfbuchstabe = gro\u00dfe Oktave (C) \u00b7 Hochzahl = h\u00f6here Oktave (c\u00b9, c\u00b2). SPN (c3, c4) wird auch akzeptiert.',
     placeholder: 'z.B. es',
@@ -2040,20 +2102,21 @@ function genNoteNameText() {
 
 function genHalbGanz() {
   const names = ['c','d','e','f','g','a','h'];
-  const name = R(names);
+  const [name, accidental] = pickRootAcc(0.45);
   const clef = pickClef();
   const octave = clef === 'treble' ? 4 : R([2,3]);
   const isHTS = Math.random() < 0.5;
-  const target = noteFrom(name, null, octave, 1, isHTS ? 1 : 2);
+  const target = noteFrom(name, accidental, octave, 1, isHTS ? 1 : 2);
+  if (target.accidental === '##' || target.accidental === 'bb') return genHalbGanz();
   return {
     mode: 'staff',
-    q: `Gehe von ${fullNoteName(name, octave, null)} einen ${isHTS ? 'Halbtonschritt' : 'Ganztonschritt'} nach oben. Tippe die Zielnote ins System! (Enharmonische Verwechslung z\u00e4hlt hier als richtig.)`,
+    q: `Gehe von ${fullNoteName(name, octave, accidental)} einen ${isHTS ? 'Halbtonschritt' : 'Ganztonschritt'} nach oben. Tippe die Zielnote ins System! (Enharmonische Verwechslung z\u00e4hlt hier als richtig.)`,
     clef,
-    fixedNotes: [{ name, octave }],
+    fixedNotes: [{ name, octave, accidental }],
     totalSlots: 2,
     expected: [target],
     acceptEnharmonic: true,
-    explanation: `${fullNoteName(name, octave)} + ${isHTS ? 'HTS' : 'GTS'} = ${fullNoteName(target.name, target.octave, target.accidental)} (enharmonisch verwechselt ebenfalls richtig).`
+    explanation: `${fullNoteName(name, octave, accidental)} + ${isHTS ? 'HTS' : 'GTS'} = ${fullNoteName(target.name, target.octave, target.accidental)} (enharmonisch verwechselt ebenfalls richtig).`
   };
 }
 
@@ -2074,37 +2137,39 @@ const INTERVALS = [
 ];
 function genIntervallInteractive() {
   const iv = R(INTERVALS);
-  const rootName = R(['c','d','e','f','g','a','h']);
+  const [rootName, rootAcc] = pickRootAcc(0.4);
   const clef = pickClef();
   const rootOct = clef === 'treble' ? 4 : R([2,3]);
-  const target = noteFrom(rootName, null, rootOct, iv.steps, iv.semis);
+  const target = noteFrom(rootName, rootAcc, rootOct, iv.steps, iv.semis);
+  if (target.accidental === '##' || target.accidental === 'bb') return genIntervallInteractive();
   return {
     mode: 'staff',
-    q: `Bilde vom ${fullNoteName(rootName, rootOct, null)} aus eine ${iv.name} aufw\u00e4rts. Tippe die zweite Note ins System!`,
+    q: `Bilde vom ${fullNoteName(rootName, rootOct, rootAcc)} aus eine ${iv.name} aufw\u00e4rts. Tippe die zweite Note ins System!`,
     clef,
-    fixedNotes: [{ name: rootName, octave: rootOct }],
+    fixedNotes: [{ name: rootName, octave: rootOct, accidental: rootAcc }],
     totalSlots: 2,
     expected: [target],
     acceptEnharmonic: false,
-    explanation: `${fullNoteName(rootName, rootOct)} \u2192 ${fullNoteName(target.name, target.octave, target.accidental)} = ${iv.name} (${iv.steps} Tonstufe(n), ${iv.semis} Halbt\u00f6ne)`
+    explanation: `${fullNoteName(rootName, rootOct, rootAcc)} \u2192 ${fullNoteName(target.name, target.octave, target.accidental)} = ${iv.name} (${iv.steps} Tonstufe(n), ${iv.semis} Halbt\u00f6ne)`
   };
 }
 function genIntervallBestimmenMC() {
   const iv = R(INTERVALS);
-  const rootName = R(['c','d','e','f','g','a','h']);
+  const [rootName, rootAcc] = pickRootAcc(0.4);
   const clef = pickClef();
   const rootOct = clef === 'bass' ? 2 : 4;
-  const target = noteFrom(rootName, null, rootOct, iv.steps, iv.semis);
+  const target = noteFrom(rootName, rootAcc, rootOct, iv.steps, iv.semis);
+  if (target.accidental === '##' || target.accidental === 'bb') return genIntervallBestimmenMC();
   const wrongs = shuffle(INTERVALS.filter(x => x.name !== iv.name).map(x => x.name)).slice(0, 3);
   const opts = shuffle([iv.name, ...wrongs]);
-  const root = { name: rootName, octave: rootOct, accidental: null };
+  const root = { name: rootName, octave: rootOct, accidental: rootAcc };
   return {
     mode: 'mc',
     q: 'Welches Intervall ist notiert? (untere \u2192 obere Note)',
     staff: { clef, notes: [root, target] },
     options: opts,
     correct: opts.indexOf(iv.name),
-    explanation: `${fullNoteName(rootName, rootOct)} \u2192 ${fullNoteName(target.name, target.octave, target.accidental)}: ${iv.steps} Tonstufe(n) und ${iv.semis} Halbt\u00f6ne \u2192 ${iv.name}.`,
+    explanation: `${fullNoteName(rootName, rootOct, rootAcc)} \u2192 ${fullNoteName(target.name, target.octave, target.accidental)}: ${iv.steps} Tonstufe(n) und ${iv.semis} Halbt\u00f6ne \u2192 ${iv.name}.`,
     playFn: () => playNotes([root, target], true)
   };
 }
@@ -2133,15 +2198,16 @@ function genIntervallH\u00f6ren() {
 }
 
 function genDreiklangInteractive() {
-  const rootName = R(['c','d','e','f','g','a','h']);
+  const [rootName, rootAcc] = pickRootAcc(0.45);
   const type = R(['dur','moll','vermindert','\u00fcberm\u00e4\u00dfig']);
   const clef = pickClef();
   const rootOct = clef === 'bass'
     ? ((rootName === 'a' || rootName === 'h') ? 2 : 3)
     : 4;
   const semis = { dur:[4,7], moll:[3,7], vermindert:[3,6], '\u00fcberm\u00e4\u00dfig':[4,8] }[type];
-  const triad = buildTriad(rootName, null, rootOct, semis[0], semis[1]);
-  const chordRoot = triadLabel(rootName, null, type);
+  const triad = buildTriad(rootName, rootAcc, rootOct, semis[0], semis[1]);
+  if (!noDouble(triad)) return genDreiklangInteractive();
+  const chordRoot = triadLabel(rootName, rootAcc, type);
   const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
   const typeText = type === 'dur' ? 'Dur-'
                  : type === 'moll' ? 'Moll-'
@@ -2150,9 +2216,9 @@ function genDreiklangInteractive() {
   return {
     mode: 'staff',
     stacked: true,
-    q: `Bilde einen ${typeText}Dreiklang \u00fcber ${capFirst(rootDisplay(rootName, null))} in Grundstellung! Tippe Terz und Quinte \u00fcber dem Grundton.`,
+    q: `Bilde einen ${typeText}Dreiklang \u00fcber ${capFirst(rootDisplay(rootName, rootAcc))} in Grundstellung! Tippe Terz und Quinte \u00fcber dem Grundton.`,
     clef,
-    fixedNotes: [{ name: rootName, octave: rootOct }],
+    fixedNotes: [{ name: rootName, octave: rootOct, accidental: rootAcc }],
     totalSlots: 3,
     expected: [triad[1], triad[2]],
     acceptEnharmonic: false,
@@ -2164,19 +2230,20 @@ function genDreiklangBestimmenMC() {
     ['dur','Dur',4,7], ['moll','Moll',3,7],
     ['vermindert','vermindert',3,6], ['\u00fcberm\u00e4\u00dfig','\u00fcberm\u00e4\u00dfig',4,8]
   ];
-  const rootName = R(['c','d','e','f','g','a','h']);
+  const [rootName, rootAcc] = pickRootAcc(0.45);
   const clef = pickClef();
   const rootOct = clef === 'bass' ? 2 : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
   const t = R(types);
-  const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
-  const correct = triadLabel(rootName, null, t[0]);
+  const triad = buildTriad(rootName, rootAcc, rootOct, t[2], t[3]);
+  if (!noDouble(triad)) return genDreiklangBestimmenMC();
+  const correct = triadLabel(rootName, rootAcc, t[0]);
   const pool = [];
   types.filter(x => x !== t).forEach(x => {
-    pool.push(triadLabel(rootName, null, x[0]));
+    pool.push(triadLabel(rootName, rootAcc, x[0]));
   });
-  ['c','d','e','f','g','a','h'].filter(n => n !== rootName).forEach(n => {
+  Array.from({ length: 8 }, () => pickRootAcc(0.5)).filter(n => n[0] !== rootName || n[1] !== rootAcc).forEach(n => {
     const x = R(types);
-    pool.push(triadLabel(n, null, x[0]));
+    pool.push(triadLabel(n[0], n[1], x[0]));
   });
   const others = [];
   let safety = 0;
@@ -2200,11 +2267,12 @@ function genDreiklangUmkehrungBestimmenMC() {
     ['dur','Dur',4,7], ['moll','Moll',3,7],
     ['vermindert','vermindert',3,6], ['\u00fcberm\u00e4\u00dfig','\u00fcberm\u00e4\u00dfig',4,8]
   ];
-  const rootName = R(['c','d','e','f','g','a','h']);
+  const [rootName, rootAcc] = pickRootAcc(0.45);
   const clef = pickClef();
   const rootOct = clef === 'bass' ? 2 : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
   const t = R(types);
-  const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
+  const triad = buildTriad(rootName, rootAcc, rootOct, t[2], t[3]);
+  if (!noDouble(triad)) return genDreiklangUmkehrungBestimmenMC();
   const inversion = RI(1, 2);
   const shown = invertTriad(triad, inversion);
   const invName = inversion === 1 ? '1. Umkehrung (Sextakkord)' : '2. Umkehrung (Quartsextakkord)';
@@ -2212,7 +2280,7 @@ function genDreiklangUmkehrungBestimmenMC() {
   const wrongs = ['Grundstellung', '1. Umkehrung (Sextakkord)', '2. Umkehrung (Quartsextakkord)', '3. Umkehrung (nicht m\u00f6glich)']
     .filter(x => x !== correct);
   const opts = shuffle([correct, ...wrongs]);
-  const symbol = triadSymbol(rootName, null, t[0]);
+  const symbol = triadSymbol(rootName, rootAcc, t[0]);
   const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
   const shownNames = shown.map(n => fullNoteName(n.name, n.octave, n.accidental));
   return {
@@ -2225,17 +2293,18 @@ function genDreiklangUmkehrungBestimmenMC() {
   };
 }
 function genDreiklangUmkehrung() {
-  const rootName = R(['c','d','e','f','g','a','h']);
+  const [rootName, rootAcc] = pickRootAcc(0.45);
   const type = R(['dur','moll']);
   const clef = pickClef();
   const rootOct = clef === 'bass'
     ? ((rootName === 'a' || rootName === 'h') ? 2 : 3)
     : 4;
-  const triad = buildTriad(rootName, null, rootOct, type === 'dur' ? 4 : 3, 7);
+  const triad = buildTriad(rootName, rootAcc, rootOct, type === 'dur' ? 4 : 3, 7);
+  if (!noDouble(triad)) return genDreiklangUmkehrung();
   const inv = RI(1, 2);
   const shown = invertTriad(triad, inv);
-  const symbol = triadSymbol(rootName, null, type);
-  const fullLabel = triadLabel(rootName, null, type);
+  const symbol = triadSymbol(rootName, rootAcc, type);
+  const fullLabel = triadLabel(rootName, rootAcc, type);
   const names = shown.map(n => fullNoteName(n.name, n.octave, n.accidental));
   const invName = inv === 1 ? '1. Umkehrung (Sextakkord)' : '2. Umkehrung (Quartsextakkord)';
   const ziffer = inv === 1 ? 'Generalbassziffer 6' : 'Generalbassziffer 6/4';
@@ -2257,21 +2326,22 @@ function genDreiklangText() {
     ['dur','Dur',4,7], ['moll','Moll',3,7],
     ['vermindert','vermindert',3,6], ['\u00fcberm\u00e4\u00dfig','\u00fcberm\u00e4\u00dfig',4,8]
   ];
-  const rootName = R(['c','d','e','f','g','a','h']);
+  const [rootName, rootAcc] = pickRootAcc(0.45);
   const clef = pickClef();
   const rootOct = clef === 'bass' ? 2 : ((rootName === 'a' || rootName === 'h') ? 3 : 4);
   const t = R(types);
-  const triad = buildTriad(rootName, null, rootOct, t[2], t[3]);
-  const chordRoot = capFirst(rootDisplay(rootName, null));
-  const symbol = triadSymbol(rootName, null, t[0]);
-  const fullLabel = triadLabel(rootName, null, t[0]);
+  const triad = buildTriad(rootName, rootAcc, rootOct, t[2], t[3]);
+  if (!noDouble(triad)) return genDreiklangText();
+  const chordRoot = capFirst(rootDisplay(rootName, rootAcc));
+  const symbol = triadSymbol(rootName, rootAcc, t[0]);
+  const fullLabel = triadLabel(rootName, rootAcc, t[0]);
   const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
   const norm = s => s.trim().toLowerCase().replace(/[\s\-\u2013_.,]/g, '');
   return {
     mode: 'text',
     q: 'Welcher Dreiklang ist notiert? Schreibe das Akkordk\u00fcrzel (z.B. G, Gm, G\u00fc, Gv) oder den vollst\u00e4ndigen Namen.',
     staff: { clef, notes: triad, stacked: true },
-    hint: 'G = G-Dur \u00b7 Gm = g-Moll \u00b7 G\u00fc = g-\u00fcberm\u00e4\u00dfig \u00b7 Gv = g-vermindert. Der Grundton im K\u00fcrzel ist immer gro\u00df.',
+    hint: 'G = G-Dur \u00b7 Gm = g-Moll \u00b7 G\u00fc = g-\u00fcberm\u00e4\u00dfig \u00b7 Gv = g-vermindert. Der Grundton im K\u00fcrzel ist immer gro\u00df. Vorzeichen: is = \u266f (Fis), es/as = \u266d (Es, As), B = H\u266d.',
     checkFn: (input) => {
       const longName = (t[0] === 'dur' ? chordRoot : chordRoot.toLowerCase()) + '-' + t[1];
       return [symbol, longName, fullLabel].some(answer => norm(input) === norm(answer));
@@ -2283,11 +2353,13 @@ function genDreiklangText() {
 
 const KEYS_DUR = [
   ['c',null,'C'], ['g',null,'G'], ['d',null,'D'], ['a',null,'A'],
-  ['e',null,'E'], ['f',null,'F'], ['h','b','B'], ['e','b','Es']
+  ['e',null,'E'], ['f',null,'F'], ['h','b','B'], ['e','b','Es'],
+  ['h',null,'H'], ['a','b','As']
 ];
 const KEYS_MOLL = [
   ['a',null,'a'], ['e',null,'e'], ['d',null,'d'], ['g',null,'g'],
-  ['c',null,'c'], ['h',null,'h'], ['f',null,'f']
+  ['c',null,'c'], ['h',null,'h'], ['f',null,'f'],
+  ['c','#','cis'], ['h','b','b'], ['g','#','gis']
 ];
 const DUR_PATTERN = [0,2,4,5,7,9,11,12];
 const MOLL_NAT   = [0,2,3,5,7,8,10,12];
@@ -2386,12 +2458,25 @@ const FUNC_DEFS = [
   { sym:'Dp', label:'Dominantparallele',    off:2, semi:4, dur:false }
 ];
 const FUNC_KEYS = [
-  ['c',null,'C'], ['g',null,'G'], ['d',null,'D'],
-  ['f',null,'F'], ['h','b','B'], ['e','b','Es']
+  ['c',null,'C'], ['g',null,'G'], ['d',null,'D'], ['a',null,'A'], ['e',null,'E'],
+  ['f',null,'F'], ['h','b','B'], ['e','b','Es'], ['a','b','As']
+];
+/* Moll: t, s = Moll-Dreikl\u00e4nge; D, tP (III), sP (VI) = Dur-Dreikl\u00e4nge */
+const FUNC_DEFS_MOLL = [
+  { sym:'t',  label:'Tonika',               off:0, semi:0, dur:false },
+  { sym:'s',  label:'Subdominante',         off:3, semi:5, dur:false },
+  { sym:'D',  label:'Dominante',            off:4, semi:7, dur:true  },
+  { sym:'tP', label:'Tonikaparallele',      off:2, semi:3, dur:true  },
+  { sym:'sP', label:'Subdominantparallele', off:5, semi:8, dur:true  }
+];
+const FUNC_KEYS_MOLL = [
+  ['a',null,'a'], ['e',null,'e'], ['h',null,'h'], ['d',null,'d'],
+  ['g',null,'g'], ['c',null,'c'], ['f',null,'f']
 ];
 function genFunktionen() {
-  const [tonName, tonAcc, keyName] = R(FUNC_KEYS);
-  const f = R(FUNC_DEFS);
+  const moll = Math.random() < 0.4;
+  const [tonName, tonAcc, keyName] = R(moll ? FUNC_KEYS_MOLL : FUNC_KEYS);
+  const f = R(moll ? FUNC_DEFS_MOLL : FUNC_DEFS);
   const clef = pickClef();
   const root = noteFrom(tonName, tonAcc, 4, f.off, f.semi);
   let oct = root.octave;
@@ -2402,17 +2487,50 @@ function genFunktionen() {
   const triad = buildTriad(root.name, root.accidental, oct, f.dur ? 4 : 3, 7);
   const chordRoot = triadLabel(root.name, root.accidental, f.dur ? 'dur' : 'moll');
   const names = triad.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  const keyFull = `${keyName}-${moll ? 'Moll' : 'Dur'}`;
   return {
     mode: 'staff',
     stacked: true,
-    q: `Schreibe in ${keyName}-Dur den Akkord ${f.sym} (${f.label}) als Dreiklang! Tippe alle drei T\u00f6ne.`,
+    q: `Schreibe in ${keyFull} den Akkord ${f.sym} (${f.label}) als Dreiklang! Tippe alle drei T\u00f6ne.`,
     clef,
     fixedNotes: [],
     totalSlots: 3,
     slotW: 50,
     expected: triad,
     acceptEnharmonic: false,
-    explanation: `${f.sym} in ${keyName}-Dur = ${chordRoot} = ${names.join(' \u2013 ')}`
+    explanation: `${f.sym} in ${keyFull} = ${chordRoot} = ${names.join(' \u2013 ')}${moll && f.sym === 'D' ? ' (Dur-Dominante mit Leitton!)' : ''}`
+  };
+}
+/* Funktion eines notierten Akkords bestimmen \u2013 auch in Umkehrung (Dur und Moll) */
+function genFunktionUmkehrungMC() {
+  const moll = Math.random() < 0.4;
+  const [tonName, tonAcc, keyName] = R(moll ? FUNC_KEYS_MOLL : FUNC_KEYS);
+  const defs = moll ? FUNC_DEFS_MOLL : FUNC_DEFS;
+  const f = R(defs);
+  const clef = pickClef();
+  const inversion = RI(0, 2);
+  const root = noteFrom(tonName, tonAcc, 4, f.off, f.semi);
+  let oct = root.octave;
+  const lo = clef === 'treble' ? -1 : -13, hi = clef === 'treble' ? 3 : -7;
+  while (absStep(root.name, oct) > hi) oct--;
+  while (absStep(root.name, oct) < lo) oct++;
+  const triad = buildTriad(root.name, root.accidental, oct, f.dur ? 4 : 3, 7);
+  const shown = invertTriad(triad, inversion);
+  const invNames = ['Grundstellung', '1. Umkehrung (Sextakkord)', '2. Umkehrung (Quartsextakkord)'];
+  const labelOf = d => `${d.label} (${d.sym})`;
+  const correct = labelOf(f);
+  const wrongs = shuffle(defs.filter(d => d.sym !== f.sym).map(labelOf)).slice(0, 3);
+  const opts = shuffle([correct, ...wrongs]);
+  const keyFull = `${keyName}-${moll ? 'Moll' : 'Dur'}`;
+  const chordRoot = triadLabel(root.name, root.accidental, f.dur ? 'dur' : 'moll');
+  const shownNames = shown.map(n => fullNoteName(n.name, n.octave, n.accidental));
+  return {
+    mode: 'mc',
+    q: `Welche Funktion hat dieser Akkord in ${keyFull}? Achtung: Er kann umgekehrt sein!`,
+    staff: { clef, notes: shown, stacked: true },
+    options: opts,
+    correct: opts.indexOf(correct),
+    explanation: `Notiert: ${shownNames.join(' \u2013 ')} (${invNames[inversion]}). Grundstellung: ${chordRoot} \u2192 in ${keyFull} die Funktion ${f.sym} (${f.label}).`
   };
 }
 
@@ -2485,45 +2603,140 @@ function genSeptakkordBestimmenMC() {
 const BEAT_VALS = { whole:4, half:2, doth:3, dotq:1.5, quarter:1, eighth:0.5, sixteenth:0.25 };
 const NOTE_VALUE_NAMES = { whole:'ganze Note', half:'halbe Note', doth:'punktierte halbe Note', dotq:'punktierte Viertelnote', quarter:'Viertelnote', eighth:'Achtelnote', sixteenth:'Sechzehntelnote' };
 const REST_NAMES = { whole:'ganze Pause', half:'halbe Pause', doth:'punktierte halbe Pause', dotq:'punktierte Viertelpause', quarter:'Viertelpause', eighth:'Achtelpause', sixteenth:'Sechzehntelpause' };
+function pickMeter() {
+  const [top, bot] = R([[4,4],[3,4],[2,4],[6,8],[2,2],[5,4],[3,8]]);
+  let sym = null;
+  if (top === 4 && bot === 4 && Math.random() < 0.3) sym = 'C';
+  if (top === 2 && bot === 2 && Math.random() < 0.5) sym = 'alla';
+  const label = sym === 'C' ? 'C-Takt (4/4)' : sym === 'alla' ? 'Alla-breve-Takt (2/2)' : `${top}/${bot}-Takt`;
+  return { top, bot, sym, label, beats: top * (4 / bot), compound: bot === 8 };
+}
+function meterInfo(m) {
+  return m.compound
+    ? `Der ${m.top}/${m.bot}-Takt z\u00e4hlt ${m.top} Achtel${m.top === 6 ? ' (= 2 punktierte Viertel-Schl\u00e4ge)' : ''}`
+    : `Der ${m.label} entspricht ${m.beats} Vierteln`;
+}
 function genTaktErgaenzung(rest) {
   const clef = pickClef();
-  const [top, bot] = R([[4,4],[3,4],[2,4],[6,8]]);
-  const beats = top * (4/bot);
+  const m = pickMeter();
+  const { top, bot, beats, compound: isCompound } = m;
   const vals = BEAT_VALS;
-  const isCompound = bot === 8;
   const names = rest ? REST_NAMES : NOTE_VALUE_NAMES;
   let missing;
   if (isCompound) {
     missing = R(['sixteenth','eighth','dotq'].filter(v => beats - vals[v] >= 0.5));
-  } else if (beats === 4 && Math.random() < 0.2) {
+  } else if (beats >= 4 && Math.random() < 0.2) {
     missing = 'whole';
   } else {
     missing = R(['half','doth','dotq','quarter','eighth','sixteenth'].filter(v => beats - vals[v] >= 0.5));
   }
-  const used = missing === 'whole' ? [] : fillBeats(beats - vals[missing], isCompound ? ['sixteenth','eighth','dotq'] : undefined);
-  const shown = used.map(v => {
-    const base = { name: R(['c','d','e','f','g','a','h']), octave: clef === 'bass' ? 3 : 4 };
-    return rest ? Object.assign(base, { value: 'r' + v }) : Object.assign(base, { value: v });
-  });
+  const remainder = beats - vals[missing];
+  const trip = !isCompound && remainder >= 1 && Math.random() < 0.3;
+  const used = fillBeats(remainder - (trip ? 1 : 0), isCompound ? ['sixteenth','eighth','dotq'] : undefined);
+  const base = () => ({ name: R(['c','d','e','f','g','a','h']), octave: clef === 'bass' ? 3 : 4 });
+  const shown = used.map(v => Object.assign(base(), { value: rest ? 'r' + v : v }));
+  if (trip) {
+    const at = RI(0, shown.length);
+    shown.splice(at, 0, ...[0, 1, 2].map(() => Object.assign(base(), { value: rest ? 'reighth' : 'eighth', trip: true })));
+  }
   const label = names[missing];
   const wrongs = shuffle(Object.keys(names).filter(k => k !== missing).map(k => names[k])).slice(0, 3);
   const opts = shuffle([label, ...wrongs]);
-  const sum = used.reduce((acc, v) => acc + vals[v], 0);
-  const q = missing === 'whole'
-    ? (rest ? `Der ${top}/${bot}-Takt ist leer. Welche Pause f\u00fcllt ihn vollst\u00e4ndig?`
-            : `Der ${top}/${bot}-Takt ist leer. Welcher Notenwert f\u00fcllt ihn vollst\u00e4ndig?`)
-    : (rest ? `Welches Pausenzeichen vervollst\u00e4ndigt den ${top}/${bot}-Takt?`
-            : `Welcher Notenwert vervollst\u00e4ndigt den ${top}/${bot}-Takt?`);
-  const taktInfo = isCompound
-    ? `Der ${top}/${bot}-Takt z\u00e4hlt ${top} Achtel (= 2 punktierte Viertel-Schl\u00e4ge)`
-    : `Der Takt hat ${beats} Schl\u00e4ge`;
+  const sum = used.reduce((acc, v) => acc + vals[v], 0) + (trip ? 1 : 0);
+  const empty = shown.length === 0;
+  const q = empty
+    ? (rest ? `Der ${m.label} ist leer. Welche Pause f\u00fcllt ihn vollst\u00e4ndig?`
+            : `Der ${m.label} ist leer. Welcher Notenwert f\u00fcllt ihn vollst\u00e4ndig?`)
+    : (rest ? `Welches Pausenzeichen vervollst\u00e4ndigt den ${m.label}?`
+            : `Welcher Notenwert vervollst\u00e4ndigt den ${m.label}?`);
   return {
     mode: 'mc',
     q,
-    staff: { clef, timeSig: [top, bot], notes: shown },
+    staff: { clef, timeSig: [top, bot], timeSym: m.sym, notes: shown },
     options: opts,
     correct: opts.indexOf(label),
-    explanation: `${taktInfo}, die gezeigten Zeichen dauern ${sum}. Es fehlen ${vals[missing]} Z\u00e4hlzeit(en) \u2192 ${label}.`
+    explanation: `${meterInfo(m)}, die gezeigten Zeichen dauern ${sum}${trip ? ' (die Achteltriole = 3 Achtel dauert zusammen 1 Schlag)' : ''}. Es fehlen ${vals[missing]} Z\u00e4hlzeit(en) \u2192 ${label}.`
+  };
+}
+function genTaktstricheMC() {
+  const clef = pickClef();
+  const m = pickMeter();
+  const allowed = m.compound ? ['sixteenth','eighth','dotq'] : undefined;
+  const oct = clef === 'bass' ? 3 : 4;
+  const mkNote = v => ({ name: R(['c','d','e','f','g','a','h']), octave: oct, value: v });
+  let hasTrip = false;
+  const makeMeasure = () => {
+    const trip = !m.compound && m.beats >= 2 && Math.random() < 0.35;
+    const vals = fillBeats(m.beats - (trip ? 1 : 0), allowed);
+    const ns = vals.map(mkNote);
+    if (trip) {
+      hasTrip = true;
+      const at = RI(0, ns.length);
+      ns.splice(at, 0, ...[0, 1, 2].map(() => Object.assign(mkNote('eighth'), { trip: true })));
+    }
+    return ns;
+  };
+  let b1, b2, tries = 0;
+  do {
+    hasTrip = false;
+    b1 = makeMeasure();
+    b2 = makeMeasure();
+    tries++;
+  } while ((b1.length < 2 || b2.length < 2 || b1.length + b2.length < 5 || b1.length + b2.length > 14) && tries < 80);
+  const all = [...b1, ...b2];
+  const k = b1.length;
+  const positions = [];
+  for (let p = 1; p < all.length; p++) if (p !== k) positions.push(p);
+  const near = positions.sort((x, y) => Math.abs(x - k) - Math.abs(y - k)).slice(0, 5);
+  const wrongPos = shuffle(near).slice(0, 3);
+  const label = p => `nach Note ${p}`;
+  const opts = shuffle([label(k), ...wrongPos.map(label)]);
+  return {
+    mode: 'mc',
+    q: `Hier sind zwei Takte im ${m.label} ohne Taktstrich notiert. Nach welcher Note steht der Taktstrich zwischen den beiden Takten?`,
+    staff: { clef, timeSig: [m.top, m.bot], timeSym: m.sym, notes: all, numbered: true },
+    options: opts,
+    correct: opts.indexOf(label(k)),
+    explanation: `${meterInfo(m)}. Die Noten 1 bis ${k} f\u00fcllen zusammen genau ${m.beats} Viertel${hasTrip ? ' (eine Triole = 3 Achtel z\u00e4hlt zusammen 1 Viertel)' : ''} \u2013 damit ist der erste Takt voll, der Taktstrich steht nach Note ${k}.`
+  };
+}
+
+function genTriolenMC() {
+  const kinds = {
+    eighth:    { beats: 1,   name: 'Achteltriole',        why: 'Drei Achtel statt zwei Achtel (= 1 Viertel) \u2192 die Triole dauert 1 Viertel.' },
+    quarter:   { beats: 2,   name: 'Vierteltriole',       why: 'Drei Viertel statt zwei Viertel (= 1 halbe Note) \u2192 die Triole dauert 2 Viertel.' },
+    sixteenth: { beats: 0.5, name: 'Sechzehnteltriole',   why: 'Drei Sechzehntel statt zwei Sechzehntel (= 1 Achtel) \u2192 die Triole dauert \u00bd Viertel.' }
+  };
+  const fmt = b => ({0.5:'\u00bd Viertel', 1:'1 Viertel', 1.5:'1\u00bd Viertel', 2:'2 Viertel', 3:'3 Viertel', 4:'4 Viertel'}[b]);
+  if (Math.random() < 0.6) {
+    const key = R(Object.keys(kinds));
+    const kind = kinds[key];
+    const clef = pickClef();
+    const oct = clef === 'bass' ? 3 : 4;
+    const mk = (v, trip) => Object.assign({ name: R(['c','d','e','f','g','a','h']), octave: oct, value: v }, trip ? { trip: true } : {});
+    const trip = [0, 1, 2].map(() => mk(key, true));
+    const before = Math.random() < 0.5 ? [mk('quarter')] : [];
+    const after = Math.random() < 0.5 ? [mk('quarter')] : [];
+    const optBeats = shuffle([0.5, 1, 1.5, 2, 3].filter(b => b !== kind.beats)).slice(0, 3);
+    const opts = shuffle([kind.beats, ...optBeats]).map(fmt);
+    return {
+      mode: 'mc',
+      q: 'Wie lange dauert die gesamte Triole (die Gruppe mit der 3)?',
+      staff: { clef, notes: [...before, ...trip, ...after] },
+      options: opts,
+      correct: opts.indexOf(fmt(kind.beats)),
+      explanation: `${kind.name}: ${kind.why}`
+    };
+  }
+  const m = R([[2,4],[3,4],[4,4],[5,4]]);
+  const answer = m[0];
+  const opts = shuffle([answer, ...shuffle([2,3,4,5,6,8,10].filter(n => n !== answer)).slice(0, 3)]).map(String);
+  return {
+    mode: 'mc',
+    q: `Wie viele Achteltriolen (je 3 Achtel) f\u00fcllen genau einen ${m[0]}/${m[1]}-Takt?`,
+    options: opts,
+    correct: opts.indexOf(String(answer)),
+    explanation: `Eine Achteltriole dauert 1 Viertel. Der ${m[0]}/${m[1]}-Takt hat ${m[0]} Viertel \u2192 ${answer} Achteltriolen.`
   };
 }
 function genNotenwertMC() { return genTaktErgaenzung(false); }
@@ -2862,25 +3075,30 @@ function genAnalyseMC() {
 const SECTIONS = [
   {
     id:'noten', icon:'\ud83c\udfb5', title:'Notennamen',
-    desc:'benennen & setzen (mit korrekter Schreibweise)',
+    desc:'benennen & setzen (auch im Altschl\u00fcssel)',
     gens:[genNotennameMC, genEnharmMC, genNotePlace, genNoteNameText],
     merke: `<ul>
       <li><b>Deutsche Notennamen:</b> Kleinbuchstaben = kleine Oktave (<code>c</code>), Gro\u00dfbuchstaben = gro\u00dfe Oktave (<code>C</code>), Hochzahl = h\u00f6here Oktave (<code>c\u00b9</code>, <code>c\u00b2</code>), Unterstrich = Kontra (<code>C\u0332</code>).</li>
       <li><b>Violinschl\u00fcssel:</b> unterste Linie = <code>e\u00b9</code>, oberste Linie = <code>f\u00b2</code>.</li>
       <li><b>Bassschl\u00fcssel:</b> unterste Linie = <code>G</code>, oberste Linie = <code>a</code>.</li>
+      <li><b>Altschl\u00fcssel:</b> mittlere Linie = <code>c\u00b9</code>, unterste Linie = <code>f</code>, oberste Linie = <code>g\u00b9</code>.</li>
       <li>Enharmonisch: <code>cis = des</code>, <code>dis = es</code>, <code>fis = ges</code>, <code>gis = as</code>, <code>ais = b</code>, <code>his = c</code>.</li>
       <li>In Deutschland hei\u00dft der Ton <b>H</b> (nicht B). <b>B</b> = H\u266d.</li>
     </ul>`
   },
   {
     id:'werte', icon:'\u23f1\ufe0f', title:'Noten- und Pausenwerte',
-    desc:'bis Sechzehntel, punktierte Werte & 6/8',
-    gens:[genNotenwertMC, genPausenwertMC, genPausenzeichenMC],
+    desc:'Taktarten (2/2 bis 6/8), Triolen & Taktstriche',
+    gens:[genNotenwertMC, genPausenwertMC, genPausenzeichenMC, genTaktstricheMC, genTriolenMC],
     merke: `<ul>
       <li>Ganze = 4 Viertel \u00b7 Halbe = 2 \u00b7 Viertel = 1 \u00b7 Achtel = \u00bd \u00b7 Sechzehntel = \u00bc.</li>
       <li>Punkt hinter Note/Pause verl\u00e4ngert um die H\u00e4lfte: punktierte Viertel = <code>1\u00bd</code>, punktierte Halbe = <code>3</code>.</li>
       <li><b>Taktart:</b> <code>4/4</code> = 4 Viertel pro Takt; <code>3/4</code> = 3 Viertel; <code>6/8</code> = 6 Achtel = 2 punktierte Viertel.</li>
       <li>Pausenwerte parallel zu Notenwerten. <b>Viertelpause:</b> gezacktes Zeichen \u00b7 <b>Achtelpause:</b> ein F\u00e4hnchen \u00b7 <b>Sechzehntelpause:</b> zwei F\u00e4hnchen.</li>
+      <li><b>Triole:</b> 3 gleiche Noten statt 2 \u2013 Achteltriole = 1 Viertel, Vierteltriole = 2 Viertel, Sechzehnteltriole = \u00bd Viertel.</li>
+      <li><b>Weitere Taktarten:</b> <code>2/2</code> (Alla breve, \u00a2) = 2 halbe Noten = 4 Viertel \u00b7 <code>5/4</code> = 5 Viertel \u00b7 <code>3/8</code> = 3 Achtel \u00b7 <b>C</b> = 4/4.</li>
+      <li><b>Triole:</b> drei gleiche Noten im Wert von zwei (Achteltriole = 1 Viertel), mit Klammer und Ziffer 3.</li>
+      <li><b>Taktstriche:</b> Werte der Reihe nach addieren, bis der Takt genau voll ist \u2013 dort steht der Strich.</li>
     </ul>`
   },
   {
@@ -2932,13 +3150,16 @@ const SECTIONS = [
   },
   {
     id:'funktionen', icon:'\ud83c\udfdb\ufe0f', title:'Haupt- & Nebendreikl\u00e4nge',
-    desc:'T, S, D und ihre Parallelen',
-    gens:[genFunktionen],
+    desc:'Dur & Moll, T/S/D, Parallelen & Umkehrungen',
+    gens:[genFunktionen, genFunktionUmkehrungMC],
     merke: `<ul>
       <li>In Dur: <b>T</b> = I. Stufe \u00b7 <b>S</b> = IV. Stufe \u00b7 <b>D</b> = V. Stufe.</li>
-      <li>Parallelen: <b>Tp</b> (vi), <b>Sp</b> (ii), <b>Dp</b> (iii) \u2013 immer Moll-Dreikl\u00e4nge, eine Terz unter der Dur-Stufe.</li>
+      <li>Parallelen in Dur: <b>Tp</b> (vi), <b>Sp</b> (ii), <b>Dp</b> (iii) \u2013 immer Moll-Dreikl\u00e4nge, eine kleine Terz unter der Dur-Stufe.</li>
+      <li>In Moll: <b>t</b> (i) und <b>s</b> (iv) sind Moll-Dreikl\u00e4nge, <b>D</b> (V) ist ein <i>Dur</i>-Dreiklang (Leitton!).</li>
+      <li>Parallelen in Moll: <b>tP</b> = III und <b>sP</b> = VI \u2013 beides Dur-Dreikl\u00e4nge, eine kleine Terz \u00fcber t bzw. s.</li>
       <li>Beispiel C-Dur: T = C, S = F, D = G \u00b7 Tp = a, Sp = d, Dp = e.</li>
-      <li>Beispiel G-Dur: T = G, S = C, D = D \u00b7 Tp = e, Sp = a, Dp = h.</li>
+      <li>Beispiel a-Moll: t = a-c-e, s = d-f-a, D = E (e-gis-h) \u00b7 tP = C, sP = F.</li>
+      <li><b>Umkehrungen:</b> Die T\u00f6ne zuerst in Terzen \u00fcbereinander ordnen, dann den Grundton suchen. Terz im Bass = 1. Umkehrung, Quinte im Bass = 2. Umkehrung.</li>
     </ul>`
   },
   {
@@ -2992,7 +3213,7 @@ const SECTIONS = [
     merke: `<ul>
       <li>Schritte: 1) Tonart bestimmen 2) Bass und Akkordt\u00f6ne lesen 3) Funktion zuordnen.</li>
       <li>Dur-Stufen: I = T \u00b7 ii = Sp \u00b7 iii = Dp \u00b7 IV = S \u00b7 V = D \u00b7 vi = Tp.</li>
-      <li>Moll: i = t \u00b7 iv = s \u00b7 V = D (Dur-Dominante!) \u00b7 VI = tP.</li>
+      <li>Moll: i = t \u00b7 iv = s \u00b7 V = D (Dur-Dominante!) \u00b7 III = tP \u00b7 VI = sP.</li>
       <li>Bass-Lage zeigt die Umkehrung: Terz im Bass = Sextakkord, Quinte im Bass = Quartsextakkord.</li>
     </ul>`
   },
@@ -3114,7 +3335,8 @@ function startSection(section) {
           function pausenwertViertel() { return genPausenzeichenMC('quarter'); },
           function pausenwertAchtel() { return genPausenzeichenMC('eighth'); },
           function pausenwertSechzehntel() { return genPausenzeichenMC('sixteenth'); },
-          genNotenwertMC, genNotenwertMC, genPausenwertMC, genPausenwertMC, genPausenzeichenMC
+          genNotenwertMC, genNotenwertMC, genPausenwertMC, genPausenwertMC, genPausenzeichenMC,
+          genTaktstricheMC, genTaktstricheMC, genTriolenMC
         ]) : null;
   let lastGenIdx = null;
   const seenSigs = new Set();
@@ -3183,7 +3405,7 @@ function showQuestion() {
     cb.style.display = 'inline-block';
   } else {
     cb.textContent = q.clef || (q.staff && q.staff.clef)
-      ? ((q.clef || q.staff.clef) === 'bass' ? 'Bassschl\u00fcssel' : 'Violinschl\u00fcssel')
+      ? clefLabel(q.clef || q.staff.clef)
       : q.staff && q.staff.chords ? 'Klaviersystem' : state_section.id === 'gehoer' ? 'Geh\u00f6rbildung' : '';
     cb.style.display = cb.textContent ? 'inline-block' : 'none';
   }
@@ -3510,8 +3732,42 @@ document.getElementById('textInput').addEventListener('keydown', e => {
 buildMenu();
 const duelBank=[["C-Dur: Welcher Ton folgt auf E?", ["F", "Fis", "G", "D"], 0, "C–D–E–F–G–A–H."], ["Wie viele Halbtonschritte hat eine reine Quarte?", ["3", "4", "5", "7"], 2, "Fünf Halbtonschritte."], ["C–E–G ist welcher Akkord?", ["c-Moll", "C-Dur", "F-Dur", "G-Dur"], 1, "C-Dur."], ["Was macht ein ♭?", ["Erhöht", "Erniedrigt", "Löscht", "Verdoppelt"], 1, "Um einen Halbton erniedrigen."], ["C nach G ist eine …", ["Terz", "Quarte", "Quinte", "Oktave"], 2, "Reine Quinte."], ["Welche Tonart hat ein Kreuz?", ["C-Dur", "G-Dur", "F-Dur", "B-Dur"], 1, "G-Dur."], ["Wie viele Viertelnoten in 4/4?", ["2", "3", "4", "8"], 2, "Vier."], ["Deutscher Name des englischen B?", ["H", "B", "C", "A"], 0, "H."], ["Welche Dynamik bedeutet leise?", ["f", "mf", "p", "sfz"], 2, "piano."], ["Was bezeichnet ein Intervall?", ["Lautstärke", "Tonabstand", "Tempo", "Klangfarbe"], 1, "Tonabstand."], ["Violinschlüssel: zweite Linie?", ["G", "H", "D", "F"], 0, "g¹."], ["Bassschlüssel: vierte Linie?", ["A", "F", "D", "G"], 0, "a."], ["Was bedeutet ♮?", ["Auflösen", "Verdoppeln", "Staccato", "Pause"], 0, "Vorzeichen auflösen."], ["Eine Viertelnote entspricht wie vielen Achteln?", ["1", "2", "3", "4"], 1, "Zwei."], ["Was bedeutet 3/4-Takt?", ["3 Viertelschläge", "4 Dreierschläge", "3 ganze Noten", "2 Schläge"], 0, "Drei Viertelschläge."], ["Welche Tonleiter hat keine Vorzeichen?", ["G-Dur", "F-Dur", "C-Dur", "D-Dur"], 2, "C-Dur."], ["Erster Ton einer Tonleiter?", ["Dominante", "Tonika", "Subdominante", "Leitton"], 1, "Tonika."], ["Welche Stufe ist die Dominante?", ["I", "II", "IV", "V"], 3, "Fünfte Stufe."], ["Was ist eine Kadenz?", ["Akkordfolge", "Einzelton", "Lautstärke", "Taktstrich"], 0, "Akkordfolge."], ["Was bedeutet crescendo?", ["Lauter", "Leiser", "Abgehackt", "Langsamer"], 0, "Allmählich lauter."]];(()=>{const $=id=>document.getElementById(id),o=$('duelOverlay'),COL=['#5ab0ff','#ff73ad','#49df98','#ffb454'];let g,t;
 const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const setQ=(r,p,e)=>{o.querySelectorAll('.dq-round').forEach(x=>x.textContent=r);o.querySelectorAll('.dq-prompt').forEach(x=>x.textContent=p);o.querySelectorAll('.dq-explain').forEach(x=>x.textContent=e)};
-function open(){o.classList.add('duel-open');o.setAttribute('aria-hidden','false');setup()}
+const setQ=(r,p,e,sc)=>{o.querySelectorAll('.dq-round').forEach(x=>x.textContent=r);o.querySelectorAll('.dq-prompt').forEach(x=>x.textContent=p);o.querySelectorAll('.dq-explain').forEach(x=>x.textContent=e);o.querySelectorAll('.dq-staff').forEach(x=>x.innerHTML=sc||'')};
+
+const plain=h=>{const d=document.createElement('div');d.innerHTML=h;return d.textContent};
+let pool=null;
+const noteOpts=(t,n)=>{const tv=pitchValue(t.name,t.octave,t.accidental),base=absStep(t.name,t.octave),cand=[];
+for(let d=-2;d<=2;d++){const pp=stepToPitch(base+d);[null,'#','b'].forEach(ac=>{const v=pitchValue(pp.name,pp.octave,ac);if(v!==tv&&Math.abs(v-tv)<=3)cand.push({name:pp.name,octave:pp.octave,accidental:ac})})}
+const seen=new Set([fullNoteName(t.name,t.octave,t.accidental)]),out=[];
+shuf(cand).forEach(c=>{const nm=fullNoteName(c.name,c.octave,c.accidental);if(!seen.has(nm)&&out.length<n){seen.add(nm);out.push(nm)}});return out};
+const plainNotes=a=>a.map(x=>({name:x.name,octave:x.octave,accidental:x.accidental||null}));
+function adaptSingle(q){const t=q.expected[0],first=q.q.split(/[.!]\s/)[0].replace(/[.!]$/,''),ok=fullNoteName(t.name,t.octave,t.accidental),opts=shuf([ok,...noteOpts(t,3)]);
+return{mode:'mc',q:first+'. Welcher Ton ist das Ziel?',staff:{clef:q.clef,notes:plainNotes(q.fixedNotes)},options:opts,correct:opts.indexOf(ok),explanation:q.explanation}}
+function adaptScale(q){const ex=q.expected;if(ex.length<4)return null;const k=RI(2,ex.length-1),t=ex[k];
+const m=q.q.match(/^Schreibe die (.+?) aufw/),ty=q.q.match(/\((natürlich|harmonisch|melodisch)/i);
+const title=(m?m[1]:'Tonleiter')+(ty?' ('+ty[1]+')':''),ok=fullNoteName(t.name,t.octave,t.accidental),opts=shuf([ok,...noteOpts(t,3)]);
+return{mode:'mc',q:'Welche Note folgt als nächste in der '+title+' (aufwärts)?',staff:{clef:q.clef,notes:plainNotes(ex.slice(Math.max(0,k-8),k))},options:opts,correct:opts.indexOf(ok),explanation:q.explanation}}
+const ADAPT=new Map([[genHalbGanz,adaptSingle],[genIntervallInteractive,adaptSingle],[genDurTonleiter,adaptScale],[genMollTonleiter,adaptScale],[genChromatisch,adaptScale],[genGanzton,adaptScale]]);
+function asMC(gen,q){if(!q)return null;
+if(q.mode==='mc'&&Array.isArray(q.options)&&q.options.length>1&&typeof q.correct==='number'&&q.correct>=0&&(q.staff||!q.playFn))return q;
+if(q.mode==='staff'&&ADAPT.has(gen)&&q.expected&&q.expected.length)return ADAPT.get(gen)(q);
+return null}
+function duelPool(){if(pool)return pool;pool=[];
+SECTIONS.forEach(sec=>{if(sec.id==='gehoer')return;sec.gens.forEach(gen=>{let ok=false;
+for(let k=0;k<5&&!ok;k++){try{ok=!!asMC(gen,gen())}catch(e){}}
+if(ok)pool.push({sec:sec.id,gen:gen})})});return pool}
+function buildQuestions(n,topic){const all=duelPool().filter(e=>topic==='all'||e.sec===topic),out=[],seen=new Set();let order=[],guard=0;
+while(out.length<n&&all.length&&guard<n*60){if(!order.length)order=shuf(all);const e=order.pop();guard++;let q=null;
+try{q=asMC(e.gen,e.gen())}catch(err){}
+if(!q)continue;
+let sig;try{sig=questionSig(q)}catch(err){sig=q.q+'|'+q.options.join('|')}
+if(seen.has(sig))continue;seen.add(sig);
+let sc='';try{if(q.staff)sc=q.staff.chords?renderHarmonyScore(q.staff):renderStaticScore(q.staff)}catch(err){continue}
+out.push([plain(q.q),q.options.slice(),q.correct,plain(q.explanation||''),sc])}
+if(out.length<n&&topic==='all')shuf(duelBank).slice(0,n-out.length).forEach(b=>out.push(b));
+return shuf(out)}
+function fillTopics(){const sel=$('duelTopic');if(sel.options.length)return;sel.add(new Option('Alle Themen gemischt','all'));SECTIONS.forEach(x=>{if(x.id!=='gehoer')sel.add(new Option(x.title,x.id))})}
+function open(){fillTopics();o.classList.add('duel-open');o.setAttribute('aria-hidden','false');setup()}
 function close(){clearInterval(t);o.classList.remove('duel-open');o.setAttribute('aria-hidden','true')}
 function setup(){clearInterval(t);$('duelSetup').hidden=false;$('duelGame').hidden=true;$('duelClose').hidden=false}
 function names(){const n=+$('duelPlayers').value;[1,2,3,4].forEach(i=>$('duelNameWrap'+i).hidden=i>n)}
@@ -3519,13 +3775,13 @@ function build(){$('duelTopHalf').innerHTML='';$('duelBottomHalf').innerHTML='';
 g.p.forEach((p,i)=>{const d=document.createElement('div');d.className='duel-panel';d.style.setProperty('--c',COL[i]);d.innerHTML='<div class="duel-phead"><span class="duel-pname"></span><span class="duel-pscore"></span></div><div class="duel-pinfo"></div><div class="duel-answers"></div>';p.ui={panel:d,name:d.querySelector('.duel-pname'),score:d.querySelector('.duel-pscore'),info:d.querySelector('.duel-pinfo'),box:d.querySelector('.duel-answers')};$(side[i]==='b'?'duelBottomHalf':'duelTopHalf').appendChild(d)})}
 function scores(){g.p.forEach(p=>{p.ui.name.textContent=p.name;p.ui.score.textContent=p.score+' Punkte'+(p.streak>=3?' 🔥'+p.streak:'')})}
 function start(){const n=+$('duelPlayers').value,c=+$('duelCount').value;
-g={q:shuf(duelBank).slice(0,c),i:0,sec:+$('duelSeconds').value,lock:false,p:[]};
+g={q:buildQuestions(c,$('duelTopic').value),i:0,sec:+$('duelSeconds').value,lock:false,p:[]};
 for(let i=1;i<=n;i++)g.p.push({name:$('duelName'+i).value.trim()||'Spieler '+i,score:0,streak:0,answer:null,time:null,perm:[],gain:0});
 $('duelSetup').hidden=true;$('duelClose').hidden=true;$('duelGame').hidden=false;$('duelRematch').hidden=true;$('duelSetupBtn').hidden=true;$('duelQuit').hidden=false;build();show()}
 function show(){clearInterval(t);if(g.i>=g.q.length)return finish();const q=g.q[g.i];g.lock=false;
-setQ('Frage '+(g.i+1)+' von '+g.q.length,q[0],'');$('duelNext').hidden=true;
+setQ('Frage '+(g.i+1)+' von '+g.q.length,q[0],'',q[4]);$('duelNext').hidden=true;
 g.p.forEach((p,pi)=>{p.answer=null;p.time=null;p.gain=0;p.perm=shuf(q[1].map((_,k)=>k));p.ui.panel.classList.remove('done');p.ui.info.textContent='Bereit …';p.ui.box.innerHTML='';
-p.perm.forEach((orig,k)=>{const b=document.createElement('button');b.className='duel-answer';b.textContent=q[1][orig];b.onclick=()=>answer(pi,k);p.ui.box.appendChild(b)})});
+p.perm.forEach((orig,k)=>{const b=document.createElement('button');b.className='duel-answer';b.innerHTML=q[1][orig];b.onclick=()=>answer(pi,k);p.ui.box.appendChild(b)})});
 let x=100;$('duelTime').style.width='100%';const step=100/(g.sec*10);t=setInterval(()=>{x-=step;$('duelTime').style.width=Math.max(x,0)+'%';if(x<=0)lock('Zeit abgelaufen.')},100);scores()}
 function answer(pi,k){const p=g.p[pi];if(g.lock||p.answer!==null)return;p.answer=p.perm[k];p.time=performance.now();
 [...p.ui.box.children].forEach((b,i)=>{b.disabled=true;if(i===k)b.classList.add('picked')});p.ui.panel.classList.add('done');p.ui.info.textContent='Antwort gesperrt ✓';
@@ -3536,7 +3792,7 @@ if(p.answer===q[2]){p.streak++;p.gain=100+(p.streak>=3?100:0);p.score+=p.gain;if
 if(fast){g.p[fast.k].gain+=50;g.p[fast.k].score+=50}
 g.p.forEach(p=>{p.ui.info.textContent=p.gain>0?'+'+p.gain+' Punkte':(p.answer===null?'Keine Antwort':'Leider falsch')});
 const last=g.i>=g.q.length-1;const r=o.querySelector('.dq-round');
-setQ('Frage '+(g.i+1)+' von '+g.q.length,q[0],q[3]+' ('+msg+')');$('duelNext').textContent=last?'Endstand':'Nächste Frage';$('duelNext').hidden=false;scores()}
+setQ('Frage '+(g.i+1)+' von '+g.q.length,q[0],q[3]+' ('+msg+')',q[4]);$('duelNext').textContent=last?'Endstand':'Nächste Frage';$('duelNext').hidden=false;scores()}
 function finish(){clearInterval(t);const r=[...g.p].sort((a,b)=>b.score-a.score),top=r.filter(p=>p.score===r[0].score);
 const title=top.length>1?'Unentschieden: '+top.map(p=>p.name).join(' & ')+'!':'🏆 '+r[0].name+' gewinnt!';
 setQ('Endstand',title,r.map((p,i)=>(i+1)+'. '+p.name+' '+p.score).join('  ·  '));
