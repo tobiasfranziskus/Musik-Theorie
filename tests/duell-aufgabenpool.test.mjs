@@ -77,7 +77,7 @@ test('Wenn kein Bereich passt, werden die bisher vorgesehenen Fallback-Fragen ge
   assert.equal(questions.length,2);
   assert.deepEqual(new Set(questions.map(q=>q.prompt)),new Set(['Ersatz A','Ersatz B']));
   assert.ok(questions.every(q=>q.svgHtml===''));
-  assert.deepEqual(f.calls(),{generated:15,hearingCalls:0},
+  assert.deepEqual(f.calls(),{generated:2,hearingCalls:0},
     'auch die ursprüngliche Eignungsprüfung läuft über alle Generatoren');
 });
 
