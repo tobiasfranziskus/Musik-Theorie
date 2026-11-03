@@ -45,6 +45,8 @@ const assets = {
   '/src/duell/timer.mjs': ['src/duell/timer.mjs', 'application/javascript; charset=utf-8'],
   '/src/duell/ansicht.mjs': ['src/duell/ansicht.mjs', 'application/javascript; charset=utf-8'],
   '/src/duell/sitzung.mjs': ['src/duell/sitzung.mjs', 'application/javascript; charset=utf-8'],
+  '/src/unterricht/lernplan.mjs': ['src/unterricht/lernplan.mjs', 'application/javascript; charset=utf-8'],
+  '/src/unterricht/oberflaeche.mjs': ['src/unterricht/oberflaeche.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {
