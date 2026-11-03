@@ -13,5 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: JavaScript-Syntax prüfen
+        run: node --check src/app.js
       - name: Noten- und Aufgabentests
         run: node --test tests/aufgaben.test.cjs
+      - name: Browser-Smoke-Test (Chrome)
+        run: node tests/browser-smoke.cjs

@@ -5,15 +5,18 @@ const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
 
-// Die Anwendung liegt aktuell als gebündelte index.html vor. Wir prüfen die
-// tatsächlichen Generatoren daraus, nicht eine separate Nachimplementierung.
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
-const begin = html.indexOf('y={c:0,d:1,e:2,f:3,g:4,a:5,h:6}');
-const end = html.indexOf('var en=', begin);
+// Wir prüfen weiterhin die tatsächlich ausgelieferten Generatoren im Bundle
+// und nicht eine getrennte, möglicherweise abweichende Nachimplementierung.
+const root = path.join(__dirname, '..');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const bundle = fs.readFileSync(path.join(root, 'src', 'app.js'), 'utf8');
+const styles = fs.readFileSync(path.join(root, 'src', 'styles.css'), 'utf8');
+const begin = bundle.indexOf('y={c:0,d:1,e:2,f:3,g:4,a:5,h:6}');
+const end = bundle.indexOf('var en=', begin);
 
 assert.ok(begin !== -1 && end > begin, 'Aufgabengeneratoren im Bundle auffindbar');
 const { M, N, Qt, Et, ye } = Function(
-  'var ' + html.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
+  'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
 )();
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -67,21 +70,21 @@ test('Multiple-Choice-Indizes der Aufgaben sind gültig', () => {
 });
 
 test('Falsche Texteingabe wird in der Rückmeldung gezeigt', () => {
-  assert.ok(html.includes('Deine Eingabe: ${_e.trim()}. ${N.explanation}'));
+  assert.ok(bundle.includes('Deine Eingabe: ${_e.trim()}. ${N.explanation}'));
 });
 
 
 test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensystems', () => {
   const topCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!0):null';
   const bottomCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!1):null';
-  assert.equal(html.split(topCall).length - 1, 1, 'eine Notendarstellung für die obere Tischseite');
-  assert.equal(html.split(bottomCall).length - 1, 1, 'eine Notendarstellung für die untere Tischseite');
-  assert.ok(html.indexOf(topCall) < html.indexOf(bottomCall), 'Noten stehen an der jeweils richtigen Seite');
-  const begin = html.indexOf('function duelNotationForSide(');
-  const end = html.indexOf('function de(e,t)', begin);
+  assert.equal(bundle.split(topCall).length - 1, 1, 'eine Notendarstellung für die obere Tischseite');
+  assert.equal(bundle.split(bottomCall).length - 1, 1, 'eine Notendarstellung für die untere Tischseite');
+  assert.ok(bundle.indexOf(topCall) < bundle.indexOf(bottomCall), 'Noten stehen an der jeweils richtigen Seite');
+  const begin = bundle.indexOf('function duelNotationForSide(');
+  const end = bundle.indexOf('function de(e,t)', begin);
   assert.ok(begin >= 0 && end > begin, 'Notensystem-Renderer im Bundle vorhanden');
   const jsx = { jsx: (tag, props) => ({ tag, props }) };
-  const render = Function('I', html.slice(begin, end) + ';return duelNotationForSide;')(jsx);
+  const render = Function('I', bundle.slice(begin, end) + ';return duelNotationForSide;')(jsx);
   const svg = '<svg><text>f¹</text></svg>';
   const top = render(svg, true);
   const bottom = render(svg, false);
@@ -89,5 +92,15 @@ test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensyst
   assert.equal(bottom.props.children.props.style.rotate, '0deg');
   assert.equal(top.props.children.props.dangerouslySetInnerHTML.__html, svg);
   assert.equal(bottom.props.children.props.dangerouslySetInnerHTML.__html, svg);
-  assert.match(html, /\.duel-score-svg>svg\{[^}]*max-height:9vh/);
+  assert.match(styles, /\.duel-score-svg>svg\{[^}]*max-height:9vh/);
+});
+
+test('GitHub Pages lädt die ausgelagerten Assets über relative Pfade', () => {
+  assert.match(html, /<script type="module" src="\.\/src\/app\.js"><\/script>/);
+  assert.match(html, /<link rel="stylesheet" href="\.\/src\/styles\.css"\s*\/>/);
+  assert.doesNotMatch(html, /<script type="module">/);
+  assert.doesNotMatch(html, /<style>/);
+  assert.ok(bundle.length > 100_000);
+  assert.ok(styles.length > 10_000);
+  assert.match(html, /<div id="root"><\/div>/);
 });
