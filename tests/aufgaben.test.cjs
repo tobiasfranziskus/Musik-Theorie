@@ -279,3 +279,20 @@ test('Die letzten drei Generatoren für Kadenz, Stimmführung und Analyse kommen
   assert.ok(bundle.includes('gens:[St,Ct]'));
   assert.ok(bundle.includes('gens:[wt]'));
 });
+
+
+test('Notensystem-Renderer werden über separate ES-Module eingebunden', () => {
+  assert.ok(bundle.includes("from './ui/notensystem.mjs';"));
+  for (const call of [
+    'notationRenderers.renderStaff(e)',
+    'notationRenderers.renderGrandStaff(e)',
+    'notationRenderers.renderEditableStaff(e,t,n,r)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+test('Musikduell behält zwei entgegengesetzte Tischrichtungen', () => {
+  assert.ok(bundle.includes('rotate-180'), 'obere Tischseite bleibt gedreht');
+  assert.ok(bundle.includes("style:{rotate:t?`180deg`:`0deg`}"),
+    'Notensystem der oberen Tischseite wird gegengedreht und bleibt lesbar');
+  assert.ok(bundle.includes('duel-score-svg'), 'Duell-Notenansicht bleibt eingebunden');
+});
