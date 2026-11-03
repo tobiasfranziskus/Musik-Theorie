@@ -202,10 +202,10 @@ test('Bewertungsmodul wird von der Anwendung geladen', () => {
 test('Vier Notennamen-Aufgabengeneratoren werden aus dem Modul verwendet', () => {
   assert.ok(bundle.includes("from './aufgaben/notennamen.mjs';"));
   for (const call of [
-    'noteNameTaskGenerators.multipleChoice(e)',
+    'noteNameTaskGenerators.multipleChoice(e,beginner)',
     'noteNameTaskGenerators.enharmonic()',
-    'noteNameTaskGenerators.placement(e)',
-    'noteNameTaskGenerators.textEntry(e)',
+    'noteNameTaskGenerators.placement(e,beginner)',
+    'noteNameTaskGenerators.textEntry(e,beginner)',
   ]) assert.ok(bundle.includes(call), call);
 });
 
