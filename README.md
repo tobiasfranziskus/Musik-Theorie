@@ -2,6 +2,12 @@
 
 Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für zwei bis vier Personen. Die Anwendung ist für die statische Veröffentlichung über GitHub Pages ausgelegt und benötigt zur Ausführung keinen Server und kein Build-System.
 
+## Neue Übungsvarianten
+
+Im Kapitel **Notennamen** startet die Schaltfläche **„🌱 Anfänger · ohne Vorzeichen“** eine eigene Lernrunde mit reinen Stammtönen. Multiple-Choice-Antworten, Notensetzen und freie Texteingabe verwenden ausschließlich Töne ohne ♯ oder ♭. Enharmonische Verwechslungsfragen bleiben in dieser Anfängerrunde aus; die normale Übungsvariante bleibt unverändert. „Dieses Thema wiederholen“ erhält den Anfängermodus.
+
+In der **Musikduell-Arena** erscheinen bei „Notennamen“ und „Alle Themen“ Schaltflächen für **Violinschlüssel** und **Bassschlüssel**. Beide lassen sich unabhängig auswählen; mindestens einer bleibt aktiv. Ein Altschlüssel wird im Duell nicht angeboten. Die Auswahl gilt ausschließlich für Aufgaben des Themenbereichs Notennamen und ändert die Schlüssel der übrigen Aufgaben nicht.
+
 ## Dateien
 
 - `index.html`: schlanker Einstiegspunkt mit Metadaten und Lizenzhinweis.

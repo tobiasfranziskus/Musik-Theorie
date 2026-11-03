@@ -2,6 +2,7 @@
  * Aufgabengeneratoren des Themenbereichs "Notennamen".
  * Die vier bisherigen Varianten behalten Fragen, Antwortformate und die
  * Reihenfolge ihrer Zufallsentscheidungen bei. Keine React-/DOM-Abhängigkeit.
+ * Der optionale Anfängermodus erzeugt nur Stammtöne ohne Vorzeichen.
  * Zufallsfunktionen und beschreibende Hilfen werden aus dem bestehenden
  * Aufgabensystem injiziert, damit die übrigen Themen unverändert bleiben.
  */
@@ -27,7 +28,7 @@ export function createNoteNameTaskGenerators({
   staffExplanation, enharmonicExplanation, clefLabel,
 }) {
   /** Multiple-Choice-Aufgabe: gezeigte Note benennen. */
-  function multipleChoice(level = 'mixed') {
+  function multipleChoice(level = 'mixed', beginner = false) {
     const clef = chooseClef(level);
     let name = choose(PITCH_NAMES);
     let octave = clef === 'treble' ? name === 'c' || name === 'd' ? 5 : 4
@@ -38,12 +39,12 @@ export function createNoteNameTaskGenerators({
       octave = other.octave;
     }
     const random = Math.random();
-    const accidental = random < .15 ? '#' : random < .3 ? 'b' : null;
+    const accidental = beginner ? null : random < .15 ? '#' : random < .3 ? 'b' : null;
     const answer = formatGermanNote(name, octave, accidental);
     const answers = new Set([answer]);
     for (let attempts = 0; attempts < 40 && answers.size < 4; attempts++) {
       const candidateName = choose(PITCH_NAMES);
-      const candidateAccidental = choose(['#', 'b', null]);
+      const candidateAccidental = beginner ? null : choose(['#', 'b', null]);
       const candidate = formatGermanNote(candidateName, octave, candidateAccidental);
       if (candidate !== answer) answers.add(candidate);
     }
@@ -79,11 +80,12 @@ export function createNoteNameTaskGenerators({
   }
 
   /** Note an die richtige Position im Notensystem setzen. */
-  function placement(level = 'mixed') {
+  function placement(level = 'mixed', beginner = false) {
     const clef = chooseClef(level);
     const note = clef === 'alto'
-      ? {...noteFromDiatonicIndex(randomInt(-4,4)), accidental:choose([null,'#','b'])}
-      : choose(clef === 'treble' ? TREBLE_OPTIONS : BASS_OPTIONS);
+      ? {...noteFromDiatonicIndex(randomInt(-4,4)), accidental:beginner ? null : choose([null,'#','b'])}
+      : choose((clef === 'treble' ? TREBLE_OPTIONS : BASS_OPTIONS)
+        .filter(note => !beginner || note.accidental === null));
     return {
       mode:'staff',
       q:'Setze die Note ' + formatGermanNote(note.name,note.octave,note.accidental) + ' ins Notensystem!',
@@ -93,7 +95,7 @@ export function createNoteNameTaskGenerators({
   }
 
   /** Notennamen als freien Text eingeben (inklusive f1, f¹, f4). */
-  function textEntry(level = 'mixed') {
+  function textEntry(level = 'mixed', beginner = false) {
     const clef = chooseClef(level);
     let name = choose(PITCH_NAMES);
     let octave = clef === 'treble' ? name === 'c' || name === 'd' ? 5 : 4
@@ -104,16 +106,18 @@ export function createNoteNameTaskGenerators({
       octave = other.octave;
     }
     const random = Math.random();
-    const accidental = random < .2 ? '#' : random < .4 ? 'b' : null;
+    const accidental = beginner ? null : random < .2 ? '#' : random < .4 ? 'b' : null;
     const note = {name,octave,accidental};
     const answer = formatGermanNote(name,octave,accidental);
     return {
       mode:'text',
       q:'Wie heißt dieser Ton im ' + clefLabel(clef) +
-        '? Schreibe den Notennamen in deutscher Schreibweise (z.B. "c", "C", "c¹", "es").',
+        (beginner
+          ? '? Schreibe den Stammton ohne Vorzeichen (z.B. "c", "C", "c¹").'
+          : '? Schreibe den Notennamen in deutscher Schreibweise (z.B. "c", "C", "c¹", "es").'),
       staff:{clef,notes:[note]},
       hint:'Kleinbuchstabe = kleine Oktave (c) · Großbuchstabe = große Oktave (C) · Hochzahl = höhere Oktave (c¹, c²). SPN (c3, c4) wird auch akzeptiert.',
-      placeholder:'z.B. es',
+      placeholder:beginner ? 'z.B. c¹' : 'z.B. es',
       checkFn:input => {
         const candidates = parseGermanNoteInput(input);
         return candidates.length
