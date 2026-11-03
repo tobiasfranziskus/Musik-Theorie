@@ -43,6 +43,7 @@ const assets = {
   '/src/duell/rundensteuerung.mjs': ['src/duell/rundensteuerung.mjs', 'application/javascript; charset=utf-8'],
   '/src/duell/aufgabenpool.mjs': ['src/duell/aufgabenpool.mjs', 'application/javascript; charset=utf-8'],
   '/src/duell/timer.mjs': ['src/duell/timer.mjs', 'application/javascript; charset=utf-8'],
+  '/src/duell/ansicht.mjs': ['src/duell/ansicht.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {
