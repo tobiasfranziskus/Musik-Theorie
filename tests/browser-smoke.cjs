@@ -38,6 +38,7 @@ const assets = {
   '/src/aufgaben/harmoniefunktionen.mjs': ['src/aufgaben/harmoniefunktionen.mjs', 'application/javascript; charset=utf-8'],
   '/src/aufgaben/kadenz-analyse.mjs': ['src/aufgaben/kadenz-analyse.mjs', 'application/javascript; charset=utf-8'],
   '/src/ui/notensystem.mjs': ['src/ui/notensystem.mjs', 'application/javascript; charset=utf-8'],
+  '/src/ui/noteneingabe.mjs': ['src/ui/noteneingabe.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {
