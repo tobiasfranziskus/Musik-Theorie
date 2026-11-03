@@ -51,6 +51,8 @@ test.before(async () => {
   const { createCadenceAnalysisTaskGenerators } = await import(cadenceTasksUrl);
   const notationUrl = pathToFileURL(path.join(root, 'src', 'ui', 'notensystem.mjs')).href;
   const { createNotationRenderers } = await import(notationUrl);
+  const duelPoolUrl = pathToFileURL(path.join(root, 'src', 'duell', 'aufgabenpool.mjs')).href;
+  const { createDuelQuestionPool } = await import(duelPoolUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -67,7 +69,7 @@ test.before(async () => {
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
     'createChordTaskGenerators', 'createRhythmTaskGenerators',
     'createKeySignatureTaskGenerators', 'MAJOR_FUNCTIONS', 'createHarmonyTaskGenerators',
-    'createCadenceAnalysisTaskGenerators', 'createNotationRenderers',
+    'createCadenceAnalysisTaskGenerators', 'createNotationRenderers', 'createDuelQuestionPool',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
@@ -75,7 +77,7 @@ test.before(async () => {
     createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
     createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators,
     MAJOR_FUNCTIONS, createHarmonyTaskGenerators, createCadenceAnalysisTaskGenerators,
-    createNotationRenderers));
+    createNotationRenderers, createDuelQuestionPool));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -319,7 +321,7 @@ test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => 
     'scoreDuelRound(e,n.correct)',
     'ie(a.players),qt(a.anyCorrect)',
   ]) assert.ok(bundle.includes(call), call);
-  assert.ok(bundle.includes('performance.now()+r'), 'bestehender Zeitstart bleibt erhalten');
+  assert.ok(bundle.includes('startDuelCountdown(c,'), 'Zeitstart liegt nun im Timer-Modul');
   assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Tischseite bleibt gedreht');
   assert.ok(bundle.includes('style:{rotate:t?`180deg`:`0deg`}'),
     'Notensystem wird weiter gegengedreht');
@@ -329,17 +331,27 @@ test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => 
 test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', () => {
   assert.ok(bundle.includes("from './duell/rundensteuerung.mjs';"));
   for (const call of [
-    'duelTimeProgress(performance.now(),i,r)',
-    're(t.percent),t.expired',
     'recordDuelAnswer(E.current,e,t,()=>performance.now())',
     'allDuelPlayersAnswered(i)',
     'nextDuelRoundIndex(g,m.length)',
   ]) assert.ok(bundle.includes(call), call);
   assert.ok(bundle.includes('window.setInterval('), 'der echte 100-ms-Timer bleibt in React');
-  assert.ok(bundle.includes('},100);T.current=a'), '100-ms-Intervall unverändert');
+  assert.ok(bundle.includes('schedule:(fn,ms)=>window.setInterval(fn,ms)'), 'Browser-Intervall bleibt im UI angebunden');
+  assert.ok(bundle.includes('T.current=a'), 'Intervall-Handle bleibt für Cleanup zugänglich');
   assert.ok(bundle.includes('if(D.current)return;let n=E.current[e];if(n.answer!==null)return'),
     'Doppelantworten und abgeschlossene Runden bleiben gesperrt');
   assert.ok(bundle.includes('se(E.current,`Zeit abgelaufen!`,e)'), 'Fristende weiterhin direkt ausgewertet');
   assert.ok(bundle.includes('se(i,`Alle haben geantwortet!`,m[g])'), 'letzte Antwort beendet Runde');
   assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Spieleransicht bleibt erhalten');
+});
+
+test('Duell-Aufgabenpool und echte Intervallverwaltung sind als Module eingebunden', () => {
+  assert.ok(bundle.includes("from './duell/aufgabenpool.mjs';"));
+  assert.ok(bundle.includes("from './duell/timer.mjs';"));
+  assert.ok(bundle.includes('createDuelQuestionPool({sections:Et,adaptTask:Qt,shuffle:D,taskSignature:Tt,renderStaff:Lt,renderGrandStaff:Rt,fallbackQuestions:Jt})'));
+  assert.ok(bundle.includes('return duelQuestionPool(e,t)'));
+  assert.ok(bundle.includes('startDuelCountdown(c,'));
+  assert.ok(bundle.includes('se(E.current,`Zeit abgelaufen!`,e)'));
+  assert.ok(bundle.includes('rotate-180'));
+  assert.ok(bundle.includes('style:{rotate:t?`180deg`:`0deg`}'));
 });
