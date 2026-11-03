@@ -43,8 +43,8 @@ test('Fristablauf: zuerst die Fortschrittsanzeige, dann Intervall löschen, dann
   assert.deepEqual(clock.canceled(),[17]);
 });
 
-test('Bei 0 Sekunden und negativen Restzeiten wird wie bisher abgebrochen', () => {
-  for(const duration of [0,-1]){
+test('Bei 0 oder sehr kurzer Rundenzeit endet die erste Intervallprüfung', () => {
+  for(const duration of [0,0.001]){
     const clock=simulatedClock(),result=[];
     startDuelCountdown(duration,p=>result.push(p),()=>result.push('end'),clock.api);
     clock.tick(100);
