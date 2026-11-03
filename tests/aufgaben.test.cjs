@@ -23,10 +23,13 @@ test.before(async () => {
   // einspeisen. Der Test prüft damit dieselben Funktionen wie der Browser.
   const url = pathToFileURL(path.join(root, 'src', 'music', 'notennamen.mjs')).href;
   const { formatGermanNote, parseGermanNoteInput } = await import(url);
+  const pitchUrl = pathToFileURL(path.join(root, 'src', 'music', 'tonhoehen.mjs')).href;
+  const { diatonicIndex, noteFromDiatonicIndex, chromaticPitch } = await import(pitchUrl);
   ({ M, N, Qt, Et, ye } = Function(
     'formatGermanNote', 'parseGermanNoteInput',
+    'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
-  )(formatGermanNote, parseGermanNoteInput));
+  )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
