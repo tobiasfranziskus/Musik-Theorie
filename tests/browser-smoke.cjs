@@ -29,6 +29,7 @@ const assets = {
   '/src/music/tonleitern.mjs': ['src/music/tonleitern.mjs', 'application/javascript; charset=utf-8'],
   '/src/music/akkorde.mjs': ['src/music/akkorde.mjs', 'application/javascript; charset=utf-8'],
   '/src/music/bewertung.mjs': ['src/music/bewertung.mjs', 'application/javascript; charset=utf-8'],
+  '/src/aufgaben/notennamen.mjs': ['src/aufgaben/notennamen.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {
