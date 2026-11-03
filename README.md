@@ -5,9 +5,11 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 ## Dateien
 
 - `index.html`: schlanker Einstiegspunkt mit Metadaten und Lizenzhinweis.
-- `src/app.js`: derzeit der **unveränderte, gebündelte** React-/Anwendungscode aus der ursprünglichen HTML-Datei.
-- `src/styles.css`: der **unveränderte, gebündelte** CSS-Code.
-- `tests/aufgaben.test.cjs`: Regressionstests für Notennamen, Lösungen, Duell und Dateistruktur.
+- `src/app.js`: bestehender React-/Anwendungscode aus dem ursprünglichen Bundle; die Notennamenlogik ruft bereits ein unabhängiges Modul auf.
+- `src/styles.css`: unveränderter gebündelter CSS-Code.
+- `src/music/notennamen.mjs`: eigenständige, DOM-freie Funktionen für deutsche Notennamen, Vorzeichen und Oktav-Eingaben.
+- `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
+- `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -27,12 +29,13 @@ Voraussetzung: Node.js 22 oder neuer. Externe npm-Abhängigkeiten sind nicht erf
 
 ```bash
 node --check src/app.js
-node --test tests/aufgaben.test.cjs
+node --check src/music/notennamen.mjs
+node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
 
 ## Wartbarkeit
 
-Die Trennung aus `index.html`, JS und CSS ist **Stufe 1** des Refactorings. Die Datei `src/app.js` ist noch kein lesbar modularisierter Quellcode, sondern der bislang verwendete Bundle-Inhalt. Eine weitere Trennung in Musiktheorie, Aufgabengeneratoren, Auswertung und UI erfolgt schrittweise mit Tests. Siehe [Refactoring-Plan](docs/REFACTORING.md).
+Die Trennung aus `index.html`, JS und CSS ist **Stufe 1** des Refactorings. In **Stufe 2** werden zuerst deutsche Notennamen/Oktaven aus `src/app.js` in ein eigenständig testbares ES-Modul ausgelagert. Der übrige Code in `src/app.js` bleibt vorerst ein gebündelter/minifizierter Quellstand. Eine weitere Trennung in Musiktheorie, Aufgabengeneratoren, Auswertung und UI erfolgt schrittweise mit Tests. Siehe [Refactoring-Plan](docs/REFACTORING.md).
 
 Änderungen an Fragen, Notation, Eingaben und Bewertung werden möglichst durch Tests abgesichert. Die öffentliche `main`-Version bleibt bis zur Freigabe eines PR unverändert.

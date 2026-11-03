@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const test = require('node:test');
+const { pathToFileURL } = require('node:url');
 
 // Wir prüfen weiterhin die tatsächlich ausgelieferten Generatoren im Bundle
 // und nicht eine getrennte, möglicherweise abweichende Nachimplementierung.
@@ -15,9 +16,18 @@ const begin = bundle.indexOf('y={c:0,d:1,e:2,f:3,g:4,a:5,h:6}');
 const end = bundle.indexOf('var en=', begin);
 
 assert.ok(begin !== -1 && end > begin, 'Aufgabengeneratoren im Bundle auffindbar');
-const { M, N, Qt, Et, ye } = Function(
-  'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
-)();
+let M, N, Qt, Et, ye;
+
+test.before(async () => {
+  // Echte ESM-Implementierung laden und in die unveränderte Generator-Sammlung
+  // einspeisen. Der Test prüft damit dieselben Funktionen wie der Browser.
+  const url = pathToFileURL(path.join(root, 'src', 'music', 'notennamen.mjs')).href;
+  const { formatGermanNote, parseGermanNoteInput } = await import(url);
+  ({ M, N, Qt, Et, ye } = Function(
+    'formatGermanNote', 'parseGermanNoteInput',
+    'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
+  )(formatGermanNote, parseGermanNoteInput));
+});
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
   const parsed = ye('f1');
@@ -103,4 +113,8 @@ test('GitHub Pages lädt die ausgelagerten Assets über relative Pfade', () => {
   assert.ok(bundle.length > 100_000);
   assert.ok(styles.length > 10_000);
   assert.match(html, /<div id="root"><\/div>/);
+});
+
+test('Notennamen-Modul wird aus dem App-Bundle relativ geladen', () => {
+  assert.match(bundle, /^import \{ formatGermanNote, parseGermanNoteInput \} from '\.\/music\/notennamen\.mjs';/);
 });

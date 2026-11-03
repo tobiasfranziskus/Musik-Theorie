@@ -4,7 +4,7 @@
 
 Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar werden. **Keine sichtbaren, spielerischen oder musiktheoretischen Verhaltensänderungen** während eines reinen Refactorings. Die `index.html` bleibt als Einstiegspunkt von GitHub Pages erhalten.
 
-## Stufe 1 – Auslieferung entkoppeln (dieser PR)
+## Stufe 1 – Auslieferung entkoppeln (PR #2)
 
 - [x] Gebündelten JS-Inhalt unverändert nach `src/app.js` verschieben.
 - [x] CSS unverändert nach `src/styles.css` verschieben.
@@ -18,8 +18,10 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 
 ## Stufe 2 – Fachlogik aus dem Bundle lösen
 
-- Notenbezeichnung und Oktavlogik (inkl. `f1`/`f¹`/`f4`) isolieren.
-- Intervalle, Tonleitern, Akkorde und Vorzeichen in eigenständig testbare Module überführen.
+- [x] Notenbezeichnung und Oktavlogik (inkl. `f1`/`f¹`/`f4`) nach `src/music/notennamen.mjs` auslagern, mit tatsächlicher Verwendung in `src/app.js`.
+- [x] 720 Darstellungsfälle und 3.255 Eingabevarianten gegen die bisherigen Funktionen auf identische Ergebnisse prüfen; zusätzlich unabhängige Unit-Tests und Browser-Smoke-Test.
+- [ ] Die übrigen musiktheoretischen Berechnungen isolieren.
+- [ ] Intervalle, Tonleitern, Akkorde und weitere Berechnungen in eigenständig testbare Module überführen.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
 - Neue Module zuerst durch Äquivalenztests gegen den vorhandenen Code absichern; dann einzeln an die Oberfläche anbinden.
 
