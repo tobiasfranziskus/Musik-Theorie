@@ -45,6 +45,8 @@ test.before(async () => {
   const { createRhythmTaskGenerators } = await import(rhythmTaskUrl);
   const keyTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'quintenzirkel-vorzeichen.mjs')).href;
   const { createKeySignatureTaskGenerators } = await import(keyTasksUrl);
+  const harmonyTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'harmoniefunktionen.mjs')).href;
+  const { MAJOR_FUNCTIONS, createHarmonyTaskGenerators } = await import(harmonyTasksUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -60,13 +62,14 @@ test.before(async () => {
     'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
     'createChordTaskGenerators', 'createRhythmTaskGenerators',
-    'createKeySignatureTaskGenerators',
+    'createKeySignatureTaskGenerators', 'MAJOR_FUNCTIONS', 'createHarmonyTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
     ...chordExports.map(name => chords[name]), gradeWrittenNotes,
     createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
-    createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators));
+    createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators,
+    MAJOR_FUNCTIONS, createHarmonyTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -248,4 +251,16 @@ test('Quintenzirkel- und Vorzeichenaufgaben verwenden das neue Modul', () => {
   assert.ok(bundle.includes("from './aufgaben/quintenzirkel-vorzeichen.mjs';"));
   assert.ok(bundle.includes('keySignatureTasks.circleOfFifths()'));
   assert.ok(bundle.includes('keySignatureTasks.readKeySignature(e)'));
+});
+
+
+test('Vier Harmonie- und Vierklanggeneratoren nutzen das neue Modul', () => {
+  assert.ok(bundle.includes("from './aufgaben/harmoniefunktionen.mjs';"));
+  assert.ok(bundle.includes('var Ye=MAJOR_FUNCTIONS'));
+  for (const call of [
+    'harmonyTasks.buildFunctionChord(e)',
+    'harmonyTasks.identifyFunction(e)',
+    'harmonyTasks.buildExtendedChord(e)',
+    'harmonyTasks.identifyExtendedChord(e)',
+  ]) assert.ok(bundle.includes(call), call);
 });
