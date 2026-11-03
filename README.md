@@ -21,6 +21,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/aufgaben/quintenzirkel-vorzeichen.mjs`: Paralleltonarten, Quintenzirkel und Generalvorzeichen erkennen.
 - `src/aufgaben/harmoniefunktionen.mjs`: T/S/D, Parallelfunktionen, Funktionen erkennen, Sept- und Sixte-ajoutée-Akkorde; gemeinsamer Dur-Funktionskatalog für die harmonische Analyse.
 - `src/aufgaben/kadenz-analyse.mjs`: Kadenzen, Stimmführungsfehler und Harmonische Analyse mit gemeinsam importiertem Dur-Funktionskatalog.
+- `src/ui/notensystem.mjs`: zustandslose SVG-Erzeugung für einfache Notensysteme, Klaviersystem und interaktive Noteneingabe, einschließlich der unveränderten Schlüssel-/Notenformen.
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
@@ -36,6 +37,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `tests/quintenzirkel-vorzeichen.test.mjs`: Quintenzirkel, Generalvorzeichen, Paralleltonarten und Schlüsselwahl.
 - `tests/harmoniefunktionen-generatoren.test.mjs`: Haupt-/Nebenfunktionen, Dreiklänge, Umkehrungen und Vierklänge.
 - `tests/kadenz-analyse.test.mjs`: Kadenzen, Stimmführung, Stimmenverteilung im Klaviersystem und harmonische Analyse.
+- `tests/notensystem-renderer.test.mjs`: 14 Referenzdarstellungen mit vollständigen SVG-Prüfsummen, darunter drei Schlüssel, Vorzeichen, Triolen, Noteneingabe und Klaviersystem.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -69,12 +71,13 @@ node --check src/aufgaben/rhythmus.mjs
 node --check src/aufgaben/quintenzirkel-vorzeichen.mjs
 node --check src/aufgaben/harmoniefunktionen.mjs
 node --check src/aufgaben/kadenz-analyse.mjs
+node --check src/ui/notensystem.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
 
 ## Wartbarkeit
 
-**Stufe 1 und die fachlichen Teilmodule von Stufe 2 sind in `main` integriert.** Notennamen, Tonhöhen, Intervalle, Tonleitern und Akkorde sind als ES-Module testbar. Mit PR #8 folgt die Bewertung der Noteneingaben. Der verbleibende React- und Generatorcode in `src/app.js` ist noch gebündelt/minifiziert; Aufgabensteuerung und Oberfläche werden in späteren PRs schrittweise getrennt. Siehe [Refactoring-Plan](docs/REFACTORING.md).
+**Stufe 1 und die fachlichen Teilmodule von Stufe 2 sind in `main` integriert.** Auf den gestapelten, noch nicht integrierten Draft-PRs #8–#16 folgen die Bewertungslogik und alle 32 Aufgabengeneratoren. PR #17 trennt zusätzlich die SVG-Notensystem-Erzeugung aus dem verbleibenden React-Bundle. Duellsteuerung, Eingabeverwaltung und Teile der Oberfläche in `src/app.js` sind weiterhin gebündelt/minifiziert. Siehe [Refactoring-Plan](docs/REFACTORING.md).
 
 Änderungen an Fragen, Notation, Eingaben und Bewertung werden möglichst durch Tests abgesichert. Die öffentliche `main`-Version bleibt bis zur Freigabe eines PR unverändert.
