@@ -11,6 +11,7 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Beide Assets mit relativen URLs aus der `index.html` laden; korrekt unter GitHub Pages mit Repository-Unterpfad.
 - [x] Bestehende Aufgabentests auf die neue Dateistruktur umstellen.
 - [x] Syntaxprüfung, CI und Dokumentation ergänzen.
+- [x] Chrome-Smoke-Test mit echten JS- und CSS-Dateien durchführen.
 - [ ] Browserabnahme auf iPad/Safari, besonders Notensystem, Touch und Duell.
 
 **Wichtig:** Die beiden großen Dateien enthalten bislang generierten/minifizierten Code. Ihre Auslagerung allein macht die interne Logik noch nicht lesbarer. Ein kosmetisches „Beautifying“ reicht für echte Modularität nicht aus.
