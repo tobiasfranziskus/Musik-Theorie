@@ -28,6 +28,7 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Notenbewertung (`src/music/bewertung.mjs`) auslagern: geordnete Aufgaben, Akkord-Reihenfolge, Mehrfachnoten und enharmonische Gleichheit; 50.020 Referenzfälle ohne Abweichung (PR #8).
 - [x] Vier Notennamen-Aufgabengeneratoren nach `src/aufgaben/notennamen.mjs` auslagern: Multiple Choice, Enharmonik, Notensetzen und Texteingabe. **3.200 deterministische Aufgabenvergleiche einschließlich Zufallsfolge ohne Abweichung** (PR #9).
 - [x] Vier Intervall-Aufgabengeneratoren inkl. Halb-/Ganztonschritte und Hören nach `src/aufgaben/intervalle.mjs` auslagern; **5.600 deterministische Vergleiche ohne Abweichung** (PR #10).
+- [x] Vier Tonleiter-Aufgabengeneratoren nach `src/aufgaben/tonleitern.mjs` auslagern: Dur, Moll, Chromatik und Ganztonleitern; **5.600 deterministische Vergleiche ohne Abweichung** (PR #11).
 - [ ] Weitere Generatorgruppen und Komponenten aus dem Bundle trennen.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
 - Neue Module zuerst durch Äquivalenztests gegen den vorhandenen Code absichern; dann einzeln an die Oberfläche anbinden.
