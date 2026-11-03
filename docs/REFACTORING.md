@@ -12,7 +12,7 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Bestehende Aufgabentests auf die neue Dateistruktur umstellen.
 - [x] Syntaxprüfung, CI und Dokumentation ergänzen.
 - [x] Chrome-Smoke-Test mit echten JS- und CSS-Dateien durchführen.
-- [ ] Browserabnahme auf iPad/Safari, besonders Notensystem, Touch und Duell.
+- [x] Browserabnahme auf iPad/Safari, besonders Notensystem, Touch und Duell – laut Nutzerfreigabe am 03.11.2026 als erledigt bestätigt (nicht von CI automatisiert geprüft).
 
 **Wichtig:** Die beiden großen Dateien enthalten bislang generierten/minifizierten Code. Ihre Auslagerung allein macht die interne Logik noch nicht lesbarer. Ein kosmetisches „Beautifying“ reicht für echte Modularität nicht aus.
 
@@ -24,7 +24,8 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [ ] Weitere musiktheoretische Berechnungen isolieren.
 - [x] Intervallkatalog und Transposition nach `src/music/intervalle.mjs` auslagern; **222.642 Referenzfälle ohne Abweichung**, abhängige Tonhöhenfunktion über ES-Import.
 - [x] Tonleiter-Daten (Dur, natürlich/harmonisch/melodisch Moll, Chromatik und Ganztonleitern) und Erzeugungsfunktion nach `src/music/tonleitern.mjs` auslagern; 980 SPN-Eingaben und 1.050 Tonleitererzeugungen mit bisherigem Verhalten verglichen, 0 Unterschiede.
-- [ ] Akkorde und weitere Berechnungen in eigenständig testbare Module überführen.
+- [x] Akkordfunktionen (`src/music/akkorde.mjs`): Dreiklänge, Umkehrungen, Doppelvorzeichenfilter, Akkordkürzel und vollständige Bezeichnungen ausgelagert; **14.880 Funktionsvergleiche** mit bisherigem Verhalten ohne Abweichung.
+- [ ] Weitere Berechnungen und Generatoren aus dem Bundle trennen.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
 - Neue Module zuerst durch Äquivalenztests gegen den vorhandenen Code absichern; dann einzeln an die Oberfläche anbinden.
 
@@ -33,7 +34,7 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - Notensystem-Rendering und Eingabelogik als getrennte Komponenten.
 - Musikduell: Aufgabenpool, Fragen-/Zeitverwaltung, Punktelogik und Darstellung voneinander trennen.
 - Zwei unabhängig ausgerichtete Notenansichten für die gegenüberliegenden Tischseiten bewahren.
-- Auf iPad Safari: Querformat, Touch-Eingabe, kleine Displays und Spielablauf manuell prüfen.
+- [x] iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
 
 ## Stufe 4 – Aufräumen
 

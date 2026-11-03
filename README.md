@@ -11,11 +11,13 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/music/tonhoehen.mjs`: diatonische Indexpositionen und chromatische Tonhöhen als unabhängige Rechenfunktionen.
 - `src/music/intervalle.mjs`: der 13-teilige Intervallkatalog und diatonisch korrekt geschriebene Auf-/Abwärtstranspositionen.
 - `src/music/tonleitern.mjs`: Dur-/Moll-Tonleitervorlagen und Tonleiterberechnung, inklusive Chromatik und Ganztonleitern.
+- `src/music/akkorde.mjs`: Dreiklänge, Umkehrungen, Vorzeichenprüfung und Akkordbezeichnungen.
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
 - `tests/intervalle.test.mjs`: Intervallnamen, enharmonische Schreibweisen und Abwärtstransposition.
 - `tests/tonleitern.test.mjs`: Tonleiter-Vorlagen, Halbtonabstände und Vorzeichen.
+- `tests/akkorde.test.mjs`: Dur/Moll/verminderte/übermäßige Dreiklänge, Umkehrungen und Akkordnamen.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -39,6 +41,7 @@ node --check src/music/notennamen.mjs
 node --check src/music/tonhoehen.mjs
 node --check src/music/intervalle.mjs
 node --check src/music/tonleitern.mjs
+node --check src/music/akkorde.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```

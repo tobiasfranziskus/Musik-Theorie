@@ -27,6 +27,7 @@ const assets = {
   '/src/music/tonhoehen.mjs': ['src/music/tonhoehen.mjs', 'application/javascript; charset=utf-8'],
   '/src/music/intervalle.mjs': ['src/music/intervalle.mjs', 'application/javascript; charset=utf-8'],
   '/src/music/tonleitern.mjs': ['src/music/tonleitern.mjs', 'application/javascript; charset=utf-8'],
+  '/src/music/akkorde.mjs': ['src/music/akkorde.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {

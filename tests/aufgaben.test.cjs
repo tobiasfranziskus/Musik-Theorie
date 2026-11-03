@@ -29,6 +29,12 @@ test.before(async () => {
   const { INTERVALS, transposeDiatonic } = await import(intervalUrl);
   const scalesUrl = pathToFileURL(path.join(root, 'src', 'music', 'tonleitern.mjs')).href;
   const scales = await import(scalesUrl);
+  const chordsUrl = pathToFileURL(path.join(root, 'src', 'music', 'akkorde.mjs')).href;
+  const chords = await import(chordsUrl);
+  const chordExports = [
+    'buildTriad', 'invertChord', 'hasSimpleAccidentals',
+    'chordSymbol', 'chordDescription',
+  ];
   const scaleExports = [
     'MAJOR_KEYS', 'MINOR_KEYS', 'MAJOR_STEPS', 'NATURAL_MINOR_STEPS',
     'HARMONIC_MINOR_STEPS', 'MELODIC_MINOR_STEPS', 'CHROMATIC_SCALES',
@@ -37,10 +43,11 @@ test.before(async () => {
   ({ M, N, Qt, Et, ye } = Function(
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
-    'INTERVALS', 'transposeDiatonic', ...scaleExports,
+    'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports,
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
-    INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name])));
+    INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
+    ...chordExports.map(name => chords[name])));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -143,4 +150,12 @@ test('Tonleitern werden über das eigenständige Modul geladen', () => {
   assert.ok(bundle.includes("from './music/tonleitern.mjs';"));
   assert.ok(bundle.includes('scaleFromSemitones(e,t,n,r)'));
   assert.ok(bundle.includes('parseCompactPitch(e)'));
+});
+
+
+test('Akkordmodul wird in den echten Generatoren verwendet', () => {
+  assert.ok(bundle.includes("from './music/akkorde.mjs';"));
+  assert.ok(bundle.includes('buildTriad(e,t,n,r,i)'));
+  assert.ok(bundle.includes('invertChord(e,t)'));
+  assert.ok(bundle.includes('chordSymbol(e,t,n)'));
 });
