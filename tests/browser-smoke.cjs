@@ -23,6 +23,7 @@ if (!browser) {
 const assets = {
   '/': ['index.html', 'text/html; charset=utf-8'],
   '/src/app.js': ['src/app.js', 'application/javascript; charset=utf-8'],
+  '/src/music/notennamen.mjs': ['src/music/notennamen.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {
