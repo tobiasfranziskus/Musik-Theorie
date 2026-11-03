@@ -31,6 +31,8 @@ test.before(async () => {
   const scales = await import(scalesUrl);
   const chordsUrl = pathToFileURL(path.join(root, 'src', 'music', 'akkorde.mjs')).href;
   const chords = await import(chordsUrl);
+  const gradingUrl = pathToFileURL(path.join(root, 'src', 'music', 'bewertung.mjs')).href;
+  const { gradeWrittenNotes } = await import(gradingUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -43,11 +45,11 @@ test.before(async () => {
   ({ M, N, Qt, Et, ye } = Function(
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
-    'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports,
+    'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
-    ...chordExports.map(name => chords[name])));
+    ...chordExports.map(name => chords[name]), gradeWrittenNotes));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -158,4 +160,10 @@ test('Akkordmodul wird in den echten Generatoren verwendet', () => {
   assert.ok(bundle.includes('buildTriad(e,t,n,r,i)'));
   assert.ok(bundle.includes('invertChord(e,t)'));
   assert.ok(bundle.includes('chordSymbol(e,t,n)'));
+});
+
+
+test('Bewertungsmodul wird von der Anwendung geladen', () => {
+  assert.ok(bundle.includes("from './music/bewertung.mjs';"));
+  assert.ok(bundle.includes('gradeWrittenNotes(e,t,n,r)'));
 });
