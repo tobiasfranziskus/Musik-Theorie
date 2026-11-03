@@ -69,3 +69,25 @@ test('Multiple-Choice-Indizes der Aufgaben sind gültig', () => {
 test('Falsche Texteingabe wird in der Rückmeldung gezeigt', () => {
   assert.ok(html.includes('Deine Eingabe: ${_e.trim()}. ${N.explanation}'));
 });
+
+
+test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensystems', () => {
+  const topCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!0):null';
+  const bottomCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!1):null';
+  assert.equal(html.split(topCall).length - 1, 1, 'eine Notendarstellung für die obere Tischseite');
+  assert.equal(html.split(bottomCall).length - 1, 1, 'eine Notendarstellung für die untere Tischseite');
+  assert.ok(html.indexOf(topCall) < html.indexOf(bottomCall), 'Noten stehen an der jeweils richtigen Seite');
+  const begin = html.indexOf('function duelNotationForSide(');
+  const end = html.indexOf('function de(e,t)', begin);
+  assert.ok(begin >= 0 && end > begin, 'Notensystem-Renderer im Bundle vorhanden');
+  const jsx = { jsx: (tag, props) => ({ tag, props }) };
+  const render = Function('I', html.slice(begin, end) + ';return duelNotationForSide;')(jsx);
+  const svg = '<svg><text>f¹</text></svg>';
+  const top = render(svg, true);
+  const bottom = render(svg, false);
+  assert.equal(top.props.children.props.style.rotate, '180deg');
+  assert.equal(bottom.props.children.props.style.rotate, '0deg');
+  assert.equal(top.props.children.props.dangerouslySetInnerHTML.__html, svg);
+  assert.equal(bottom.props.children.props.dangerouslySetInnerHTML.__html, svg);
+  assert.match(html, /\\.duel-score-svg>svg\\{[^}]*max-height:9vh/);
+});
