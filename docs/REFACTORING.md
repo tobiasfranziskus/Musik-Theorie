@@ -78,7 +78,9 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 - [ ] Den verbleibenden React-Eingabezustand (Vorzeichenwahl, Rückgängig, Löschen, Antwort abgeben) vom Rendering trennen; iPad-/Safari-Touchverhalten anschließend praktisch erneut prüfen.
 - [x] Spielerinitialisierung, individuelle Antwortmischung und Punkteauswertung des Duells nach `src/duell/spielregeln.mjs` auslagern: **24.780 Originalvergleiche** für Spieler, Runden und Wertung einschließlich Zufallsfortsetzung ohne Abweichung (PR #19).
 - [x] Rundenfortschritt, Antwortaufnahme, Erkennung der letzten Antwort und Wechsel zur nächsten Frage nach `src/duell/rundensteuerung.mjs` auslagern. **36.499 deterministische Referenzvergleiche** gegen den bisherigen Code ohne Abweichung (PR #20).
-- [ ] Musikduell: Aufgabenpool, echte Timer-/Intervallverwaltung und Duellansicht voneinander trennen. Der 100-ms-Browser-Timer und die React-Event-Sperren bleiben in PR #20 unverändert.
+- [x] Aufgabenpool (`src/duell/aufgabenpool.mjs`) einschließlich Kandidatenprüfung, MC-Umwandlung, Dubletten und Ersatzfragen auslagern; 6.600 deterministische Referenzvergleiche ohne Abweichung (PR #21).
+- [x] Den echten 100-ms-Rundentimer (`src/duell/timer.mjs`) mit injizierter Uhr und Intervall-API auslagern; 2.800 Zeitverläufe mit identischer Ablauf-/Callback-Reihenfolge (PR #21).
+- [ ] Musikduell: verbleibende React-Zustände und Duellansicht voneinander trennen. React-Event-Sperren und gegenüberliegende Notendarstellung weiterhin unverändert, iPad-Abnahme offen.
 - [ ] Duelllayout mit gegenüberliegenden Ansichten gezielt per Browser-/iPad-Abnahme testen; alle sichtbaren Änderungen gesondert freigeben.
 - [x] Frühere iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
 
