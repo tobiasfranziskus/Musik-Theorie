@@ -30,11 +30,12 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Vier Intervall-Aufgabengeneratoren inkl. Halb-/Ganztonschritte und Hören nach `src/aufgaben/intervalle.mjs` auslagern; **5.600 deterministische Vergleiche ohne Abweichung** (PR #10).
 - [x] Vier Tonleiter-Aufgabengeneratoren nach `src/aufgaben/tonleitern.mjs` auslagern: Dur, Moll, Chromatik und Ganztonleitern; **5.600 deterministische Vergleiche ohne Abweichung** (PR #11).
 - [x] Sechs Dreiklang-Aufgabengeneratoren inkl. Umkehrungen, freier Eingabe und Hörakkorden nach `src/aufgaben/akkorde.mjs` auslagern. **8.400 deterministische Aufgabenvergleiche** und **9.800 Antwortprüfungen**, jeweils ohne Abweichung (PR #12).
+- [x] Fünf Rhythmusgeneratoren nach `src/aufgaben/rhythmus.mjs` auslagern (Noten-/Pausenwerte, Pausen erkennen, Taktstrich, Triolen): **5.200 deterministische Aufgabenerzeugungen und Zufallsfortsetzungen ohne Abweichung** (PR #13).
 - [ ] Weitere Generatorgruppen und Komponenten aus dem Bundle trennen.
 
 ### Inventur der Aufgabengeneratoren (13 Themenbereiche)
 
-Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davon **18 modularisiert** und **14 noch im Bundle**. Die beiden Hörgeneratoren sind bereits in die Intervall- und Akkordmodule übernommen.
+Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davon **23 modularisiert** und **9 noch im Bundle**. Die beiden Hörgeneratoren sind bereits in die Intervall- und Akkordmodule übernommen.
 
 | Bereich | Generatoren | Zustand |
 | --- | --- | --- |
@@ -44,7 +45,7 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 | Dreiklänge | 5 | ausgelagert (#12) |
 | Tonleitern | 4 | ausgelagert (#11) |
 | Gehörbildung | 2 | ausgelagert (#10, #12) |
-| Noten-/Pausenwerte | 5 | offen |
+| Noten-/Pausenwerte | 5 | ausgelagert (#13) |
 | Haupt-/Nebendreiklänge | 2 | offen |
 | Weitere Akkorde | 2 | offen |
 | Quintenzirkel | 1 | offen |
@@ -52,7 +53,7 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 | Kadenz | 2 | offen |
 | Harmonische Analyse | 1 | offen |
 
-**Empfohlene Reihenfolge:** Zunächst die fünf rhythmischen Generatoren (unabhängiger Bereich), dann Quintenzirkel/Vorzeichen, anschließend die vier Funktions-/Akkordgeneratoren und zuletzt Kadenz/Harmonieanalyse. Vor jedem Auslagern Zufallsfolge, Notation, Antwortvalidierung und Browser-Start gegen den bestehenden Code prüfen.
+**Empfohlene Reihenfolge:** Als Nächstes Quintenzirkel/Vorzeichen (zwei Generatoren), danach Haupt-/Nebendreiklänge und weitere Akkorde (vier), anschließend Kadenz/Harmonieanalyse (drei). Vor jedem Auslagern Zufallsfolge, Notation, Antwortvalidierung und Browser-Start gegen den bestehenden Code prüfen.
 
 **Hinweis zur Codequalität:** PR #12 verschiebt die sechs bisher kompakten Generatorfunktionskörper in ein eigenes Modul mit benannter Factory und unabhängigen Tests. Der eigentliche Funktionskörper wird noch in einem separaten, rein kosmetisch/refaktorierenden Schritt lesbar formatiert; keine Mischänderungen an der Aufgabenlogik.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
