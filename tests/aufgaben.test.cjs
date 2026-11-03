@@ -49,6 +49,8 @@ test.before(async () => {
   const { MAJOR_FUNCTIONS, createHarmonyTaskGenerators } = await import(harmonyTasksUrl);
   const cadenceTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'kadenz-analyse.mjs')).href;
   const { createCadenceAnalysisTaskGenerators } = await import(cadenceTasksUrl);
+  const notationUrl = pathToFileURL(path.join(root, 'src', 'ui', 'notensystem.mjs')).href;
+  const { createNotationRenderers } = await import(notationUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -65,14 +67,15 @@ test.before(async () => {
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
     'createChordTaskGenerators', 'createRhythmTaskGenerators',
     'createKeySignatureTaskGenerators', 'MAJOR_FUNCTIONS', 'createHarmonyTaskGenerators',
-    'createCadenceAnalysisTaskGenerators',
+    'createCadenceAnalysisTaskGenerators', 'createNotationRenderers',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
     ...chordExports.map(name => chords[name]), gradeWrittenNotes,
     createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
     createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators,
-    MAJOR_FUNCTIONS, createHarmonyTaskGenerators, createCadenceAnalysisTaskGenerators));
+    MAJOR_FUNCTIONS, createHarmonyTaskGenerators, createCadenceAnalysisTaskGenerators,
+    createNotationRenderers));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
