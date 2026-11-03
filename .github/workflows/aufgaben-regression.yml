@@ -27,6 +27,7 @@ jobs:
           node --check src/aufgaben/tonleitern.mjs
           node --check src/aufgaben/akkorde.mjs
           node --check src/aufgaben/rhythmus.mjs
+          node --check src/aufgaben/quintenzirkel-vorzeichen.mjs
       - name: Noten- und Aufgabentests
         run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)
