@@ -51,6 +51,8 @@ test.before(async () => {
   const { createCadenceAnalysisTaskGenerators } = await import(cadenceTasksUrl);
   const notationUrl = pathToFileURL(path.join(root, 'src', 'ui', 'notensystem.mjs')).href;
   const { createNotationRenderers } = await import(notationUrl);
+  const poolUrl = pathToFileURL(path.join(root, 'src', 'duell', 'aufgabenpool.mjs')).href;
+  const { createDuelQuestionPool } = await import(poolUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -67,7 +69,7 @@ test.before(async () => {
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
     'createChordTaskGenerators', 'createRhythmTaskGenerators',
     'createKeySignatureTaskGenerators', 'MAJOR_FUNCTIONS', 'createHarmonyTaskGenerators',
-    'createCadenceAnalysisTaskGenerators', 'createNotationRenderers',
+    'createCadenceAnalysisTaskGenerators', 'createNotationRenderers', 'createDuelQuestionPool',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
@@ -75,7 +77,7 @@ test.before(async () => {
     createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
     createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators,
     MAJOR_FUNCTIONS, createHarmonyTaskGenerators, createCadenceAnalysisTaskGenerators,
-    createNotationRenderers));
+    createNotationRenderers, createDuelQuestionPool));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
