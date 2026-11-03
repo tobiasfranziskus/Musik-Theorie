@@ -43,6 +43,8 @@ test.before(async () => {
   const { createChordTaskGenerators } = await import(chordTaskUrl);
   const rhythmTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'rhythmus.mjs')).href;
   const { createRhythmTaskGenerators } = await import(rhythmTaskUrl);
+  const keyTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'quintenzirkel-vorzeichen.mjs')).href;
+  const { createKeySignatureTaskGenerators } = await import(keyTasksUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -58,12 +60,13 @@ test.before(async () => {
     'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
     'createChordTaskGenerators', 'createRhythmTaskGenerators',
+    'createKeySignatureTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
     ...chordExports.map(name => chords[name]), gradeWrittenNotes,
     createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
-    createChordTaskGenerators, createRhythmTaskGenerators));
+    createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -238,4 +241,11 @@ test('Fünf Rhythmus-Aufgabengeneratoren werden tatsächlich aus dem Modul genut
     'rhythmTaskGenerators.barLine(e)',
     'rhythmTaskGenerators.triplet(e)',
   ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Quintenzirkel- und Vorzeichenaufgaben verwenden das neue Modul', () => {
+  assert.ok(bundle.includes("from './aufgaben/quintenzirkel-vorzeichen.mjs';"));
+  assert.ok(bundle.includes('keySignatureTasks.circleOfFifths()'));
+  assert.ok(bundle.includes('keySignatureTasks.readKeySignature(e)'));
 });
