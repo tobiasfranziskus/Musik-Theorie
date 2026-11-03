@@ -321,7 +321,7 @@ test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => 
     'scoreDuelRound(e,n.correct)',
     'ie(a.players),qt(a.anyCorrect)',
   ]) assert.ok(bundle.includes(call), call);
-  assert.ok(bundle.includes('performance.now()+r'), 'bestehender Zeitstart bleibt erhalten');
+  assert.ok(bundle.includes('now:()=>performance.now()'), 'Zeitquelle bleibt performance.now');
   assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Tischseite bleibt gedreht');
   assert.ok(bundle.includes('style:{rotate:t?`180deg`:`0deg`}'),
     'Notensystem wird weiter gegengedreht');
@@ -331,8 +331,8 @@ test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => 
 test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', () => {
   assert.ok(bundle.includes("from './duell/rundensteuerung.mjs';"));
   for (const call of [
-    'duelTimeProgress(performance.now(),i,r)',
-    're(t.percent),t.expired',
+    'T.current=startDuelRoundTimer(',
+    'onProgress:percent=>re(percent)',
     'recordDuelAnswer(E.current,e,t,()=>performance.now())',
     'allDuelPlayersAnswered(i)',
     'nextDuelRoundIndex(g,m.length)',
