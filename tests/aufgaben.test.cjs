@@ -33,6 +33,8 @@ test.before(async () => {
   const chords = await import(chordsUrl);
   const gradingUrl = pathToFileURL(path.join(root, 'src', 'music', 'bewertung.mjs')).href;
   const { gradeWrittenNotes } = await import(gradingUrl);
+  const nameTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'notennamen.mjs')).href;
+  const { createNoteNameTaskGenerators } = await import(nameTasksUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -46,10 +48,11 @@ test.before(async () => {
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
     'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
+    'createNoteNameTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
-    ...chordExports.map(name => chords[name]), gradeWrittenNotes));
+    ...chordExports.map(name => chords[name]), gradeWrittenNotes, createNoteNameTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -166,4 +169,15 @@ test('Akkordmodul wird in den echten Generatoren verwendet', () => {
 test('Bewertungsmodul wird von der Anwendung geladen', () => {
   assert.ok(bundle.includes("from './music/bewertung.mjs';"));
   assert.ok(bundle.includes('gradeWrittenNotes(e,t,n,r)'));
+});
+
+
+test('Vier Notennamen-Aufgabengeneratoren werden aus dem Modul verwendet', () => {
+  assert.ok(bundle.includes("from './aufgaben/notennamen.mjs';"));
+  for (const call of [
+    'noteNameTaskGenerators.multipleChoice(e)',
+    'noteNameTaskGenerators.enharmonic()',
+    'noteNameTaskGenerators.placement(e)',
+    'noteNameTaskGenerators.textEntry(e)',
+  ]) assert.ok(bundle.includes(call), call);
 });
