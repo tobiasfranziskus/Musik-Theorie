@@ -25,6 +25,8 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/ui/noteneingabe.mjs`: Touch- und Mausklicks über die SVG-Transformationsmatrix in die korrekte Notenposition umrechnen – unabhängig von React.
 - `src/duell/spielregeln.mjs`: Spielerinitialisierung, Antwortmischung je Spieler und Punktevergabe (Serien- und Schnelligkeitsbonus) ohne React oder DOM.
 - `src/duell/rundensteuerung.mjs`: Rundenzeitberechnung, Antwortaufnahme, vollständige Antwortprüfung und nächster Fragenindex, ohne Browser-Timer und React.
+- `src/duell/aufgabenpool.mjs`: Auswahl geeigneter Aufgaben, MC-Umwandlung, Dublettenprüfung, SVG-Ausgabe und Ersatzfragen ohne React.
+- `src/duell/timer.mjs`: native 100-ms-Intervallverwaltung mit injizierbarer Uhr und Browser-Timer-API.
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
@@ -44,6 +46,8 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `tests/noteneingabe-touch.test.mjs`: SVG-Touchkoordinaten, drei Schlüssel, Eingabegrenzen, Vorzeichen, Skalierung und 180°-Drehung.
 - `tests/duell-spielregeln.test.mjs`: zwei bis vier Spieler, individuelle Antwortreihenfolge, Serienbonus, Schnellstenbonus und neue Runden.
 - `tests/duell-rundensteuerung.test.mjs`: Rundenende durch Zeitablauf oder letzte Antwort, zeitgestempelte Spielerantworten und Fragenwechsel.
+- `tests/duell-aufgabenpool.test.mjs`: Themenfilter, unzulässige Übungen, Duplikate, Noten-SVG und Ersatzfragen.
+- `tests/duell-timer.test.mjs`: 100-ms-Timer, abgelaufene Zeit, Stoppen und Reihenfolge der Callbacks.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -81,6 +85,8 @@ node --check src/ui/notensystem.mjs
 node --check src/ui/noteneingabe.mjs
 node --check src/duell/spielregeln.mjs
 node --check src/duell/rundensteuerung.mjs
+node --check src/duell/aufgabenpool.mjs
+node --check src/duell/timer.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
