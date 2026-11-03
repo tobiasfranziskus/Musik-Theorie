@@ -17,3 +17,5 @@ jobs:
         run: node --check src/app.js
       - name: Noten- und Aufgabentests
         run: node --test tests/aufgaben.test.cjs
+      - name: Browser-Smoke-Test (Chrome)
+        run: node tests/browser-smoke.cjs
