@@ -16,6 +16,12 @@ Die Website führt ein **lokales Fehlerprotokoll** und zeigt eine kompakte Über
 
 Ein **Unterrichtslink** enthält nur den Themen- und Übungsplan als URL-Parameter, keine Schülerdaten. Auf einem anderen iPad wird damit die Übung direkt gestartet. QR-Freigabe und getrennte Lernprofile sind als weitere Ausbaustufen vorgesehen.
 
+## Lernprofile und zeitfreies Duell
+
+Auf gemeinsam genutzten Geräten sind die Lernstände nun pro lokalem Profil getrennt. Das bisherige **Standardprofil** behält die vorhandenen XP-, Punkte- und Statistikdaten. Für Gruppen oder Lernende lassen sich weitere Profile anlegen und wieder löschen. Im **Gastmodus** bleiben weder Fortschritte noch Fehler im lokalen Speicher zurück. Es wird kein Konto und kein Server benötigt; ein Profil existiert ausschließlich in diesem Browser.
+
+Im Musikduell gibt es zusätzlich **5 Fragen** als kurze Runde und die Zeitwahl **„Ohne Zeitlimit (Übungsduell)“**. Dabei läuft kein Browser-Intervall; wie bisher wird die Runde abgeschlossen, sobald alle geantwortet haben. Die gewohnten Zeit- und Punkteregeln bleiben für reguläre Duelle erhalten.
+
 ## Dateien
 
 - `index.html`: schlanker Einstiegspunkt mit Metadaten und Lizenzhinweis.
