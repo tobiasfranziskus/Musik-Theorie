@@ -14,7 +14,13 @@ Neben **Üben** und **Anfänger** bietet jedes Thema **⚙️ Einstellen**: 5–
 
 Die Website führt ein **lokales Fehlerprotokoll** und zeigt eine kompakte Übersicht der häufigsten Schwierigkeiten. Persönliche Konten oder ein Server sind dafür nicht erforderlich. Bei gemeinschaftlich genutzten iPads sind die Daten vorerst noch an den Browser gebunden.
 
-Ein **Unterrichtslink** enthält nur den Themen- und Übungsplan als URL-Parameter, keine Schülerdaten. Auf einem anderen iPad wird damit die Übung direkt gestartet. QR-Freigabe und getrennte Lernprofile sind als weitere Ausbaustufen vorgesehen.
+Ein **Unterrichtslink** enthält nur den Themen- und Übungsplan als URL-Parameter, keine Schülerdaten. Auf einem anderen iPad wird damit die Übung direkt gestartet. Unter **„QR-Code für Schüler-iPads anzeigen“** lässt sich derselbe Link als QR-Code darstellen und mit der iPad-Kamera öffnen. Der QR-Code wird **vollständig lokal im Browser** erzeugt; es gibt keine Anfrage an einen fremden QR-Dienst.
+
+### Technische Umsetzung der QR-Freigabe
+
+- `src/unterricht/qr-code.mjs`: kodiert einen HTTP(S)-Unterrichtslink in die druck- und scanbare SVG-Geometrie mit vier Modulen Weißrand.
+- `src/unterricht/vendor/qrcode.mjs`: gebündelter QR-Encoder von Kazuhiko Arase (MIT), inklusive vollständigem Lizenztext unter `src/unterricht/vendor/LICENSE.qrcode-generator.txt`. Keine Laufzeitabhängigkeit zu einem CDN oder einem Dienst.
+- `tests/unterricht-qr.test.mjs`: Tests für URL-Sicherheit, Kodierung, Ruhezonen, Finder-Muster und die einklappbare QR-Anzeige.
 
 ## Lernprofile und zeitfreies Duell
 
