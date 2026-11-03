@@ -324,3 +324,22 @@ test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => 
   assert.ok(bundle.includes('style:{rotate:t?`180deg`:`0deg`}'),
     'Notensystem wird weiter gegengedreht');
 });
+
+
+test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', () => {
+  assert.ok(bundle.includes("from './duell/rundensteuerung.mjs';"));
+  for (const call of [
+    'duelTimeProgress(performance.now(),i,r)',
+    're(t.percent),t.expired',
+    'recordDuelAnswer(E.current,e,t,()=>performance.now())',
+    'allDuelPlayersAnswered(i)',
+    'nextDuelRoundIndex(g,m.length)',
+  ]) assert.ok(bundle.includes(call), call);
+  assert.ok(bundle.includes('window.setInterval('), 'der echte 100-ms-Timer bleibt in React');
+  assert.ok(bundle.includes('},100);T.current=a'), '100-ms-Intervall unverändert');
+  assert.ok(bundle.includes('if(D.current)return;let n=E.current[e];if(n.answer!==null)return'),
+    'Doppelantworten und abgeschlossene Runden bleiben gesperrt');
+  assert.ok(bundle.includes('se(E.current,`Zeit abgelaufen!`,e)'), 'Fristende weiterhin direkt ausgewertet');
+  assert.ok(bundle.includes('se(i,`Alle haben geantwortet!`,m[g])'), 'letzte Antwort beendet Runde');
+  assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Spieleransicht bleibt erhalten');
+});
