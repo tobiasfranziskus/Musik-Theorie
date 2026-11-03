@@ -26,6 +26,12 @@ Ein **Unterrichtslink** enthält nur den Themen- und Übungsplan als URL-Paramet
 
 Im selben Bereich lässt sich die gewählte Übung über **„Auftragskarte mit QR-Code drucken“** als A4-Karte mit Thema, Aufgabenart, Notenschlüssel, Aufgabenanzahl, QR-Code, Link sowie Namens- und Datumsfeld ausgeben. Die Druckansicht erscheint nur beim Drucken; die normale Seite bleibt unverändert. Auf dem iPad öffnet der Knopf den vom Browser angebotenen Druckdialog. Die PDF-Speicherung erfolgt gegebenenfalls über die Druckoptionen des Geräts, nicht über einen Server.
 
+## Getrennte Notenbeispiele im Musikduell
+
+Bei Aufgaben mit Notengrafik erhält jede Tischseite jetzt **ein eigenes, gleich hohes Notenfeld** in der Bildschirmmitte. Die Felder sind sichtbar voneinander abgegrenzt und verhindern, dass sich größere oder gedrehte SVG-Notenbeispiele übermalen. Die Noten für die gegenüberliegende Tischseite bleiben um 180° gedreht. Aufgaben ohne Notengrafik behalten ihr bisheriges Layout; Spielerzuordnung, Noteninhalt, Punkte und Timer sind unverändert.
+
+Die Änderung nutzt feste Grid-Reihen mit begrenzter SVG-Darstellung statt zwei frei überlaufender Notenansichten. Der Offline-Cache wird mit Revision `2026-11-03-v3` erneuert. Die neuen Tests kontrollieren die Trennung, Orientierung und bisherigen Referenzgrafiken. Eine manuelle Ansicht auf einem echten iPad im Querformat ist weiterhin sinnvoll.
+
 ## Lernprofile und zeitfreies Duell
 
 Auf gemeinsam genutzten Geräten sind die Lernstände nun pro lokalem Profil getrennt. Das bisherige **Standardprofil** behält die vorhandenen XP-, Punkte- und Statistikdaten. Für Gruppen oder Lernende lassen sich weitere Profile anlegen und wieder löschen. Im **Gastmodus** bleiben weder Fortschritte noch Fehler im lokalen Speicher zurück. Es wird kein Konto und kein Server benötigt; ein Profil existiert ausschließlich in diesem Browser.
@@ -91,7 +97,7 @@ Auf Touchgeräten werden interaktive Notensysteme um den Faktor 1,5 und statisch
 
 Die Vorzeichentasten und Kontrollknöpfe der Noteneingabe haben auf Touchgeräten eine Trefferfläche von mindestens **44 × 44 Pixeln**. Die Vorzeichen sind zusätzlich mit gesprochenen Bezeichnungen und ihrem Auswahlzustand versehen. Der Hinweis über dem Notensystem erklärt das seitliche Verschieben.
 
-Die eigentlichen SVG-Noten, musikalischen Koordinaten und die Bewertung wurden nicht verändert. Die bestehende Transformationsmatrix berücksichtigt auch Vergrößerung, Scrollposition und 180°-Drehung; zusätzliche deterministische Regressionen sichern diese Fälle ab. Der Offline-Cache wird mit Revision `2026-11-03-v2` erneuert. **Eine reale iPad-/Safari-Touchabnahme steht weiterhin aus.**
+Die eigentlichen SVG-Noten, musikalischen Koordinaten und die Bewertung wurden nicht verändert. Die bestehende Transformationsmatrix berücksichtigt auch Vergrößerung, Scrollposition und 180°-Drehung; zusätzliche deterministische Regressionen sichern diese Fälle ab. Der Offline-Cache wird mit Revision `2026-11-03-v3` erneuert. **Eine reale iPad-/Safari-Touchabnahme steht weiterhin aus.**
 
 ## iPad: Offline-Nutzung und Home-Bildschirm
 
