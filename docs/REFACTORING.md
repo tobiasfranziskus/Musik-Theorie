@@ -79,7 +79,8 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 - [x] Spielerinitialisierung, individuelle Antwortmischung und Punkteauswertung des Duells nach `src/duell/spielregeln.mjs` auslagern: **24.780 Originalvergleiche** für Spieler, Runden und Wertung einschließlich Zufallsfortsetzung ohne Abweichung (PR #19).
 - [x] Rundenfortschritt, Antwortaufnahme, Erkennung der letzten Antwort und Wechsel zur nächsten Frage nach `src/duell/rundensteuerung.mjs` auslagern. **36.499 deterministische Referenzvergleiche** gegen den bisherigen Code ohne Abweichung (PR #20).
 - [x] Duell-Aufgabenpool (`src/duell/aufgabenpool.mjs`) ohne Verhaltensänderung ausgelagert: Themenfilter, Eignungsprobe, Duplikatschutz, SVG-Renderer und Rückfallfragen. **1.250 deterministische Szenariovergleiche ohne Abweichung** (PR #21).
-- [ ] Den realen 100-ms-Timer und die Lifecycle-Verwaltung gesondert modularisieren; die Duellansicht und React-Event-Sperren bleiben unverändert.
+- [x] Echte 100-ms-Rundenuhr nach `src/duell/timer.mjs` ausgelagert (Start, Fortschrittsanzeige, automatischer Zeitabbruch, Intervall-ID): **1.800 simulierte Referenzvergleiche** gegen den bisherigen Browser-Timer ohne Abweichung (PR #22). Die React-Lifecycle-Bereinigung über `T.current` bleibt kompatibel und unverändert.
+- [ ] Die verbliebenen React-Event-Sperren und die Duellansicht getrennt prüfen und bei Bedarf modularisieren.
 - [ ] Duellansicht erst nach gesonderter Abnahme überarbeiten.
 - [ ] Duelllayout mit gegenüberliegenden Ansichten gezielt per Browser-/iPad-Abnahme testen; alle sichtbaren Änderungen gesondert freigeben.
 - [x] Frühere iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
