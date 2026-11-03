@@ -29,7 +29,32 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Vier Notennamen-Aufgabengeneratoren nach `src/aufgaben/notennamen.mjs` auslagern: Multiple Choice, Enharmonik, Notensetzen und Texteingabe. **3.200 deterministische Aufgabenvergleiche einschließlich Zufallsfolge ohne Abweichung** (PR #9).
 - [x] Vier Intervall-Aufgabengeneratoren inkl. Halb-/Ganztonschritte und Hören nach `src/aufgaben/intervalle.mjs` auslagern; **5.600 deterministische Vergleiche ohne Abweichung** (PR #10).
 - [x] Vier Tonleiter-Aufgabengeneratoren nach `src/aufgaben/tonleitern.mjs` auslagern: Dur, Moll, Chromatik und Ganztonleitern; **5.600 deterministische Vergleiche ohne Abweichung** (PR #11).
+- [x] Sechs Dreiklang-Aufgabengeneratoren inkl. Umkehrungen, freier Eingabe und Hörakkorden nach `src/aufgaben/akkorde.mjs` auslagern. **8.400 deterministische Aufgabenvergleiche** und **9.800 Antwortprüfungen**, jeweils ohne Abweichung (PR #12).
 - [ ] Weitere Generatorgruppen und Komponenten aus dem Bundle trennen.
+
+### Inventur der Aufgabengeneratoren (13 Themenbereiche)
+
+Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davon **18 modularisiert** und **14 noch im Bundle**. Die beiden Hörgeneratoren sind bereits in die Intervall- und Akkordmodule übernommen.
+
+| Bereich | Generatoren | Zustand |
+| --- | --- | --- |
+| Notennamen | 4 | ausgelagert (#9) |
+| Halb-/Ganztonschritte | 1 | ausgelagert (#10) |
+| Intervalle | 2 | ausgelagert (#10) |
+| Dreiklänge | 5 | ausgelagert (#12) |
+| Tonleitern | 4 | ausgelagert (#11) |
+| Gehörbildung | 2 | ausgelagert (#10, #12) |
+| Noten-/Pausenwerte | 5 | offen |
+| Haupt-/Nebendreiklänge | 2 | offen |
+| Weitere Akkorde | 2 | offen |
+| Quintenzirkel | 1 | offen |
+| Vorzeichen lesen | 1 | offen |
+| Kadenz | 2 | offen |
+| Harmonische Analyse | 1 | offen |
+
+**Empfohlene Reihenfolge:** Zunächst die fünf rhythmischen Generatoren (unabhängiger Bereich), dann Quintenzirkel/Vorzeichen, anschließend die vier Funktions-/Akkordgeneratoren und zuletzt Kadenz/Harmonieanalyse. Vor jedem Auslagern Zufallsfolge, Notation, Antwortvalidierung und Browser-Start gegen den bestehenden Code prüfen.
+
+**Hinweis zur Codequalität:** PR #12 verschiebt die sechs bisher kompakten Generatorfunktionskörper in ein eigenes Modul mit benannter Factory und unabhängigen Tests. Der eigentliche Funktionskörper wird noch in einem separaten, rein kosmetisch/refaktorierenden Schritt lesbar formatiert; keine Mischänderungen an der Aufgabenlogik.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
 - Neue Module zuerst durch Äquivalenztests gegen den vorhandenen Code absichern; dann einzeln an die Oberfläche anbinden.
 
