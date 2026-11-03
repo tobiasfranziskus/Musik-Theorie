@@ -112,10 +112,12 @@ export function createNoteNameTaskGenerators({
     return {
       mode:'text',
       q:'Wie heißt dieser Ton im ' + clefLabel(clef) +
-        '? Schreibe den Notennamen in deutscher Schreibweise (z.B. "c", "C", "c¹", "es").',
+        (beginner
+          ? '? Schreibe den Stammton ohne Vorzeichen (z.B. "c", "C", "c¹").'
+          : '? Schreibe den Notennamen in deutscher Schreibweise (z.B. "c", "C", "c¹", "es").'),
       staff:{clef,notes:[note]},
       hint:'Kleinbuchstabe = kleine Oktave (c) · Großbuchstabe = große Oktave (C) · Hochzahl = höhere Oktave (c¹, c²). SPN (c3, c4) wird auch akzeptiert.',
-      placeholder:'z.B. es',
+      placeholder:beginner ? 'z.B. c¹' : 'z.B. es',
       checkFn:input => {
         const candidates = parseGermanNoteInput(input);
         return candidates.length
