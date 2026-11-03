@@ -57,7 +57,7 @@ server.listen(0, '127.0.0.1', () => {
   });
   child.on('close', code => {
     clearTimeout(timer);
-    const rendered = /<div id="root">[\\s\\S]*Musiktheorie Interaktiv/.test(dom);
+    const rendered = /<div id="root">[\s\S]*Musiktheorie Interaktiv/.test(dom);
     const hasTasks = dom.includes('Notennamen');
     const ok = code === 0 && rendered && hasTasks;
     console.log(JSON.stringify({ browser, exitCode: code, appRendered: rendered, tasksVisible: hasTasks }));
