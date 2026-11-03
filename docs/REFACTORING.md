@@ -22,7 +22,8 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] 720 Darstellungsfälle und 3.255 Eingabevarianten gegen die bisherigen Funktionen auf identische Ergebnisse prüfen; zusätzlich unabhängige Unit-Tests und Browser-Smoke-Test.
 - [x] Tonhöhenkern (`src/music/tonhoehen.mjs`): diatonische Indizes, Oktavumrechnung, chromatische Halbtonwerte ausgelagert; Vergleich mit der bestehenden Implementierung über 2.581 Fälle ohne Abweichung.
 - [ ] Weitere musiktheoretische Berechnungen isolieren.
-- [ ] Intervalle, Tonleitern, Akkorde und weitere Berechnungen in eigenständig testbare Module überführen.
+- [x] Intervallkatalog und Transposition nach `src/music/intervalle.mjs` auslagern; **222.642 Referenzfälle ohne Abweichung**, abhängige Tonhöhenfunktion über ES-Import.
+- [ ] Tonleitern, Akkorde und weitere Berechnungen in eigenständig testbare Module überführen.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
 - Neue Module zuerst durch Äquivalenztests gegen den vorhandenen Code absichern; dann einzeln an die Oberfläche anbinden.
 
