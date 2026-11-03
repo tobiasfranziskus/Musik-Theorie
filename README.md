@@ -12,12 +12,14 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/music/intervalle.mjs`: der 13-teilige Intervallkatalog und diatonisch korrekt geschriebene Auf-/Abwärtstranspositionen.
 - `src/music/tonleitern.mjs`: Dur-/Moll-Tonleitervorlagen und Tonleiterberechnung, inklusive Chromatik und Ganztonleitern.
 - `src/music/akkorde.mjs`: Dreiklänge, Umkehrungen, Vorzeichenprüfung und Akkordbezeichnungen.
+- `src/music/bewertung.mjs`: eigenständige Bewertung von Noteneingaben (Reihenfolge, enharmonische Gleichheit und Duplikate).
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
 - `tests/intervalle.test.mjs`: Intervallnamen, enharmonische Schreibweisen und Abwärtstransposition.
 - `tests/tonleitern.test.mjs`: Tonleiter-Vorlagen, Halbtonabstände und Vorzeichen.
 - `tests/akkorde.test.mjs`: Dur/Moll/verminderte/übermäßige Dreiklänge, Umkehrungen und Akkordnamen.
+- `tests/bewertung.test.mjs`: Regressionstests für die Bewertung geordneter und gestapelter Noten.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -42,12 +44,13 @@ node --check src/music/tonhoehen.mjs
 node --check src/music/intervalle.mjs
 node --check src/music/tonleitern.mjs
 node --check src/music/akkorde.mjs
+node --check src/music/bewertung.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
 
 ## Wartbarkeit
 
-Die Trennung aus `index.html`, JS und CSS ist **Stufe 1** des Refactorings. In **Stufe 2** werden zuerst deutsche Notennamen/Oktaven aus `src/app.js` in ein eigenständig testbares ES-Modul ausgelagert. Der übrige Code in `src/app.js` bleibt vorerst ein gebündelter/minifizierter Quellstand. Eine weitere Trennung in Musiktheorie, Aufgabengeneratoren, Auswertung und UI erfolgt schrittweise mit Tests. Siehe [Refactoring-Plan](docs/REFACTORING.md).
+**Stufe 1 und die fachlichen Teilmodule von Stufe 2 sind in `main` integriert.** Notennamen, Tonhöhen, Intervalle, Tonleitern und Akkorde sind als ES-Module testbar. Mit PR #8 folgt die Bewertung der Noteneingaben. Der verbleibende React- und Generatorcode in `src/app.js` ist noch gebündelt/minifiziert; Aufgabensteuerung und Oberfläche werden in späteren PRs schrittweise getrennt. Siehe [Refactoring-Plan](docs/REFACTORING.md).
 
 Änderungen an Fragen, Notation, Eingaben und Bewertung werden möglichst durch Tests abgesichert. Die öffentliche `main`-Version bleibt bis zur Freigabe eines PR unverändert.
