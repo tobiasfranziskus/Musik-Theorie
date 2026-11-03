@@ -8,6 +8,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/app.js`: derzeit der **unveränderte, gebündelte** React-/Anwendungscode aus der ursprünglichen HTML-Datei.
 - `src/styles.css`: der **unveränderte, gebündelte** CSS-Code.
 - `tests/aufgaben.test.cjs`: Regressionstests für Notennamen, Lösungen, Duell und Dateistruktur.
+- `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
 ## Lokal starten
@@ -27,6 +28,7 @@ Voraussetzung: Node.js 22 oder neuer. Externe npm-Abhängigkeiten sind nicht erf
 ```bash
 node --check src/app.js
 node --test tests/aufgaben.test.cjs
+node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
 
 ## Wartbarkeit
