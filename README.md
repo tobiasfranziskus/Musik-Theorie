@@ -28,6 +28,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/duell/aufgabenpool.mjs`: Fragenpool mit Themenfilter, Aufgaben-Konvertierung, Duplikatschutz, Notensystem-SVG und Ersatzfragen unabhängig von React.
 - `src/duell/timer.mjs`: echte Rundenuhr mit 100-ms-Browser-Intervall, Zeitfortschritt, selbständigem Zeitablauf-Abbruch und in Tests austauschbarer Uhr.
 - `src/duell/ansicht.mjs`: zustandslose JSX-Teilansichten für beide gegenüberliegenden Notensysteme und die individuellen Spieler-Antwortfelder.
+- `src/duell/sitzung.mjs`: React-Hook mit sämtlichen bisherigen Duell-Zuständen, Event-Sperren, Spieleraktionen und Timer-Cleanup (ohne eigene Darstellung).
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
@@ -50,6 +51,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `tests/duell-aufgabenpool.test.mjs`: Themenfilter, Duplikate, Hörübungen ausschließen, Rendering und Fallback-Logik.
 - `tests/duell-timer.test.mjs`: Intervallstart, Fortschrittswerte, Ablauf-Reihenfolge und ID-Rückgabe für mehrere Rundenuhren.
 - `tests/duell-ansicht.test.mjs`: feste Referenzprüfsummen der beiden Tischrichtungen und sechs Spielerzustände, Antwort-Buttons, Sperren und Farben.
+- `tests/duell-sitzung.test.mjs`: Regression der Hook-Reihenfolge, Doppelantwort-Sperre, Zeitablauf, Rundenende und Dialog-Cleanup gegen eingefrorenen Althook.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -90,6 +92,7 @@ node --check src/duell/rundensteuerung.mjs
 node --check src/duell/aufgabenpool.mjs
 node --check src/duell/timer.mjs
 node --check src/duell/ansicht.mjs
+node --check src/duell/sitzung.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
