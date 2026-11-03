@@ -398,3 +398,16 @@ test('Duell: Nur Notennamen bieten Violin- und Bassschlüssel ohne Altschlüssel
   assert.ok(duelSessionSource.includes('$t(o,u,noteClefs)'));
   assert.ok(bundle.includes('rotate-180'),'gegenüberliegende Anzeige bleibt erhalten');
 });
+
+test('Konfigurierbare Unterrichtsrunden und Links sind tatsächlich in React eingebunden', () => {
+  assert.ok(bundle.includes("from './unterricht/lernplan.mjs';"));
+  assert.ok(bundle.includes("from './unterricht/oberflaeche.mjs';"));
+  assert.ok(bundle.includes('generatePracticeRound({section:t,plan:selectedPlan'));
+  assert.ok(bundle.includes('readPracticeLink(window.location.search)'));
+  assert.ok(bundle.includes('practiceTopic&&(0,I.jsx)(PracticeSetup'));
+  assert.ok(bundle.includes('(0,I.jsx)(LearningProgress'));
+  assert.ok(bundle.includes('updateLearningErrors(learningErrors,N,e)'));
+  assert.ok(bundle.includes('musiktheorie_learning_errors_v1'));
+  assert.ok(bundle.includes('⚙️ Einstellen'));
+  assert.ok(bundle.includes('🔁 Fehler gezielt üben'));
+});
