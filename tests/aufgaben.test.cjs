@@ -127,5 +127,5 @@ test('Notennamen-Modul wird aus dem App-Bundle relativ geladen', () => {
 
 
 test('Intervall-Modul wird vom App-Bundle geladen', () => {
-  assert.match(bundle, /import \\{ INTERVALS, transposeDiatonic \\} from '\\.\\/music\\/intervalle\\.mjs';/);
+  assert.ok(bundle.includes("import { INTERVALS, transposeDiatonic } from './music/intervalle.mjs';"));
 });
