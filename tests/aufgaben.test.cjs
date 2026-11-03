@@ -27,12 +27,20 @@ test.before(async () => {
   const { diatonicIndex, noteFromDiatonicIndex, chromaticPitch } = await import(pitchUrl);
   const intervalUrl = pathToFileURL(path.join(root, 'src', 'music', 'intervalle.mjs')).href;
   const { INTERVALS, transposeDiatonic } = await import(intervalUrl);
+  const scalesUrl = pathToFileURL(path.join(root, 'src', 'music', 'tonleitern.mjs')).href;
+  const scales = await import(scalesUrl);
+  const scaleExports = [
+    'MAJOR_KEYS', 'MINOR_KEYS', 'MAJOR_STEPS', 'NATURAL_MINOR_STEPS',
+    'HARMONIC_MINOR_STEPS', 'MELODIC_MINOR_STEPS', 'CHROMATIC_SCALES',
+    'WHOLE_TONE_SCALES', 'scaleFromSemitones', 'parseCompactPitch',
+  ];
   ({ M, N, Qt, Et, ye } = Function(
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
-    'INTERVALS', 'transposeDiatonic',
+    'INTERVALS', 'transposeDiatonic', ...scaleExports,
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
-  )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch, INTERVALS, transposeDiatonic));
+  )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
+    INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name])));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -128,4 +136,11 @@ test('Notennamen-Modul wird aus dem App-Bundle relativ geladen', () => {
 
 test('Intervall-Modul wird vom App-Bundle geladen', () => {
   assert.ok(bundle.includes("import { INTERVALS, transposeDiatonic } from './music/intervalle.mjs';"));
+});
+
+
+test('Tonleitern werden über das eigenständige Modul geladen', () => {
+  assert.ok(bundle.includes("from './music/tonleitern.mjs';"));
+  assert.ok(bundle.includes('scaleFromSemitones(e,t,n,r)'));
+  assert.ok(bundle.includes('parseCompactPitch(e)'));
 });
