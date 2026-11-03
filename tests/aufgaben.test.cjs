@@ -309,3 +309,18 @@ test('Touch-Positionsberechnung ist von der React-Oberfläche getrennt', () => {
   assert.ok(bundle.includes('if(A.current)return'), 'Sperre laufender Animationen bleibt erhalten');
   assert.ok(bundle.includes('d&&fe([...de,d])'), 'ungültige Klicks bleiben folgenlos');
 });
+
+
+test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => {
+  assert.ok(bundle.includes("from './duell/spielregeln.mjs';"));
+  for (const call of [
+    'createDuelPlayers(i,f)',
+    'prepareDuelRoundPlayers(t,e.options)',
+    'scoreDuelRound(e,n.correct)',
+    'ie(a.players),qt(a.anyCorrect)',
+  ]) assert.ok(bundle.includes(call), call);
+  assert.ok(bundle.includes('performance.now()+r'), 'bestehender Zeitstart bleibt erhalten');
+  assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Tischseite bleibt gedreht');
+  assert.ok(bundle.includes('style:{rotate:t?`180deg`:`0deg`}'),
+    'Notensystem wird weiter gegengedreht');
+});
