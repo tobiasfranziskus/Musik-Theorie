@@ -17,6 +17,7 @@ jobs:
         run: |
           node --check src/app.js
           node --check src/music/notennamen.mjs
+          node --check src/music/tonhoehen.mjs
       - name: Noten- und Aufgabentests
         run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)
