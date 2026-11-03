@@ -74,7 +74,8 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 ### Umsetzung und nächste Schritte
 
 - [x] SVG-Erzeugung für Notensystem, Klaviersystem und interaktive Eingabe nach `src/ui/notensystem.mjs` ausgelagert; **3.500 exakte SVG-Vergleiche (0 Abweichungen)** und **14 feste Referenzprüfsummen** mit drei Schlüsseln, Vorzeichen, Noten-/Pausenwerten, Triolen und Bewertungsfarben (PR #17).
-- [ ] Interaktive Eingabeverwaltung von SVG-Ausgabe trennen; Koordinaten-, Touch- und iPad-Verhalten gesondert prüfen.
+- [x] Koordinatenzuordnung der Touch-/Mauseingabe aus React nach `src/ui/noteneingabe.mjs` auslagern: **7.680 deterministische Vergleiche ohne Verhaltensabweichung** (einschließlich SVG-Drehung/Skalierung und leerer Klicks), zusätzliche Grenzwert- und Affintransformations-Tests (PR #18).
+- [ ] Den verbleibenden React-Eingabezustand (Vorzeichenwahl, Rückgängig, Löschen, Antwort abgeben) vom Rendering trennen; iPad-/Safari-Touchverhalten anschließend praktisch erneut prüfen.
 - [ ] Musikduell: Aufgabenpool, Fragen-/Zeitverwaltung, Punktelogik und Darstellung voneinander trennen.
 - [ ] Duelllayout mit gegenüberliegenden Ansichten gezielt per Browser-/iPad-Abnahme testen; alle sichtbaren Änderungen gesondert freigeben.
 - [x] Frühere iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
