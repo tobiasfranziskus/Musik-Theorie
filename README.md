@@ -85,6 +85,18 @@ Im Musikduell gibt es zusätzlich **5 Fragen** als kurze Runde und die Zeitwahl 
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
+## iPad: Offline-Nutzung und Home-Bildschirm
+
+Die App besitzt einen **Service Worker** (`sw.js`) und ein Web-App-Manifest. Beim ersten vollständigen Online-Besuch werden der Einstiegspunkt, Stylesheets, sämtliche derzeit benötigten JavaScript-Module und die QR-Freigabe in einem separaten Offline-Cache gespeichert. **Danach** lassen sich Übungen, Duell und bereits gespeicherte lokale Lernprofile ohne Internetverbindung aufrufen. Auch Unterrichtslinks mit URL-Parametern können offline geöffnet werden, sofern die App zuvor auf diesem iPad vollständig zwischengespeichert wurde.
+
+**Für das iPad:** Die Website einmal mit Internet in Safari öffnen, den ersten Ladevorgang abschließen, danach über **Teilen → Zum Home-Bildschirm** ablegen. Für einen verlässlichen ersten Offline-Test die Seite nach der Installation einmal neu laden und anschließend im Flugmodus öffnen. Die Offline-Kopie ist geräte- und browserspezifisch; Safari kann gespeicherte Daten bei Platzmangel oder längerem Nichtgebrauch entfernen. Noch nie aufgerufene externe Seiten und neu herunterzuladende Updates benötigen weiterhin Internet.
+
+**Aktualisierung:** Bei bestehender Internetverbindung verwendet der Service Worker stets die Netzwerkfassung und erneuert die zwischengespeicherten Dateien. Ein neues Release wird bei erneutem Online-Aufruf geladen; eine bereits laufende Übung wird **nicht automatisch unterbrochen**. Bei Änderungen der Offline-Dateiliste die Revision `CACHE_NAME` in `sw.js` erhöhen und den Precache-Inhalt prüfen. Die Installation eines neuen Workers wird erst nach vollständig erfolgreichem Precache aktiviert; alte Musiktheorie-Caches werden dann bereinigt. Nach einem Versionswechsel einmal neu laden.
+
+**Datenschutz:** Der Worker verarbeitet ausschließlich GET-Anfragen im eigenen GitHub-Pages-Unterverzeichnis; fremde Websites, Benutzeraktionen und persönliche API-Daten werden nicht zwischengespeichert. Lernprofile, Punkte und Fehlerstatistik bleiben weiterhin im lokalen Browser-Speicher und werden nicht hochgeladen.
+
+**Prüfung:** `tests/offline-service-worker.test.cjs` kontrolliert Cache-Vollständigkeit, Installationsabbruch, Aktivierung, Scope, Aktualisierung und parameterisierte Offline-Links mit einer simulierten Service-Worker-Umgebung. Die bisherige Chrome-Startprüfung bleibt bestehen. Eine echte iPad-/Safari-Prüfung im Flugmodus ist zusätzlich empfehlenswert, wird aber nicht als bereits durchgeführt behauptet.
+
 ## Lokal starten
 
 Die Dateien müssen über HTTP bereitgestellt werden, weil `index.html` ein JavaScript-Modul lädt.

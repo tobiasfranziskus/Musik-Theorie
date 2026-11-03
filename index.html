@@ -3,6 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Musiktheorie" />
+    <link rel="manifest" href="./manifest.webmanifest" />
     <title>Musiktheorie – Interaktiv & Musikduell</title>
     <meta name="description" content="Interaktive Musiktheorie-Lernplattform mit 13 Kapiteln, Noteneingabe im Notensystem, Gehörbildung, Mehrspieler-Musikduell und detaillierten Analysen." />
     <meta property="og:title" content="Musiktheorie – Interaktiv & Musikduell" />
@@ -108,6 +113,17 @@ INCLUDING ANY GENERAL, SPECIAL, INDIRECT, INCIDENTAL, OR CONSEQUENTIAL
 DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
-</script></body>
+</script>
+  <script>
+    // Nur HTTPS/GitHub Pages bzw. localhost: auf Dateisystem oder unsicherem
+    // HTTP bleibt die Anwendung ohne Offline-Zwischenspeicherung benutzbar.
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { scope: './' })
+          .then(registration => registration.update())
+          .catch(() => { /* Lernübungen funktionieren weiterhin online. */ });
+      });
+    }
+  </script></body>
 </html>
 
