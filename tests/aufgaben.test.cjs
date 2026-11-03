@@ -337,8 +337,9 @@ test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', (
     'allDuelPlayersAnswered(i)',
     'nextDuelRoundIndex(g,m.length)',
   ]) assert.ok(bundle.includes(call), call);
-  assert.ok(bundle.includes('window.setInterval('), 'der echte 100-ms-Timer bleibt in React');
-  assert.ok(bundle.includes('},100);T.current=a'), '100-ms-Intervall unverändert');
+  assert.ok(bundle.includes("from './duell/timer.mjs';"), 'der Intervalltimer liegt im eigenen Modul');
+  assert.ok(bundle.includes('schedule:(tick,ms)=>window.setInterval(tick,ms)'), 'Browser-Intervall bleibt erhalten');
+  assert.ok(bundle.includes('T.current=startDuelRoundTimer('), 'die neue Timer-Factory wird tatsächlich verwendet');
   assert.ok(bundle.includes('if(D.current)return;let n=E.current[e];if(n.answer!==null)return'),
     'Doppelantworten und abgeschlossene Runden bleiben gesperrt');
   assert.ok(bundle.includes('se(E.current,`Zeit abgelaufen!`,e)'), 'Fristende weiterhin direkt ausgewertet');
