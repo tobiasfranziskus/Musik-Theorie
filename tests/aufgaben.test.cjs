@@ -35,6 +35,8 @@ test.before(async () => {
   const { gradeWrittenNotes } = await import(gradingUrl);
   const nameTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'notennamen.mjs')).href;
   const { createNoteNameTaskGenerators } = await import(nameTasksUrl);
+  const intervalTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'intervalle.mjs')).href;
+  const { createIntervalTaskGenerators } = await import(intervalTaskUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -48,11 +50,12 @@ test.before(async () => {
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
     'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
-    'createNoteNameTaskGenerators',
+    'createNoteNameTaskGenerators', 'createIntervalTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
-    ...chordExports.map(name => chords[name]), gradeWrittenNotes, createNoteNameTaskGenerators));
+    ...chordExports.map(name => chords[name]), gradeWrittenNotes,
+    createNoteNameTaskGenerators, createIntervalTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -179,5 +182,16 @@ test('Vier Notennamen-Aufgabengeneratoren werden aus dem Modul verwendet', () =>
     'noteNameTaskGenerators.enharmonic()',
     'noteNameTaskGenerators.placement(e)',
     'noteNameTaskGenerators.textEntry(e)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Vier Intervall-Generatoren werden tatsächlich aus ihrem Modul aufgerufen', () => {
+  assert.ok(bundle.includes("from './aufgaben/intervalle.mjs';"));
+  for (const call of [
+    'intervalTaskGenerators.halfWholeStep(e)',
+    'intervalTaskGenerators.buildInterval(e)',
+    'intervalTaskGenerators.recognizeInterval(e)',
+    'intervalTaskGenerators.listeningInterval()',
   ]) assert.ok(bundle.includes(call), call);
 });
