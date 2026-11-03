@@ -353,7 +353,7 @@ test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', (
 test('Duell-Aufgabenpool wird aus eigenem Modul erzeugt', () => {
   assert.ok(bundle.includes("from './duell/aufgabenpool.mjs';"));
   assert.ok(bundle.includes('createDuelQuestionPool({sections:Et,shuffle:D,adaptQuestion:Qt,questionKey:Tt,renderGrandStaff:Rt,renderStaff:Lt,fallbackQuestions:Jt})'));
-  assert.ok(duelSessionSource.includes('let e=$t(o,u),t=createDuelPlayers(i,f)'), 'Start behält Aufgabenpool und Spielerstammdaten');
+  assert.ok(duelSessionSource.includes('let e=$t(o,u,noteClefs),t=createDuelPlayers(i,f)'), 'Duellstart übernimmt die gewählten Notennamen-Schlüssel');
 });
 
 test('Spielerpanels kommen aus dem unabhängigen Duell-Ansichtsmodul', () => {
@@ -369,10 +369,32 @@ test('Spielerpanels kommen aus dem unabhängigen Duell-Ansichtsmodul', () => {
 test('Duell-Hook bleibt bedingungslos vor dem Dialog-Render eingebunden', () => {
   assert.ok(bundle.includes("from './duell/sitzung.mjs';"));
   assert.ok(bundle.includes('createDuelSessionHook({React:_,generateQuestions:$t,playFeedback:qt})'));
-  assert.ok(bundle.includes('=useDuelSession(e);if(!e)return null;'),
+  assert.ok(bundle.includes('=useDuelSession(e,duelNoteClefs);if(!e)return null;'),
     'alle React-Hooks werden vor dem möglichen frühen Return ausgeführt');
   assert.ok(duelSessionSource.includes('if(D.current)return'), 'abgeschlossene Runden bleiben gegen Mehrfachwertung geschützt');
   assert.ok(duelSessionSource.includes('if(n.answer!==null)return'), 'zweifache Antwort wird blockiert');
   assert.ok(duelSessionSource.includes('D.current=!0,ee(!0)'), 'Sperre wird vor der Wertung aktiviert');
   assert.ok(duelSessionSource.includes('T.current&&clearInterval(T.current)'), 'alle Timer-Cleanup-Pfade bleiben erhalten');
+});
+
+test('Notennamen: Anfänger-Schaltfläche und normale Übungen bleiben getrennt', () => {
+  assert.ok(bundle.includes('🌱 Anfänger · ohne Vorzeichen'));
+  assert.ok(bundle.includes('onClick:()=>M(e,!1,!0)'));
+  assert.ok(bundle.includes('t.id===`noten`&&beginner?t.gens.filter(e=>e!==Te):t.gens'),
+    'Enharmonik wird in der Anfänger-Runde übersprungen');
+  assert.ok(bundle.includes('i=r(e,beginner)'),'Anfängerstatus wird an Generatoren übergeben');
+  assert.ok(bundle.includes('onClick:()=>M(u,f,beginnerPractice)'),
+    'Rundenwiederholung behält die Anfänger-Variante');
+});
+
+test('Duell: Nur Notennamen bieten Violin- und Bassschlüssel ohne Altschlüssel', () => {
+  assert.ok(bundle.includes('u===`noten`||u===`all`'),'Schlüsselauswahl erscheint nur bei Notennamen');
+  assert.ok(bundle.includes('Notenschlüssel für Notennamen'));
+  assert.ok(bundle.includes('{id:`treble`,label:`Violinschlüssel`},{id:`bass`,label:`Bassschlüssel`}'));
+  assert.ok(bundle.includes('t.length>1?t.filter(n=>n!==e.id):t'),
+    'der letzte ausgewählte Schlüssel bleibt aktiv');
+  assert.ok(bundle.includes('useDuelSession(e,duelNoteClefs)'),
+    'Auswahl erreicht die Duellsitzung');
+  assert.ok(duelSessionSource.includes('$t(o,u,noteClefs)'));
+  assert.ok(bundle.includes('rotate-180'),'gegenüberliegende Anzeige bleibt erhalten');
 });
