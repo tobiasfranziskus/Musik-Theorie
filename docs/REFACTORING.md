@@ -24,7 +24,8 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [ ] Weitere musiktheoretische Berechnungen isolieren.
 - [x] Intervallkatalog und Transposition nach `src/music/intervalle.mjs` auslagern; **222.642 Referenzfälle ohne Abweichung**, abhängige Tonhöhenfunktion über ES-Import.
 - [x] Tonleiter-Daten (Dur, natürlich/harmonisch/melodisch Moll, Chromatik und Ganztonleitern) und Erzeugungsfunktion nach `src/music/tonleitern.mjs` auslagern; 980 SPN-Eingaben und 1.050 Tonleitererzeugungen mit bisherigem Verhalten verglichen, 0 Unterschiede.
-- [ ] Akkorde und weitere Berechnungen in eigenständig testbare Module überführen.
+- [x] Akkordfunktionen (`src/music/akkorde.mjs`): Dreiklänge, Umkehrungen, Doppelvorzeichenfilter, Akkordkürzel und vollständige Bezeichnungen ausgelagert; **14.880 Funktionsvergleiche** mit bisherigem Verhalten ohne Abweichung.
+- [ ] Weitere Berechnungen und Generatoren aus dem Bundle trennen.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
 - Neue Module zuerst durch Äquivalenztests gegen den vorhandenen Code absichern; dann einzeln an die Oberfläche anbinden.
 
