@@ -6,7 +6,7 @@ const css=readFileSync(new URL('../src/styles.css',import.meta.url),'utf8');
 const app=readFileSync(new URL('../src/app.js',import.meta.url),'utf8');
 
 function sectionBetween(start,end){
-  const a=css.lastIndexOf(start);
+  const a=css.indexOf(start);
   assert.ok(a>=0, 'CSS-Feld muss definiert sein: '+start);
   const b=css.indexOf(end,a);
   assert.ok(b>a,'CSS-Ende fehlt: '+end);
