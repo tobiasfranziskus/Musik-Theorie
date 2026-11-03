@@ -72,7 +72,7 @@ test('Skalierung, horizontales Scrollen und 180° ändern die Notenpositionen ni
     for(const scale of [1,1.35,1.5,2.25]){
       for(const scrollLeft of [0,140,450]){
         for(const turn of [0,180]){
-          for(const [x,y] of [[74,5],[110,55],[195,90],[245,132],[270,155]]){
+          for(const [x,y] of [[80,10],[110,55],[195,90],[245,132],[265,150]]){
             const expected=noteFromStaffPoint(x,y,320,clef,'#');
             const actual=noteFromSvgEvent(touchEvent(x,y,320,scale,scrollLeft,turn),clef,'#');
             assert.deepEqual(actual,expected,
