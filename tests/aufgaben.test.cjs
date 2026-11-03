@@ -383,7 +383,7 @@ test('Notennamen: Anfänger-Schaltfläche und normale Übungen bleiben getrennt'
   assert.ok(bundle.includes('t.id===`noten`&&beginner?t.gens.filter(e=>e!==Te):t.gens'),
     'Enharmonik wird in der Anfänger-Runde übersprungen');
   assert.ok(bundle.includes('i0=gen(e,beginner)'),'Anfängerstatus wird an Generatoren übergeben');
-  assert.ok(bundle.includes('onClick:()=>M(u,f,beginnerPractice)'),
+  assert.ok(bundle.includes('onClick:()=>M(u,f,beginnerPractice,activePracticePlan)'),
     'Rundenwiederholung behält die Anfänger-Variante');
 });
 
