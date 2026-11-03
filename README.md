@@ -17,6 +17,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/aufgaben/intervalle.mjs`: vier Generatoren für Halb-/Ganztonschritte, Intervallbildung, Erkennung und Intervallhören.
 - `src/aufgaben/tonleitern.mjs`: vier Generatoren für Dur-, Moll-, chromatische und Ganztonleitern.
 - `src/aufgaben/akkorde.mjs`: sechs Generatoren für Dreiklänge, Umkehrungen, freie Akkordnamen und Akkordhören.
+- `src/aufgaben/rhythmus.mjs`: fünf Generatoren für Notenwerte, Pausen, Taktstrich und Triolen.
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
@@ -28,6 +29,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `tests/intervall-generatoren.test.mjs`: Intervall-Aufgabengeneratoren und Hörintervalle.
 - `tests/tonleiter-generatoren.test.mjs`: Vier Tonleiter-Aufgabentypen, Mollvarianten und Oktavlagen.
 - `tests/akkord-generatoren.test.mjs`: sechs Akkordgeneratoren, Umkehrungen und freie Akkordnamen.
+- `tests/rhythmus-generatoren.test.mjs`: alle fünf Rhythmusaufgabentypen samt Taktangaben und Triolen.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -57,6 +59,7 @@ node --check src/aufgaben/notennamen.mjs
 node --check src/aufgaben/intervalle.mjs
 node --check src/aufgaben/tonleitern.mjs
 node --check src/aufgaben/akkorde.mjs
+node --check src/aufgaben/rhythmus.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
