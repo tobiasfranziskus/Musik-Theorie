@@ -30,6 +30,7 @@ jobs:
           node --check src/aufgaben/quintenzirkel-vorzeichen.mjs
           node --check src/aufgaben/harmoniefunktionen.mjs
           node --check src/aufgaben/kadenz-analyse.mjs
+          node --check src/ui/notensystem.mjs
       - name: Noten- und Aufgabentests
         run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)
