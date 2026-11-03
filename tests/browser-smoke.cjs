@@ -36,6 +36,7 @@ const assets = {
   '/src/aufgaben/rhythmus.mjs': ['src/aufgaben/rhythmus.mjs', 'application/javascript; charset=utf-8'],
   '/src/aufgaben/quintenzirkel-vorzeichen.mjs': ['src/aufgaben/quintenzirkel-vorzeichen.mjs', 'application/javascript; charset=utf-8'],
   '/src/aufgaben/harmoniefunktionen.mjs': ['src/aufgaben/harmoniefunktionen.mjs', 'application/javascript; charset=utf-8'],
+  '/src/aufgaben/kadenz-analyse.mjs': ['src/aufgaben/kadenz-analyse.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {
