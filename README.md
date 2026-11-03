@@ -85,6 +85,14 @@ Im Musikduell gibt es zusätzlich **5 Fragen** als kurze Runde und die Zeitwahl 
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
+## Verbesserte Notendarstellung auf dem iPad
+
+Auf Touchgeräten werden interaktive Notensysteme um den Faktor 1,5 und statische Notenbilder in Multiple-Choice- und Texteingabe-Aufgaben um den Faktor 1,35 vergrößert. Lange Systeme bleiben in ihrer Originalbreite und lassen sich **seitlich scrollen**, statt stark verkleinert zu werden. Auf Desktopgeräten bleibt die bisherige Größe erhalten.
+
+Die Vorzeichentasten und Kontrollknöpfe der Noteneingabe haben auf Touchgeräten eine Trefferfläche von mindestens **44 × 44 Pixeln**. Die Vorzeichen sind zusätzlich mit gesprochenen Bezeichnungen und ihrem Auswahlzustand versehen. Der Hinweis über dem Notensystem erklärt das seitliche Verschieben.
+
+Die eigentlichen SVG-Noten, musikalischen Koordinaten und die Bewertung wurden nicht verändert. Die bestehende Transformationsmatrix berücksichtigt auch Vergrößerung, Scrollposition und 180°-Drehung; zusätzliche deterministische Regressionen sichern diese Fälle ab. Der Offline-Cache wird mit Revision `2026-11-03-v2` erneuert. **Eine reale iPad-/Safari-Touchabnahme steht weiterhin aus.**
+
 ## iPad: Offline-Nutzung und Home-Bildschirm
 
 Die App besitzt einen **Service Worker** (`sw.js`) und ein Web-App-Manifest. Beim ersten vollständigen Online-Besuch werden der Einstiegspunkt, Stylesheets, sämtliche derzeit benötigten JavaScript-Module und die QR-Freigabe in einem separaten Offline-Cache gespeichert. **Danach** lassen sich Übungen, Duell und bereits gespeicherte lokale Lernprofile ohne Internetverbindung aufrufen. Auch Unterrichtslinks mit URL-Parametern können offline geöffnet werden, sofern die App zuvor auf diesem iPad vollständig zwischengespeichert wurde.
