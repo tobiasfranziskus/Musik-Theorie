@@ -12,6 +12,7 @@ const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const bundle = fs.readFileSync(path.join(root, 'src', 'app.js'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'src', 'styles.css'), 'utf8');
+const duelViewSource = fs.readFileSync(path.join(root, 'src', 'duell', 'ansicht.mjs'), 'utf8');
 const begin = bundle.indexOf('y={c:0,d:1,e:2,f:3,g:4,a:5,h:6}');
 const end = bundle.indexOf('var en=', begin);
 
@@ -135,17 +136,17 @@ test('Falsche Texteingabe wird in der Rückmeldung gezeigt', () => {
 });
 
 
-test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensystems', () => {
+test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensystems', async () => {
   const topCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!0):null';
   const bottomCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!1):null';
   assert.equal(bundle.split(topCall).length - 1, 1, 'eine Notendarstellung für die obere Tischseite');
   assert.equal(bundle.split(bottomCall).length - 1, 1, 'eine Notendarstellung für die untere Tischseite');
   assert.ok(bundle.indexOf(topCall) < bundle.indexOf(bottomCall), 'Noten stehen an der jeweils richtigen Seite');
-  const begin = bundle.indexOf('function duelNotationForSide(');
-  const end = bundle.indexOf('function de(e,t)', begin);
-  assert.ok(begin >= 0 && end > begin, 'Notensystem-Renderer im Bundle vorhanden');
+  assert.ok(bundle.includes("from './duell/ansicht.mjs';"), 'Renderer wird aus eigenem Modul importiert');
+  const viewUrl = pathToFileURL(path.join(root, 'src', 'duell', 'ansicht.mjs')).href;
+  const { renderDuelNotation } = await import(viewUrl);
   const jsx = { jsx: (tag, props) => ({ tag, props }) };
-  const render = Function('I', bundle.slice(begin, end) + ';return duelNotationForSide;')(jsx);
+  const render = (svg, upper) => renderDuelNotation(jsx, svg, upper);
   const svg = '<svg><text>f¹</text></svg>';
   const top = render(svg, true);
   const bottom = render(svg, false);
@@ -297,9 +298,9 @@ test('Notensystem-Renderer werden über separate ES-Module eingebunden', () => {
 
 test('Musikduell behält zwei entgegengesetzte Tischrichtungen', () => {
   assert.ok(bundle.includes('rotate-180'), 'obere Tischseite bleibt gedreht');
-  assert.ok(bundle.includes("style:{rotate:t?`180deg`:`0deg`}"),
+  assert.ok(duelViewSource.includes("style:{rotate:t?`180deg`:`0deg`}"),
     'Notensystem der oberen Tischseite wird gegengedreht und bleibt lesbar');
-  assert.ok(bundle.includes('duel-score-svg'), 'Duell-Notenansicht bleibt eingebunden');
+  assert.ok(duelViewSource.includes('duel-score-svg'), 'Duell-Notenansicht bleibt eingebunden');
 });
 
 
@@ -352,4 +353,14 @@ test('Duell-Aufgabenpool wird aus eigenem Modul erzeugt', () => {
   assert.ok(bundle.includes("from './duell/aufgabenpool.mjs';"));
   assert.ok(bundle.includes('createDuelQuestionPool({sections:Et,shuffle:D,adaptQuestion:Qt,questionKey:Tt,renderGrandStaff:Rt,renderStaff:Lt,fallbackQuestions:Jt})'));
   assert.ok(bundle.includes('let e=$t(o,u),t=createDuelPlayers(i,f)'), 'Start behält Aufgabenpool und Spielerstammdaten');
+});
+
+test('Spielerpanels kommen aus dem unabhängigen Duell-Ansichtsmodul', () => {
+  assert.ok(bundle.includes("from './duell/ansicht.mjs';"));
+  assert.ok(bundle.includes('renderDuelNotation(I,e,t)'));
+  assert.ok(bundle.includes('renderDuelPlayer(I,Dn,x,O,e,t)'));
+  assert.ok(bundle.includes('ue.map(e=>de(e,le))'), 'obere Spielerseite vorhanden');
+  assert.ok(bundle.includes('k.map(e=>de(e,le))'), 'untere Spielerseite vorhanden');
+  assert.ok(duelViewSource.includes('onClick:()=>O(e.id,i)'), 'Antwort-Buttons übergeben ID und Antwortslot');
+  assert.ok(duelViewSource.includes('disabled:n||x'), 'beantwortete Runden sperren Eingaben');
 });
