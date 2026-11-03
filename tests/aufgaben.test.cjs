@@ -343,3 +343,10 @@ test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', (
   assert.ok(bundle.includes('se(i,`Alle haben geantwortet!`,m[g])'), 'letzte Antwort beendet Runde');
   assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Spieleransicht bleibt erhalten');
 });
+
+
+test('Duell-Aufgabenpool wird aus eigenem Modul erzeugt', () => {
+  assert.ok(bundle.includes("from './duell/aufgabenpool.mjs';"));
+  assert.ok(bundle.includes('createDuelQuestionPool({sections:Et,shuffle:D,adaptQuestion:Qt,questionKey:Tt,renderGrandStaff:Rt,renderStaff:Lt,fallbackQuestions:Jt})'));
+  assert.ok(bundle.includes('let e=$t(o,u),t=createDuelPlayers(i,f)'), 'Start behält Aufgabenpool und Spielerstammdaten');
+});
