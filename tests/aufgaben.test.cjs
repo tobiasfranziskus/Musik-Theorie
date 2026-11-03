@@ -39,6 +39,8 @@ test.before(async () => {
   const { createIntervalTaskGenerators } = await import(intervalTaskUrl);
   const scaleTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'tonleitern.mjs')).href;
   const { createScaleTaskGenerators } = await import(scaleTaskUrl);
+  const chordTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'akkorde.mjs')).href;
+  const { createChordTaskGenerators } = await import(chordTaskUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -53,11 +55,13 @@ test.before(async () => {
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
     'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
+    'createChordTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
     ...chordExports.map(name => chords[name]), gradeWrittenNotes,
-    createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators));
+    createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
+    createChordTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -206,5 +210,18 @@ test('Tonleiter-Generatoren werden von der Anwendung aus dem Modul geladen', () 
     'scaleTaskGenerators.minorScale(e)',
     'scaleTaskGenerators.chromaticScale(e)',
     'scaleTaskGenerators.wholeToneScale(e)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Sechs Akkord-Aufgabengeneratoren werden aus dem Modul geladen', () => {
+  assert.ok(bundle.includes("from './aufgaben/akkorde.mjs';"));
+  for (const call of [
+    'chordTaskGenerators.buildTriadTask(e)',
+    'chordTaskGenerators.identifyTriad(e)',
+    'chordTaskGenerators.identifyInversion(e)',
+    'chordTaskGenerators.buildInversion(e)',
+    'chordTaskGenerators.writtenTriadName(e)',
+    'chordTaskGenerators.listeningTriad()',
   ]) assert.ok(bundle.includes(call), call);
 });
