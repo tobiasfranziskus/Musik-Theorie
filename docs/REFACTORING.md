@@ -33,11 +33,12 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Fünf Rhythmusgeneratoren nach `src/aufgaben/rhythmus.mjs` auslagern (Noten-/Pausenwerte, Pausen erkennen, Taktstrich, Triolen): **5.200 deterministische Aufgabenerzeugungen und Zufallsfortsetzungen ohne Abweichung** (PR #13).
 - [x] Quintenzirkel und Generalvorzeichen (`src/aufgaben/quintenzirkel-vorzeichen.mjs`) als zwei Generatoren auslagern: **6.000 deterministische Vergleichsfälle und identische Zufallsfortsetzung**, keine Abweichungen (PR #14).
 - [x] Vier Generatoren für Haupt-/Nebendreiklänge sowie erweiterte Vierklänge nach `src/aufgaben/harmoniefunktionen.mjs` auslagern; **7.200 deterministische Aufgaben- und RNG-Vergleiche ohne Abweichung**; den bisher auch von der Harmonischen Analyse verwendeten Dur-Funktionskatalog als `MAJOR_FUNCTIONS` teilen (PR #15).
-- [ ] Die drei Generatoren für Kadenz und Harmonieanalyse aus dem Bundle trennen.
+- [x] Drei Generatoren für Kadenz, Stimmführungsfehler und harmonische Analyse nach `src/aufgaben/kadenz-analyse.mjs` auslagern; **6.600 deterministische Aufgaben- und RNG-Vergleiche ohne Abweichung**. `MAJOR_FUNCTIONS` aus `harmoniefunktionen.mjs` direkt importieren (PR #16).
+- [x] Sämtliche **32 Aufgabengeneratoren** in fachliche ES-Module ausgelagert; `src/app.js` enthält nun nur noch deren Aufrufadapter und die Aufgabenregistrierung.
 
 ### Inventur der Aufgabengeneratoren (13 Themenbereiche)
 
-Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davon **29 modularisiert** und **3 noch im Bundle**. Die beiden Hörgeneratoren sind bereits in die Intervall- und Akkordmodule übernommen.
+Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davon **32 modularisiert** und **0 Generatoren mit Funktionskörpern im Bundle**. Die beiden Hörgeneratoren sind bereits in die Intervall- und Akkordmodule übernommen.
 
 | Bereich | Generatoren | Zustand |
 | --- | --- | --- |
@@ -52,10 +53,10 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 | Weitere Akkorde | 2 | ausgelagert (#15) |
 | Quintenzirkel | 1 | ausgelagert (#14) |
 | Vorzeichen lesen | 1 | ausgelagert (#14) |
-| Kadenz | 2 | offen |
-| Harmonische Analyse | 1 | offen |
+| Kadenz | 2 | ausgelagert (#16) |
+| Harmonische Analyse | 1 | ausgelagert (#16) |
 
-**Empfohlene Reihenfolge:** Die verbleibenden drei Generatoren für Kadenz/Stimmführung und Harmonische Analyse auslagern; danach technische Bestandsaufnahme des UI- und Duellbundles, ohne sichtbare Änderung vor erneuter Abnahme. Vor jedem Auslagern Zufallsfolge, Notation, Antwortvalidierung und Browser-Start gegen den bestehenden Code prüfen.
+**Empfohlene Reihenfolge:** Vollständige Regression und iPad-Abnahme der gestapelten PRs #8–#16, danach Integration nur nach Freigabe. Als nächsten technischen Block UI-Rendering, Musikduell, Notensystem und Eingabelogik inventarisieren und gezielt modularisieren; keine sichtbaren Änderungen ohne neue Abnahme. Vor jedem Auslagern Zufallsfolge, Notation, Antwortvalidierung und Browser-Start gegen den bestehenden Code prüfen.
 
 **Hinweis zur Codequalität:** PR #12 verschiebt die sechs bisher kompakten Generatorfunktionskörper in ein eigenes Modul mit benannter Factory und unabhängigen Tests. Der eigentliche Funktionskörper wird noch in einem separaten, rein kosmetisch/refaktorierenden Schritt lesbar formatiert; keine Mischänderungen an der Aufgabenlogik.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
