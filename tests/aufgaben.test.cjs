@@ -407,7 +407,7 @@ test('Konfigurierbare Unterrichtsrunden und Links sind tatsächlich in React ein
   assert.ok(bundle.includes('practiceTopic&&(0,I.jsx)(PracticeSetup'));
   assert.ok(bundle.includes('(0,I.jsx)(LearningProgress'));
   assert.ok(bundle.includes('updateLearningErrors(learningErrors,N,e)'));
-  assert.ok(bundle.includes('musiktheorie_learning_errors_v1'));
+  assert.ok(bundle.includes('PROFILE_KEYS.errors'),'Fehlerhistorie verwendet den aktuellen Lernprofil-Schlüssel');
   assert.ok(bundle.includes('⚙️ Einstellen'));
   assert.ok(bundle.includes('🔁 Fehler gezielt üben'));
 });
