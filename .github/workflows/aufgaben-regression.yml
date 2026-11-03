@@ -38,6 +38,8 @@ jobs:
           node --check src/duell/timer.mjs
           node --check src/duell/ansicht.mjs
           node --check src/duell/sitzung.mjs
+          node --check src/unterricht/lernplan.mjs
+          node --check src/unterricht/oberflaeche.mjs
       - name: Noten- und Aufgabentests
         run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)

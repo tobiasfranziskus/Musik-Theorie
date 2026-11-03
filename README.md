@@ -8,6 +8,14 @@ Im Kapitel **Notennamen** startet die Schaltfläche **„🌱 Anfänger · ohne 
 
 In der **Musikduell-Arena** erscheinen bei „Notennamen“ und „Alle Themen“ Schaltflächen für **Violinschlüssel** und **Bassschlüssel**. Beide lassen sich unabhängig auswählen; mindestens einer bleibt aktiv. Ein Altschlüssel wird im Duell nicht angeboten. Die Auswahl gilt ausschließlich für Aufgaben des Themenbereichs Notennamen und ändert die Schlüssel der übrigen Aufgaben nicht.
 
+## Konfigurierbare Übungsrunden (Unterrichtsmodus)
+
+Neben **Üben** und **Anfänger** bietet jedes Thema **⚙️ Einstellen**: 5–30 Aufgaben, Multiple Choice/Notensetzen/Texteingabe, Notenschlüssel sowie bei Notennamen drei Niveaus. Die Einstellung **Fehler gezielt üben** erhöht die Wahrscheinlichkeit der Aufgabentypen, bei denen bisher viele Fehler auftraten; niemals wird eine falsche Antwort einfach als richtig markiert.
+
+Die Website führt ein **lokales Fehlerprotokoll** und zeigt eine kompakte Übersicht der häufigsten Schwierigkeiten. Persönliche Konten oder ein Server sind dafür nicht erforderlich. Bei gemeinschaftlich genutzten iPads sind die Daten vorerst noch an den Browser gebunden.
+
+Ein **Unterrichtslink** enthält nur den Themen- und Übungsplan als URL-Parameter, keine Schülerdaten. Auf einem anderen iPad wird damit die Übung direkt gestartet. QR-Freigabe und getrennte Lernprofile sind als weitere Ausbaustufen vorgesehen.
+
 ## Dateien
 
 - `index.html`: schlanker Einstiegspunkt mit Metadaten und Lizenzhinweis.

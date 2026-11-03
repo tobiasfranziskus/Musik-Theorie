@@ -382,8 +382,8 @@ test('Notennamen: Anfänger-Schaltfläche und normale Übungen bleiben getrennt'
   assert.ok(bundle.includes('onClick:()=>M(e,!1,!0)'));
   assert.ok(bundle.includes('t.id===`noten`&&beginner?t.gens.filter(e=>e!==Te):t.gens'),
     'Enharmonik wird in der Anfänger-Runde übersprungen');
-  assert.ok(bundle.includes('i=r(e,beginner)'),'Anfängerstatus wird an Generatoren übergeben');
-  assert.ok(bundle.includes('onClick:()=>M(u,f,beginnerPractice)'),
+  assert.ok(bundle.includes('i0=gen(e,beginner)'),'Anfängerstatus wird an Generatoren übergeben');
+  assert.ok(bundle.includes('onClick:()=>M(u,f,beginnerPractice,activePracticePlan)'),
     'Rundenwiederholung behält die Anfänger-Variante');
 });
 
@@ -397,4 +397,17 @@ test('Duell: Nur Notennamen bieten Violin- und Bassschlüssel ohne Altschlüssel
     'Auswahl erreicht die Duellsitzung');
   assert.ok(duelSessionSource.includes('$t(o,u,noteClefs)'));
   assert.ok(bundle.includes('rotate-180'),'gegenüberliegende Anzeige bleibt erhalten');
+});
+
+test('Konfigurierbare Unterrichtsrunden und Links sind tatsächlich in React eingebunden', () => {
+  assert.ok(bundle.includes("from './unterricht/lernplan.mjs';"));
+  assert.ok(bundle.includes("from './unterricht/oberflaeche.mjs';"));
+  assert.ok(bundle.includes('generatePracticeRound({section:t,plan:selectedPlan'));
+  assert.ok(bundle.includes('readPracticeLink(window.location.search)'));
+  assert.ok(bundle.includes('practiceTopic&&(0,I.jsx)(PracticeSetup'));
+  assert.ok(bundle.includes('(0,I.jsx)(LearningProgress'));
+  assert.ok(bundle.includes('updateLearningErrors(learningErrors,N,e)'));
+  assert.ok(bundle.includes('musiktheorie_learning_errors_v1'));
+  assert.ok(bundle.includes('⚙️ Einstellen'));
+  assert.ok(bundle.includes('🔁 Fehler gezielt üben'));
 });
