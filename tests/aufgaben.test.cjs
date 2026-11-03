@@ -13,6 +13,7 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const bundle = fs.readFileSync(path.join(root, 'src', 'app.js'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'src', 'styles.css'), 'utf8');
 const duelViewSource = fs.readFileSync(path.join(root, 'src', 'duell', 'ansicht.mjs'), 'utf8');
+const duelSessionSource = fs.readFileSync(path.join(root, 'src', 'duell', 'sitzung.mjs'), 'utf8');
 const begin = bundle.indexOf('y={c:0,d:1,e:2,f:3,g:4,a:5,h:6}');
 const end = bundle.indexOf('var en=', begin);
 
@@ -315,44 +316,44 @@ test('Touch-Positionsberechnung ist von der React-Oberfläche getrennt', () => {
 
 
 test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => {
-  assert.ok(bundle.includes("from './duell/spielregeln.mjs';"));
+  assert.ok(duelSessionSource.includes("from './duell/spielregeln.mjs';"));
   for (const call of [
     'createDuelPlayers(i,f)',
     'prepareDuelRoundPlayers(t,e.options)',
     'scoreDuelRound(e,n.correct)',
     'ie(a.players),qt(a.anyCorrect)',
-  ]) assert.ok(bundle.includes(call), call);
-  assert.ok(bundle.includes('now:()=>performance.now()'), 'Zeitquelle bleibt performance.now');
-  assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Tischseite bleibt gedreht');
+  ]) assert.ok(duelSessionSource.includes(call), call);
+  assert.ok(duelSessionSource.includes('now:()=>performance.now()'), 'Zeitquelle bleibt performance.now');
+  assert.ok(duelSessionSource.includes('rotate-180'), 'gegenüberliegende Tischseite bleibt gedreht');
   assert.ok(duelViewSource.includes('style:{rotate:t?`180deg`:`0deg`}'),
     'Notensystem wird weiter gegengedreht');
 });
 
 
 test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', () => {
-  assert.ok(bundle.includes("from './duell/rundensteuerung.mjs';"));
+  assert.ok(duelSessionSource.includes("from './duell/rundensteuerung.mjs';"));
   for (const call of [
     'T.current=startDuelRoundTimer(',
     'onProgress:percent=>re(percent)',
     'recordDuelAnswer(E.current,e,t,()=>performance.now())',
     'allDuelPlayersAnswered(i)',
     'nextDuelRoundIndex(g,m.length)',
-  ]) assert.ok(bundle.includes(call), call);
-  assert.ok(bundle.includes("from './duell/timer.mjs';"), 'der Intervalltimer liegt im eigenen Modul');
-  assert.ok(bundle.includes('schedule:(tick,ms)=>window.setInterval(tick,ms)'), 'Browser-Intervall bleibt erhalten');
-  assert.ok(bundle.includes('T.current=startDuelRoundTimer('), 'die neue Timer-Factory wird tatsächlich verwendet');
-  assert.ok(bundle.includes('if(D.current)return;let n=E.current[e];if(n.answer!==null)return'),
+  ]) assert.ok(duelSessionSource.includes(call), call);
+  assert.ok(duelSessionSource.includes("from './duell/timer.mjs';"), 'der Intervalltimer liegt im eigenen Modul');
+  assert.ok(duelSessionSource.includes('schedule:(tick,ms)=>window.setInterval(tick,ms)'), 'Browser-Intervall bleibt erhalten');
+  assert.ok(duelSessionSource.includes('T.current=startDuelRoundTimer('), 'die neue Timer-Factory wird tatsächlich verwendet');
+  assert.ok(duelSessionSource.includes('if(D.current)return;let n=E.current[e];if(n.answer!==null)return'),
     'Doppelantworten und abgeschlossene Runden bleiben gesperrt');
-  assert.ok(bundle.includes('se(E.current,`Zeit abgelaufen!`,e)'), 'Fristende weiterhin direkt ausgewertet');
-  assert.ok(bundle.includes('se(i,`Alle haben geantwortet!`,m[g])'), 'letzte Antwort beendet Runde');
-  assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Spieleransicht bleibt erhalten');
+  assert.ok(duelSessionSource.includes('se(E.current,`Zeit abgelaufen!`,e)'), 'Fristende weiterhin direkt ausgewertet');
+  assert.ok(duelSessionSource.includes('se(i,`Alle haben geantwortet!`,m[g])'), 'letzte Antwort beendet Runde');
+  assert.ok(duelSessionSource.includes('rotate-180'), 'gegenüberliegende Spieleransicht bleibt erhalten');
 });
 
 
 test('Duell-Aufgabenpool wird aus eigenem Modul erzeugt', () => {
   assert.ok(bundle.includes("from './duell/aufgabenpool.mjs';"));
-  assert.ok(bundle.includes('createDuelQuestionPool({sections:Et,shuffle:D,adaptQuestion:Qt,questionKey:Tt,renderGrandStaff:Rt,renderStaff:Lt,fallbackQuestions:Jt})'));
-  assert.ok(bundle.includes('let e=$t(o,u),t=createDuelPlayers(i,f)'), 'Start behält Aufgabenpool und Spielerstammdaten');
+  assert.ok(duelSessionSource.includes('createDuelQuestionPool({sections:Et,shuffle:D,adaptQuestion:Qt,questionKey:Tt,renderGrandStaff:Rt,renderStaff:Lt,fallbackQuestions:Jt})'));
+  assert.ok(duelSessionSource.includes('let e=$t(o,u),t=createDuelPlayers(i,f)'), 'Start behält Aufgabenpool und Spielerstammdaten');
 });
 
 test('Spielerpanels kommen aus dem unabhängigen Duell-Ansichtsmodul', () => {
@@ -363,4 +364,15 @@ test('Spielerpanels kommen aus dem unabhängigen Duell-Ansichtsmodul', () => {
   assert.ok(bundle.includes('k.map(e=>de(e,le))'), 'untere Spielerseite vorhanden');
   assert.ok(duelViewSource.includes('onClick:()=>O(e.id,i)'), 'Antwort-Buttons übergeben ID und Antwortslot');
   assert.ok(duelViewSource.includes('disabled:n||x'), 'beantwortete Runden sperren Eingaben');
+});
+
+test('Duell-Hook bleibt bedingungslos vor dem Dialog-Render eingebunden', () => {
+  assert.ok(bundle.includes("from './duell/sitzung.mjs';"));
+  assert.ok(bundle.includes('createDuelSessionHook({React:_,generateQuestions:$t,playFeedback:qt})'));
+  assert.ok(bundle.includes('=useDuelSession(e);if(!e)return null;'),
+    'alle React-Hooks werden vor dem möglichen frühen Return ausgeführt');
+  assert.ok(duelSessionSource.includes('if(D.current)return'), 'abgeschlossene Runden bleiben gegen Mehrfachwertung geschützt');
+  assert.ok(duelSessionSource.includes('if(n.answer!==null)return'), 'zweifache Antwort wird blockiert');
+  assert.ok(duelSessionSource.includes('D.current=!0,ee(!0)'), 'Sperre wird vor der Wertung aktiviert');
+  assert.ok(duelSessionSource.includes('T.current&&clearInterval(T.current)'), 'alle Timer-Cleanup-Pfade bleiben erhalten');
 });
