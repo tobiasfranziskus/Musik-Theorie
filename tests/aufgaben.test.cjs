@@ -333,7 +333,7 @@ test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => 
 test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', () => {
   assert.ok(duelSessionSource.includes("from './rundensteuerung.mjs';"));
   for (const call of [
-    'T.current=startDuelRoundTimer(',
+    'T.current=c===0?null:startDuelRoundTimer(',
     'onProgress:percent=>re(percent)',
     'recordDuelAnswer(E.current,e,t,()=>performance.now())',
     'allDuelPlayersAnswered(i)',
@@ -341,7 +341,7 @@ test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', (
   ]) assert.ok(duelSessionSource.includes(call), call);
   assert.ok(duelSessionSource.includes("from './timer.mjs';"), 'der Intervalltimer liegt im eigenen Modul');
   assert.ok(duelSessionSource.includes('schedule:(tick,ms)=>window.setInterval(tick,ms)'), 'Browser-Intervall bleibt erhalten');
-  assert.ok(duelSessionSource.includes('T.current=startDuelRoundTimer('), 'die neue Timer-Factory wird tatsächlich verwendet');
+  assert.ok(duelSessionSource.includes('T.current=c===0?null:startDuelRoundTimer('), 'die neue Timer-Factory wird tatsächlich verwendet');
   assert.ok(duelSessionSource.includes('if(D.current)return;let n=E.current[e];if(n.answer!==null)return'),
     'Doppelantworten und abgeschlossene Runden bleiben gesperrt');
   assert.ok(duelSessionSource.includes('se(E.current,`Zeit abgelaufen!`,e)'), 'Fristende weiterhin direkt ausgewertet');
@@ -410,4 +410,15 @@ test('Konfigurierbare Unterrichtsrunden und Links sind tatsächlich in React ein
   assert.ok(bundle.includes('musiktheorie_learning_errors_v1'));
   assert.ok(bundle.includes('⚙️ Einstellen'));
   assert.ok(bundle.includes('🔁 Fehler gezielt üben'));
+});
+
+test('Lokale Schülerprofile, Gastmodus und Duell ohne Zeitlimit sind eingebunden', () => {
+  assert.ok(bundle.includes("from './unterricht/profile.mjs';"));
+  assert.ok(bundle.includes('(0,I.jsx)(ProfilePicker'));
+  assert.ok(bundle.includes('loadProfileSnapshot(localStorage,profileId)'));
+  assert.ok(bundle.includes('saveProfileValue(localStorage,profileId'));
+  assert.ok(bundle.includes('removeProfileValue(localStorage,profileId'));
+  assert.ok(bundle.includes('Ohne Zeitlimit (Übungsduell)'));
+  assert.ok(bundle.includes('[5,10,15,20].map'));
+  assert.ok(duelSessionSource.includes('T.current=c===0?null:startDuelRoundTimer('));
 });
