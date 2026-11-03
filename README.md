@@ -24,6 +24,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/ui/notensystem.mjs`: zustandslose SVG-Erzeugung für einfache Notensysteme, Klaviersystem und interaktive Noteneingabe, einschließlich der unveränderten Schlüssel-/Notenformen.
 - `src/ui/noteneingabe.mjs`: Touch- und Mausklicks über die SVG-Transformationsmatrix in die korrekte Notenposition umrechnen – unabhängig von React.
 - `src/duell/spielregeln.mjs`: Spielerinitialisierung, Antwortmischung je Spieler und Punktevergabe (Serien- und Schnelligkeitsbonus) ohne React oder DOM.
+- `src/duell/rundensteuerung.mjs`: Rundenzeitberechnung, Antwortaufnahme, vollständige Antwortprüfung und nächster Fragenindex, ohne Browser-Timer und React.
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
@@ -42,6 +43,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `tests/notensystem-renderer.test.mjs`: 14 Referenzdarstellungen mit vollständigen SVG-Prüfsummen, darunter drei Schlüssel, Vorzeichen, Triolen, Noteneingabe und Klaviersystem.
 - `tests/noteneingabe-touch.test.mjs`: SVG-Touchkoordinaten, drei Schlüssel, Eingabegrenzen, Vorzeichen, Skalierung und 180°-Drehung.
 - `tests/duell-spielregeln.test.mjs`: zwei bis vier Spieler, individuelle Antwortreihenfolge, Serienbonus, Schnellstenbonus und neue Runden.
+- `tests/duell-rundensteuerung.test.mjs`: Rundenende durch Zeitablauf oder letzte Antwort, zeitgestempelte Spielerantworten und Fragenwechsel.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -78,12 +80,13 @@ node --check src/aufgaben/kadenz-analyse.mjs
 node --check src/ui/notensystem.mjs
 node --check src/ui/noteneingabe.mjs
 node --check src/duell/spielregeln.mjs
+node --check src/duell/rundensteuerung.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
 
 ## Wartbarkeit
 
-**Stufe 1 und die fachlichen Teilmodule von Stufe 2 sind in `main` integriert.** Auf den gestapelten, noch nicht integrierten Draft-PRs #8–#16 folgen die Bewertungslogik und alle 32 Aufgabengeneratoren. PR #17 trennt zusätzlich die SVG-Notensystem-Erzeugung aus dem verbleibenden React-Bundle. PR #18 isoliert die Positionsberechnung für Touch und Maus. PR #19 modularisiert die reinen Duellregeln für Spieler, Antwortoptionen und Punkte. Duellsteuerung, Eingabeverwaltung und Teile der Oberfläche in `src/app.js` sind weiterhin gebündelt/minifiziert. Siehe [Refactoring-Plan](docs/REFACTORING.md).
+**Stufe 1 und die fachlichen Teilmodule von Stufe 2 sind in `main` integriert.** Auf den gestapelten, noch nicht integrierten Draft-PRs #8–#16 folgen die Bewertungslogik und alle 32 Aufgabengeneratoren. PR #17 trennt zusätzlich die SVG-Notensystem-Erzeugung aus dem verbleibenden React-Bundle. PR #18 isoliert die Positionsberechnung für Touch und Maus. PR #19 modularisiert die reinen Duellregeln für Spieler, Antwortoptionen und Punkte. PR #20 trennt zudem Rundenzeitberechnung, Antwortaufnahme und Fragenwechsel vom React-Bundle. Duellsteuerung, Eingabeverwaltung und Teile der Oberfläche in `src/app.js` sind weiterhin gebündelt/minifiziert. Siehe [Refactoring-Plan](docs/REFACTORING.md).
 
 Änderungen an Fragen, Notation, Eingaben und Bewertung werden möglichst durch Tests abgesichert. Die öffentliche `main`-Version bleibt bis zur Freigabe eines PR unverändert.
