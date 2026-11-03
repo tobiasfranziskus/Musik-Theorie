@@ -299,3 +299,13 @@ test('Musikduell behält zwei entgegengesetzte Tischrichtungen', () => {
     'Notensystem der oberen Tischseite wird gegengedreht und bleibt lesbar');
   assert.ok(bundle.includes('duel-score-svg'), 'Duell-Notenansicht bleibt eingebunden');
 });
+
+
+test('Touch-Positionsberechnung ist von der React-Oberfläche getrennt', () => {
+  assert.ok(bundle.includes("from './ui/noteneingabe.mjs';"));
+  assert.ok(bundle.includes('noteFromSvgEvent(e,N.clef||`treble`,pe)'));
+  assert.ok(bundle.includes('if(O||!N)return'), 'gesperrte Aufgaben nehmen keine Eingabe an');
+  assert.ok(bundle.includes('if(de.length>=n-t)return'), 'volle Notensysteme nehmen keine Eingabe an');
+  assert.ok(bundle.includes('if(A.current)return'), 'Sperre laufender Animationen bleibt erhalten');
+  assert.ok(bundle.includes('d&&fe([...de,d])'), 'ungültige Klicks bleiben folgenlos');
+});
