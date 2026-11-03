@@ -41,6 +41,8 @@ test.before(async () => {
   const { createScaleTaskGenerators } = await import(scaleTaskUrl);
   const chordTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'akkorde.mjs')).href;
   const { createChordTaskGenerators } = await import(chordTaskUrl);
+  const rhythmTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'rhythmus.mjs')).href;
+  const { createRhythmTaskGenerators } = await import(rhythmTaskUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -55,13 +57,13 @@ test.before(async () => {
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
     'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
-    'createChordTaskGenerators',
+    'createChordTaskGenerators', 'createRhythmTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
     ...chordExports.map(name => chords[name]), gradeWrittenNotes,
     createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
-    createChordTaskGenerators));
+    createChordTaskGenerators, createRhythmTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -223,5 +225,17 @@ test('Sechs Akkord-Aufgabengeneratoren werden aus dem Modul geladen', () => {
     'chordTaskGenerators.buildInversion(e)',
     'chordTaskGenerators.writtenTriadName(e)',
     'chordTaskGenerators.listeningTriad()',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Fünf Rhythmus-Aufgabengeneratoren werden tatsächlich aus dem Modul genutzt', () => {
+  assert.ok(bundle.includes("from './aufgaben/rhythmus.mjs';"));
+  for (const call of [
+    'rhythmTaskGenerators.missingNoteValue(e)',
+    'rhythmTaskGenerators.missingRestValue(e)',
+    'rhythmTaskGenerators.identifyRest(e,t)',
+    'rhythmTaskGenerators.barLine(e)',
+    'rhythmTaskGenerators.triplet(e)',
   ]) assert.ok(bundle.includes(call), call);
 });
