@@ -39,3 +39,67 @@
     outline-offset: 2px;
   }
 }
+
+
+/* Tischduell: zwei wirklich getrennte Notenfelder in der Bildschirmmitte.
+   Die oberen und unteren Noten werden nur innerhalb ihres eigenen Feldes
+   dargestellt; eine 180°-Drehung kann nicht in das Gegenfeld hineinragen. */
+.duel-center-panel-with-score {
+  display: grid;
+  height: min(42vh, 420px);
+  max-height: 42vh;
+  min-height: 0;
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) auto auto auto;
+  align-items: stretch;
+  justify-items: stretch;
+  row-gap: 4px;
+}
+.duel-center-panel-with-score .duel-center-question {
+  min-height: 0;
+  overflow: hidden;
+}
+.duel-center-panel-with-score .duel-score-slot {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+  contain: paint;
+  background: #fff;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+.duel-center-panel-with-score .duel-score-slot[data-duel-side="top"] {
+  border-bottom: 2px solid #d97706;
+}
+.duel-center-panel-with-score .duel-score-slot[data-duel-side="bottom"] {
+  border-top: 2px solid #0d9488;
+}
+.duel-center-panel-with-score .duel-score-svg {
+  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  overflow: hidden;
+}
+.duel-center-panel-with-score .duel-score-svg > svg {
+  display: block;
+  height: 100%;
+  max-height: 100%;
+  width: auto;
+  max-width: 100%;
+}
+@media (max-height: 560px) and (orientation: landscape) {
+  .duel-center-panel-with-score {
+    height: 48vh;
+    max-height: 48vh;
+    row-gap: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
