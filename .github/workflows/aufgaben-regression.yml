@@ -14,8 +14,10 @@ jobs:
         with:
           node-version: '22'
       - name: JavaScript-Syntax prüfen
-        run: node --check src/app.js
+        run: |
+          node --check src/app.js
+          node --check src/music/notennamen.mjs
       - name: Noten- und Aufgabentests
-        run: node --test tests/aufgaben.test.cjs
+        run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)
         run: node tests/browser-smoke.cjs
