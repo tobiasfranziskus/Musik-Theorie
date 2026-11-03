@@ -80,8 +80,9 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 - [x] Rundenfortschritt, Antwortaufnahme, Erkennung der letzten Antwort und Wechsel zur nächsten Frage nach `src/duell/rundensteuerung.mjs` auslagern. **36.499 deterministische Referenzvergleiche** gegen den bisherigen Code ohne Abweichung (PR #20).
 - [x] Duell-Aufgabenpool (`src/duell/aufgabenpool.mjs`) ohne Verhaltensänderung ausgelagert: Themenfilter, Eignungsprobe, Duplikatschutz, SVG-Renderer und Rückfallfragen. **1.250 deterministische Szenariovergleiche ohne Abweichung** (PR #21).
 - [x] Echte 100-ms-Rundenuhr nach `src/duell/timer.mjs` ausgelagert (Start, Fortschrittsanzeige, automatischer Zeitabbruch, Intervall-ID): **1.800 simulierte Referenzvergleiche** gegen den bisherigen Browser-Timer ohne Abweichung (PR #22). Die React-Lifecycle-Bereinigung über `T.current` bleibt kompatibel und unverändert.
-- [ ] Die verbliebenen React-Event-Sperren und die Duellansicht getrennt prüfen und bei Bedarf modularisieren.
-- [ ] Duellansicht erst nach gesonderter Abnahme überarbeiten.
+- [x] Die beiden Duell-Notengrafiken und Spieler-Antwortfelder als zustandslose JSX-Funktionen nach `src/duell/ansicht.mjs` ausgelagert. **2.400 Spieler- und 8 Noten-Ansichtsvergleiche ohne Abweichung**, 160 vergleichbare Button-Callbacks sowie zehn feste JSX-Referenzprüfsummen (PR #24).
+- [ ] Verbleibende React-Event-Sperren und Duell-Zustandsübergänge getrennt prüfen; kein neues sichtbares Verhalten ohne iPad-Abnahme.
+- [ ] Duellansicht gestalterisch erst nach gesonderter Abnahme überarbeiten. PR #24 ändert nur den Speicherort der bisherigen Darstellung.
 - [ ] Duelllayout mit gegenüberliegenden Ansichten gezielt per Browser-/iPad-Abnahme testen; alle sichtbaren Änderungen gesondert freigeben.
 - [x] Frühere iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
 
