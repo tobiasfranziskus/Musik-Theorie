@@ -89,5 +89,31 @@ export function createPracticeWidgets(I) {
         I.jsx('p',{className:'text-xs text-slate-400',children:'Fortschritte bleiben ausschließlich in diesem Browser gespeichert.'}),
       ]});
   }
-  return {PracticeSetup,LearningProgress};
+  function ProfilePicker({profiles=[],current='standard',onSelect,newName='',onName,onAdd,onRemove}) {
+    return I.jsxs('section',{className:'bg-white/5 border border-white/10 rounded-2xl p-4 space-y-3',
+      children:[
+        I.jsx('h2',{className:'text-sm font-bold text-slate-100',children:'Lernprofil auf diesem iPad'}),
+        I.jsxs('div',{className:'flex flex-col sm:flex-row gap-2 items-stretch',children:[
+          I.jsx('select',{value:current,'aria-label':'Lernprofil auswählen',onChange:e=>onSelect(e.target.value),
+            className:'flex-1 p-2.5 text-sm bg-slate-900 text-white border border-white/20 rounded-lg',
+            children:[
+              I.jsx('option',{value:'standard',children:'Standardprofil (bisherige Fortschritte)'}),
+              I.jsx('option',{value:'gast',children:'Gastmodus – nichts speichern'}),
+              ...profiles.map(p=>I.jsx('option',{value:p.id,children:p.name},p.id)),
+            ]}),
+          current!=='standard'&&current!=='gast'?I.jsx('button',{
+            type:'button',onClick:onRemove,className:'px-3 py-2 border border-rose-400/30 rounded-lg text-xs text-rose-200',
+            children:'Dieses Profil löschen'}):null,
+        ]}),
+        I.jsxs('div',{className:'flex flex-col sm:flex-row gap-2',children:[
+          I.jsx('input',{value:newName,maxLength:30,'aria-label':'Neuer Profilname',onChange:e=>onName(e.target.value),
+            onKeyDown:e=>{if(e.key==='Enter')onAdd()},placeholder:'Neues Profil (z. B. Gruppe A)',
+            className:'min-w-0 flex-1 p-2.5 bg-slate-900 text-white border border-white/20 rounded-lg text-sm'}),
+          I.jsx('button',{type:'button',onClick:onAdd,disabled:!newName.trim(),
+            className:'px-3 py-2 rounded-lg bg-teal-500 text-slate-950 font-bold text-xs disabled:opacity-40',children:'Profil anlegen'}),
+        ]}),
+        I.jsx('p',{className:'text-xs text-slate-400',children:'Jedes Profil führt eigene Punkte und Fehler. Im Gastmodus wird nichts gespeichert. Alles bleibt lokal auf diesem Gerät.'}),
+      ]});
+  }
+  return {PracticeSetup,LearningProgress,ProfilePicker};
 }
