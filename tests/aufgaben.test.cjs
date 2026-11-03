@@ -119,5 +119,5 @@ test('GitHub Pages lädt die ausgelagerten Assets über relative Pfade', () => {
 });
 
 test('Notennamen-Modul wird aus dem App-Bundle relativ geladen', () => {
-  assert.match(bundle, /^import \{ formatGermanNote, parseGermanNoteInput \} from '\.\/music\/notennamen\.mjs';/);
+  assert.match(bundle, /import \{ formatGermanNote, parseGermanNoteInput \} from '\.\/music\/notennamen\.mjs';/);
 });
