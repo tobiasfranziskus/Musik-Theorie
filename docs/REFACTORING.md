@@ -12,7 +12,7 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Bestehende Aufgabentests auf die neue Dateistruktur umstellen.
 - [x] Syntaxprüfung, CI und Dokumentation ergänzen.
 - [x] Chrome-Smoke-Test mit echten JS- und CSS-Dateien durchführen.
-- [ ] Browserabnahme auf iPad/Safari, besonders Notensystem, Touch und Duell.
+- [x] Browserabnahme auf iPad/Safari, besonders Notensystem, Touch und Duell – laut Nutzerfreigabe am 03.11.2026 als erledigt bestätigt (nicht von CI automatisiert geprüft).
 
 **Wichtig:** Die beiden großen Dateien enthalten bislang generierten/minifizierten Code. Ihre Auslagerung allein macht die interne Logik noch nicht lesbarer. Ein kosmetisches „Beautifying“ reicht für echte Modularität nicht aus.
 
@@ -34,7 +34,7 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - Notensystem-Rendering und Eingabelogik als getrennte Komponenten.
 - Musikduell: Aufgabenpool, Fragen-/Zeitverwaltung, Punktelogik und Darstellung voneinander trennen.
 - Zwei unabhängig ausgerichtete Notenansichten für die gegenüberliegenden Tischseiten bewahren.
-- Auf iPad Safari: Querformat, Touch-Eingabe, kleine Displays und Spielablauf manuell prüfen.
+- [x] iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
 
 ## Stufe 4 – Aufräumen
 
