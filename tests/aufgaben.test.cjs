@@ -25,11 +25,14 @@ test.before(async () => {
   const { formatGermanNote, parseGermanNoteInput } = await import(url);
   const pitchUrl = pathToFileURL(path.join(root, 'src', 'music', 'tonhoehen.mjs')).href;
   const { diatonicIndex, noteFromDiatonicIndex, chromaticPitch } = await import(pitchUrl);
+  const intervalUrl = pathToFileURL(path.join(root, 'src', 'music', 'intervalle.mjs')).href;
+  const { INTERVALS, transposeDiatonic } = await import(intervalUrl);
   ({ M, N, Qt, Et, ye } = Function(
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
+    'INTERVALS', 'transposeDiatonic',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
-  )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch));
+  )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch, INTERVALS, transposeDiatonic));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -120,4 +123,9 @@ test('GitHub Pages lädt die ausgelagerten Assets über relative Pfade', () => {
 
 test('Notennamen-Modul wird aus dem App-Bundle relativ geladen', () => {
   assert.match(bundle, /import \{ formatGermanNote, parseGermanNoteInput \} from '\.\/music\/notennamen\.mjs';/);
+});
+
+
+test('Intervall-Modul wird vom App-Bundle geladen', () => {
+  assert.ok(bundle.includes("import { INTERVALS, transposeDiatonic } from './music/intervalle.mjs';"));
 });
