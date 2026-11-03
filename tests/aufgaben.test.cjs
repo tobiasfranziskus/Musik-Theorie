@@ -324,7 +324,7 @@ test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => 
   ]) assert.ok(bundle.includes(call), call);
   assert.ok(bundle.includes('now:()=>performance.now()'), 'Zeitquelle bleibt performance.now');
   assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Tischseite bleibt gedreht');
-  assert.ok(bundle.includes('style:{rotate:t?`180deg`:`0deg`}'),
+  assert.ok(duelViewSource.includes('style:{rotate:t?`180deg`:`0deg`}'),
     'Notensystem wird weiter gegengedreht');
 });
 
