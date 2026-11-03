@@ -47,6 +47,8 @@ test.before(async () => {
   const { createKeySignatureTaskGenerators } = await import(keyTasksUrl);
   const harmonyTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'harmoniefunktionen.mjs')).href;
   const { MAJOR_FUNCTIONS, createHarmonyTaskGenerators } = await import(harmonyTasksUrl);
+  const cadenceTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'kadenz-analyse.mjs')).href;
+  const { createCadenceAnalysisTaskGenerators } = await import(cadenceTasksUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -63,13 +65,14 @@ test.before(async () => {
     'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
     'createChordTaskGenerators', 'createRhythmTaskGenerators',
     'createKeySignatureTaskGenerators', 'MAJOR_FUNCTIONS', 'createHarmonyTaskGenerators',
+    'createCadenceAnalysisTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
     ...chordExports.map(name => chords[name]), gradeWrittenNotes,
     createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
     createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators,
-    MAJOR_FUNCTIONS, createHarmonyTaskGenerators));
+    MAJOR_FUNCTIONS, createHarmonyTaskGenerators, createCadenceAnalysisTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -263,4 +266,16 @@ test('Vier Harmonie- und Vierklanggeneratoren nutzen das neue Modul', () => {
     'harmonyTasks.buildExtendedChord(e)',
     'harmonyTasks.identifyExtendedChord(e)',
   ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Die letzten drei Generatoren für Kadenz, Stimmführung und Analyse kommen aus dem Modul', () => {
+  assert.ok(bundle.includes("from './aufgaben/kadenz-analyse.mjs';"));
+  for (const call of [
+    'cadenceAnalysisTasks.cadence()',
+    'cadenceAnalysisTasks.voiceLeading()',
+    'cadenceAnalysisTasks.harmonicAnalysis()',
+  ]) assert.ok(bundle.includes(call), call);
+  assert.ok(bundle.includes('gens:[St,Ct]'));
+  assert.ok(bundle.includes('gens:[wt]'));
 });
