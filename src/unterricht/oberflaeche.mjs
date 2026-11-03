@@ -3,6 +3,7 @@
  * JSX-Runtime wird injiziert, kein Build-Prozess oder DOM-Zugriff beim Import.
  */
 import {normalizePracticePlan,learningSummary} from './lernplan.mjs';
+import {createLessonQrSvgData} from './qr-code.mjs';
 
 const TYPES=[
   {value:'all',label:'Alle Aufgabenarten'},
@@ -33,11 +34,20 @@ export function createPracticeWidgets(I) {
         className:'w-full p-3 bg-slate-900 border border-white/20 rounded-xl text-sm text-white focus:ring-2 focus:ring-teal-400',
         children:values.map(v=>I.jsx('option',{value:v.value,children:v.label},v.value))})]});
   }
-  function PracticeSetup({section,plan,onChange,onStart,onClose,errors={},shareUrl,onCopy,copied=false,error=''}) {
+  function PracticeSetup({section,plan,onChange,onStart,onClose,errors={},shareUrl,onCopy,onPrint,copied=false,error=''}) {
     if(!section)return null;
     const config=normalizePracticePlan(plan);
     const set=(key,value)=>onChange({...config,[key]:value});
     const weak=learningSummary(errors,section.id).filter(x=>x.weak);
+    let qr=null;
+    try {if(shareUrl)qr=createLessonQrSvgData(shareUrl);} catch { /* link text remains available */ }
+    const lessonDetails=[
+      config.count+' Aufgaben',
+      TYPES.find(item=>item.value===config.mode)?.label||config.mode,
+      CLEFS.find(item=>item.value===config.clef)?.label||config.clef,
+      ...(section.id==='noten'?[LEVELS.find(item=>item.value===config.difficulty)?.label||config.difficulty]:[]),
+      ...(config.focusErrors?['Individuelles Fehlertraining']:[]),
+    ];
     return I.jsxs('section',{id:'practice-setup',className:'bg-slate-800/90 border border-teal-400/50 rounded-2xl p-4 sm:p-6 space-y-4 shadow-lg',
       children:[
         I.jsxs('div',{className:'flex justify-between gap-3 items-start',children:[
@@ -66,6 +76,48 @@ export function createPracticeWidgets(I) {
             I.jsx('button',{type:'button',onClick:onCopy,className:'px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold',children:copied?'Kopiert!':'Link kopieren'}),
           ]}),
           I.jsx('p',{className:'text-xs text-slate-400',children:'Der Link enthält nur die Übungseinstellungen, keine Ergebnisse oder persönlichen Daten.'}),
+          qr&&typeof onPrint==='function'?I.jsx('button',{
+            type:'button',onClick:onPrint,
+            className:'w-full px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold text-sm rounded-xl border border-white/20',
+            children:'Auftragskarte mit QR-Code drucken',
+          }):null,
+          I.jsxs('details',{className:'rounded-xl bg-white/5 border border-white/10 p-3',children:[
+            I.jsx('summary',{className:'cursor-pointer text-teal-200 font-bold text-sm select-none',children:'QR-Code für Schüler-iPads anzeigen'}),
+            qr?I.jsxs('div',{className:'flex flex-col items-start gap-2 mt-3',children:[
+              I.jsxs('svg',{viewBox:qr.viewBox,width:232,height:232,
+                xmlns:'http://www.w3.org/2000/svg',role:'img',
+                'aria-label':'QR-Code für diesen Unterrichtslink',
+                className:'max-w-full h-auto bg-white rounded-lg shadow p-1',
+                children:[
+                  I.jsx('rect',{x:0,y:0,width:qr.size,height:qr.size,fill:'#ffffff'}),
+                  I.jsx('path',{d:qr.path,fill:'#111111'}),
+                ]}),
+              I.jsx('p',{className:'text-xs text-slate-300',children:'Mit der iPad-Kamera scannen. Der QR-Code wird direkt auf diesem Gerät erzeugt und benötigt keinen fremden Dienst.'}),
+            ]}):I.jsx('p',{className:'text-xs text-amber-200 mt-2',children:'Für diesen Link kann kein QR-Code erzeugt werden. Bitte den Link kopieren.'}),
+          ]}),
+          qr?I.jsxs('section',{
+            id:'practice-print-card',
+            style:{display:'none'},
+            'aria-label':'Druckbarer Übungsauftrag',
+            children:[
+              I.jsx('h1',{children:'Musiktheorie · Übungsauftrag'}),
+              I.jsx('h2',{children:section.title}),
+              I.jsx('p',{className:'lesson-print-instructions',
+                children:'Öffne die Kamera auf deinem iPad, scanne den QR-Code und bearbeite die Übung.'}),
+              I.jsx('p',{className:'lesson-print-details',children:lessonDetails.join(' · ')}),
+              I.jsxs('div',{className:'lesson-print-qr',children:[
+                I.jsxs('svg',{viewBox:qr.viewBox,width:250,height:250,
+                  xmlns:'http://www.w3.org/2000/svg',role:'img',
+                  'aria-label':'QR-Code zum Übungsauftrag',
+                  children:[
+                    I.jsx('rect',{x:0,y:0,width:qr.size,height:qr.size,fill:'#fff'}),
+                    I.jsx('path',{d:qr.path,fill:'#111'}),
+                  ]}),
+              ]}),
+              I.jsx('p',{className:'lesson-print-link',children:shareUrl}),
+              I.jsx('p',{className:'lesson-print-names',children:'Name: ____________________________________  Datum: ______________'}),
+            ],
+          }):null,
         ]}),
       ]});
   }
