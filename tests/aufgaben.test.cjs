@@ -12,6 +12,8 @@ const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const bundle = fs.readFileSync(path.join(root, 'src', 'app.js'), 'utf8');
 const styles = fs.readFileSync(path.join(root, 'src', 'styles.css'), 'utf8');
+const duelViewSource = fs.readFileSync(path.join(root, 'src', 'duell', 'ansicht.mjs'), 'utf8');
+const duelSessionSource = fs.readFileSync(path.join(root, 'src', 'duell', 'sitzung.mjs'), 'utf8');
 const begin = bundle.indexOf('y={c:0,d:1,e:2,f:3,g:4,a:5,h:6}');
 const end = bundle.indexOf('var en=', begin);
 
@@ -31,6 +33,28 @@ test.before(async () => {
   const scales = await import(scalesUrl);
   const chordsUrl = pathToFileURL(path.join(root, 'src', 'music', 'akkorde.mjs')).href;
   const chords = await import(chordsUrl);
+  const gradingUrl = pathToFileURL(path.join(root, 'src', 'music', 'bewertung.mjs')).href;
+  const { gradeWrittenNotes } = await import(gradingUrl);
+  const nameTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'notennamen.mjs')).href;
+  const { createNoteNameTaskGenerators } = await import(nameTasksUrl);
+  const intervalTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'intervalle.mjs')).href;
+  const { createIntervalTaskGenerators } = await import(intervalTaskUrl);
+  const scaleTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'tonleitern.mjs')).href;
+  const { createScaleTaskGenerators } = await import(scaleTaskUrl);
+  const chordTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'akkorde.mjs')).href;
+  const { createChordTaskGenerators } = await import(chordTaskUrl);
+  const rhythmTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'rhythmus.mjs')).href;
+  const { createRhythmTaskGenerators } = await import(rhythmTaskUrl);
+  const keyTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'quintenzirkel-vorzeichen.mjs')).href;
+  const { createKeySignatureTaskGenerators } = await import(keyTasksUrl);
+  const harmonyTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'harmoniefunktionen.mjs')).href;
+  const { MAJOR_FUNCTIONS, createHarmonyTaskGenerators } = await import(harmonyTasksUrl);
+  const cadenceTasksUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'kadenz-analyse.mjs')).href;
+  const { createCadenceAnalysisTaskGenerators } = await import(cadenceTasksUrl);
+  const notationUrl = pathToFileURL(path.join(root, 'src', 'ui', 'notensystem.mjs')).href;
+  const { createNotationRenderers } = await import(notationUrl);
+  const poolUrl = pathToFileURL(path.join(root, 'src', 'duell', 'aufgabenpool.mjs')).href;
+  const { createDuelQuestionPool } = await import(poolUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -43,11 +67,19 @@ test.before(async () => {
   ({ M, N, Qt, Et, ye } = Function(
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
-    'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports,
+    'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
+    'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
+    'createChordTaskGenerators', 'createRhythmTaskGenerators',
+    'createKeySignatureTaskGenerators', 'MAJOR_FUNCTIONS', 'createHarmonyTaskGenerators',
+    'createCadenceAnalysisTaskGenerators', 'createNotationRenderers', 'createDuelQuestionPool',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
-    ...chordExports.map(name => chords[name])));
+    ...chordExports.map(name => chords[name]), gradeWrittenNotes,
+    createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators,
+    createChordTaskGenerators, createRhythmTaskGenerators, createKeySignatureTaskGenerators,
+    MAJOR_FUNCTIONS, createHarmonyTaskGenerators, createCadenceAnalysisTaskGenerators,
+    createNotationRenderers, createDuelQuestionPool));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -105,17 +137,17 @@ test('Falsche Texteingabe wird in der Rückmeldung gezeigt', () => {
 });
 
 
-test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensystems', () => {
+test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensystems', async () => {
   const topCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!0):null';
   const bottomCall = 'le.svgHtml?duelNotationForSide(le.svgHtml,!1):null';
   assert.equal(bundle.split(topCall).length - 1, 1, 'eine Notendarstellung für die obere Tischseite');
   assert.equal(bundle.split(bottomCall).length - 1, 1, 'eine Notendarstellung für die untere Tischseite');
   assert.ok(bundle.indexOf(topCall) < bundle.indexOf(bottomCall), 'Noten stehen an der jeweils richtigen Seite');
-  const begin = bundle.indexOf('function duelNotationForSide(');
-  const end = bundle.indexOf('function de(e,t)', begin);
-  assert.ok(begin >= 0 && end > begin, 'Notensystem-Renderer im Bundle vorhanden');
+  assert.ok(bundle.includes("from './duell/ansicht.mjs';"), 'Renderer wird aus eigenem Modul importiert');
+  const viewUrl = pathToFileURL(path.join(root, 'src', 'duell', 'ansicht.mjs')).href;
+  const { renderDuelNotation } = await import(viewUrl);
   const jsx = { jsx: (tag, props) => ({ tag, props }) };
-  const render = Function('I', bundle.slice(begin, end) + ';return duelNotationForSide;')(jsx);
+  const render = (svg, upper) => renderDuelNotation(jsx, svg, upper);
   const svg = '<svg><text>f¹</text></svg>';
   const top = render(svg, true);
   const bottom = render(svg, false);
@@ -158,4 +190,189 @@ test('Akkordmodul wird in den echten Generatoren verwendet', () => {
   assert.ok(bundle.includes('buildTriad(e,t,n,r,i)'));
   assert.ok(bundle.includes('invertChord(e,t)'));
   assert.ok(bundle.includes('chordSymbol(e,t,n)'));
+});
+
+
+test('Bewertungsmodul wird von der Anwendung geladen', () => {
+  assert.ok(bundle.includes("from './music/bewertung.mjs';"));
+  assert.ok(bundle.includes('gradeWrittenNotes(e,t,n,r)'));
+});
+
+
+test('Vier Notennamen-Aufgabengeneratoren werden aus dem Modul verwendet', () => {
+  assert.ok(bundle.includes("from './aufgaben/notennamen.mjs';"));
+  for (const call of [
+    'noteNameTaskGenerators.multipleChoice(e)',
+    'noteNameTaskGenerators.enharmonic()',
+    'noteNameTaskGenerators.placement(e)',
+    'noteNameTaskGenerators.textEntry(e)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Vier Intervall-Generatoren werden tatsächlich aus ihrem Modul aufgerufen', () => {
+  assert.ok(bundle.includes("from './aufgaben/intervalle.mjs';"));
+  for (const call of [
+    'intervalTaskGenerators.halfWholeStep(e)',
+    'intervalTaskGenerators.buildInterval(e)',
+    'intervalTaskGenerators.recognizeInterval(e)',
+    'intervalTaskGenerators.listeningInterval()',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Tonleiter-Generatoren werden von der Anwendung aus dem Modul geladen', () => {
+  assert.ok(bundle.includes("from './aufgaben/tonleitern.mjs';"));
+  for (const call of [
+    'scaleTaskGenerators.majorScale(e)',
+    'scaleTaskGenerators.minorScale(e)',
+    'scaleTaskGenerators.chromaticScale(e)',
+    'scaleTaskGenerators.wholeToneScale(e)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Sechs Akkord-Aufgabengeneratoren werden aus dem Modul geladen', () => {
+  assert.ok(bundle.includes("from './aufgaben/akkorde.mjs';"));
+  for (const call of [
+    'chordTaskGenerators.buildTriadTask(e)',
+    'chordTaskGenerators.identifyTriad(e)',
+    'chordTaskGenerators.identifyInversion(e)',
+    'chordTaskGenerators.buildInversion(e)',
+    'chordTaskGenerators.writtenTriadName(e)',
+    'chordTaskGenerators.listeningTriad()',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Fünf Rhythmus-Aufgabengeneratoren werden tatsächlich aus dem Modul genutzt', () => {
+  assert.ok(bundle.includes("from './aufgaben/rhythmus.mjs';"));
+  for (const call of [
+    'rhythmTaskGenerators.missingNoteValue(e)',
+    'rhythmTaskGenerators.missingRestValue(e)',
+    'rhythmTaskGenerators.identifyRest(e,t)',
+    'rhythmTaskGenerators.barLine(e)',
+    'rhythmTaskGenerators.triplet(e)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Quintenzirkel- und Vorzeichenaufgaben verwenden das neue Modul', () => {
+  assert.ok(bundle.includes("from './aufgaben/quintenzirkel-vorzeichen.mjs';"));
+  assert.ok(bundle.includes('keySignatureTasks.circleOfFifths()'));
+  assert.ok(bundle.includes('keySignatureTasks.readKeySignature(e)'));
+});
+
+
+test('Vier Harmonie- und Vierklanggeneratoren nutzen das neue Modul', () => {
+  assert.ok(bundle.includes("from './aufgaben/harmoniefunktionen.mjs';"));
+  assert.ok(bundle.includes('var Ye=MAJOR_FUNCTIONS'));
+  for (const call of [
+    'harmonyTasks.buildFunctionChord(e)',
+    'harmonyTasks.identifyFunction(e)',
+    'harmonyTasks.buildExtendedChord(e)',
+    'harmonyTasks.identifyExtendedChord(e)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Die letzten drei Generatoren für Kadenz, Stimmführung und Analyse kommen aus dem Modul', () => {
+  assert.ok(bundle.includes("from './aufgaben/kadenz-analyse.mjs';"));
+  for (const call of [
+    'cadenceAnalysisTasks.cadence()',
+    'cadenceAnalysisTasks.voiceLeading()',
+    'cadenceAnalysisTasks.harmonicAnalysis()',
+  ]) assert.ok(bundle.includes(call), call);
+  assert.ok(bundle.includes('gens:[St,Ct]'));
+  assert.ok(bundle.includes('gens:[wt]'));
+});
+
+
+test('Notensystem-Renderer werden über separate ES-Module eingebunden', () => {
+  assert.ok(bundle.includes("from './ui/notensystem.mjs';"));
+  for (const call of [
+    'notationRenderers.renderStaff(e)',
+    'notationRenderers.renderGrandStaff(e)',
+    'notationRenderers.renderEditableStaff(e,t,n,r)',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+test('Musikduell behält zwei entgegengesetzte Tischrichtungen', () => {
+  assert.ok(bundle.includes('rotate-180'), 'obere Tischseite bleibt gedreht');
+  assert.ok(duelViewSource.includes("style:{rotate:t?`180deg`:`0deg`}"),
+    'Notensystem der oberen Tischseite wird gegengedreht und bleibt lesbar');
+  assert.ok(duelViewSource.includes('duel-score-svg'), 'Duell-Notenansicht bleibt eingebunden');
+});
+
+
+test('Touch-Positionsberechnung ist von der React-Oberfläche getrennt', () => {
+  assert.ok(bundle.includes("from './ui/noteneingabe.mjs';"));
+  assert.ok(bundle.includes('noteFromSvgEvent(e,N.clef||`treble`,pe)'));
+  assert.ok(bundle.includes('if(O||!N)return'), 'gesperrte Aufgaben nehmen keine Eingabe an');
+  assert.ok(bundle.includes('if(de.length>=n-t)return'), 'volle Notensysteme nehmen keine Eingabe an');
+  assert.ok(bundle.includes('if(A.current)return'), 'Sperre laufender Animationen bleibt erhalten');
+  assert.ok(bundle.includes('d&&fe([...de,d])'), 'ungültige Klicks bleiben folgenlos');
+});
+
+
+test('Duell verwendet eigenständige Spieler- und Auswertungsfunktionen', () => {
+  assert.ok(duelSessionSource.includes("from './spielregeln.mjs';"));
+  for (const call of [
+    'createDuelPlayers(i,f)',
+    'prepareDuelRoundPlayers(t,e.options)',
+    'scoreDuelRound(e,n.correct)',
+    'ie(a.players),qt(a.anyCorrect)',
+  ]) assert.ok(duelSessionSource.includes(call), call);
+  assert.ok(duelSessionSource.includes('now:()=>performance.now()'), 'Zeitquelle bleibt performance.now');
+  assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Tischseite bleibt gedreht');
+  assert.ok(duelViewSource.includes('style:{rotate:t?`180deg`:`0deg`}'),
+    'Notensystem wird weiter gegengedreht');
+});
+
+
+test('Duellzeit und Rundenentscheidungen werden aus eigenem Modul aufgerufen', () => {
+  assert.ok(duelSessionSource.includes("from './rundensteuerung.mjs';"));
+  for (const call of [
+    'T.current=startDuelRoundTimer(',
+    'onProgress:percent=>re(percent)',
+    'recordDuelAnswer(E.current,e,t,()=>performance.now())',
+    'allDuelPlayersAnswered(i)',
+    'nextDuelRoundIndex(g,m.length)',
+  ]) assert.ok(duelSessionSource.includes(call), call);
+  assert.ok(duelSessionSource.includes("from './timer.mjs';"), 'der Intervalltimer liegt im eigenen Modul');
+  assert.ok(duelSessionSource.includes('schedule:(tick,ms)=>window.setInterval(tick,ms)'), 'Browser-Intervall bleibt erhalten');
+  assert.ok(duelSessionSource.includes('T.current=startDuelRoundTimer('), 'die neue Timer-Factory wird tatsächlich verwendet');
+  assert.ok(duelSessionSource.includes('if(D.current)return;let n=E.current[e];if(n.answer!==null)return'),
+    'Doppelantworten und abgeschlossene Runden bleiben gesperrt');
+  assert.ok(duelSessionSource.includes('se(E.current,`Zeit abgelaufen!`,e)'), 'Fristende weiterhin direkt ausgewertet');
+  assert.ok(duelSessionSource.includes('se(i,`Alle haben geantwortet!`,m[g])'), 'letzte Antwort beendet Runde');
+  assert.ok(bundle.includes('rotate-180'), 'gegenüberliegende Spieleransicht bleibt erhalten');
+});
+
+
+test('Duell-Aufgabenpool wird aus eigenem Modul erzeugt', () => {
+  assert.ok(bundle.includes("from './duell/aufgabenpool.mjs';"));
+  assert.ok(bundle.includes('createDuelQuestionPool({sections:Et,shuffle:D,adaptQuestion:Qt,questionKey:Tt,renderGrandStaff:Rt,renderStaff:Lt,fallbackQuestions:Jt})'));
+  assert.ok(duelSessionSource.includes('let e=$t(o,u),t=createDuelPlayers(i,f)'), 'Start behält Aufgabenpool und Spielerstammdaten');
+});
+
+test('Spielerpanels kommen aus dem unabhängigen Duell-Ansichtsmodul', () => {
+  assert.ok(bundle.includes("from './duell/ansicht.mjs';"));
+  assert.ok(bundle.includes('renderDuelNotation(I,e,t)'));
+  assert.ok(bundle.includes('renderDuelPlayer(I,Dn,x,O,e,t)'));
+  assert.ok(bundle.includes('ue.map(e=>de(e,le))'), 'obere Spielerseite vorhanden');
+  assert.ok(bundle.includes('k.map(e=>de(e,le))'), 'untere Spielerseite vorhanden');
+  assert.ok(duelViewSource.includes('onClick:()=>O(e.id,i)'), 'Antwort-Buttons übergeben ID und Antwortslot');
+  assert.ok(duelViewSource.includes('disabled:n||x'), 'beantwortete Runden sperren Eingaben');
+});
+
+test('Duell-Hook bleibt bedingungslos vor dem Dialog-Render eingebunden', () => {
+  assert.ok(bundle.includes("from './duell/sitzung.mjs';"));
+  assert.ok(bundle.includes('createDuelSessionHook({React:_,generateQuestions:$t,playFeedback:qt})'));
+  assert.ok(bundle.includes('=useDuelSession(e);if(!e)return null;'),
+    'alle React-Hooks werden vor dem möglichen frühen Return ausgeführt');
+  assert.ok(duelSessionSource.includes('if(D.current)return'), 'abgeschlossene Runden bleiben gegen Mehrfachwertung geschützt');
+  assert.ok(duelSessionSource.includes('if(n.answer!==null)return'), 'zweifache Antwort wird blockiert');
+  assert.ok(duelSessionSource.includes('D.current=!0,ee(!0)'), 'Sperre wird vor der Wertung aktiviert');
+  assert.ok(duelSessionSource.includes('T.current&&clearInterval(T.current)'), 'alle Timer-Cleanup-Pfade bleiben erhalten');
 });
