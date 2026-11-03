@@ -22,6 +22,10 @@ Ein **Unterrichtslink** enthält nur den Themen- und Übungsplan als URL-Paramet
 - `src/unterricht/vendor/qrcode.mjs`: gebündelter QR-Encoder von Kazuhiko Arase (MIT), inklusive vollständigem Lizenztext unter `src/unterricht/vendor/LICENSE.qrcode-generator.txt`. Keine Laufzeitabhängigkeit zu einem CDN oder einem Dienst.
 - `tests/unterricht-qr.test.mjs`: Tests für URL-Sicherheit, Kodierung, Ruhezonen, Finder-Muster und die einklappbare QR-Anzeige.
 
+### Druckbare Unterrichtsaufträge
+
+Im selben Bereich lässt sich die gewählte Übung über **„Auftragskarte mit QR-Code drucken“** als A4-Karte mit Thema, Aufgabenart, Notenschlüssel, Aufgabenanzahl, QR-Code, Link sowie Namens- und Datumsfeld ausgeben. Die Druckansicht erscheint nur beim Drucken; die normale Seite bleibt unverändert. Auf dem iPad öffnet der Knopf den vom Browser angebotenen Druckdialog. Die PDF-Speicherung erfolgt gegebenenfalls über die Druckoptionen des Geräts, nicht über einen Server.
+
 ## Lernprofile und zeitfreies Duell
 
 Auf gemeinsam genutzten Geräten sind die Lernstände nun pro lokalem Profil getrennt. Das bisherige **Standardprofil** behält die vorhandenen XP-, Punkte- und Statistikdaten. Für Gruppen oder Lernende lassen sich weitere Profile anlegen und wieder löschen. Im **Gastmodus** bleiben weder Fortschritte noch Fehler im lokalen Speicher zurück. Es wird kein Konto und kein Server benötigt; ein Profil existiert ausschließlich in diesem Browser.
