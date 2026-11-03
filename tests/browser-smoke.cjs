@@ -33,6 +33,7 @@ const assets = {
   '/src/aufgaben/intervalle.mjs': ['src/aufgaben/intervalle.mjs', 'application/javascript; charset=utf-8'],
   '/src/aufgaben/tonleitern.mjs': ['src/aufgaben/tonleitern.mjs', 'application/javascript; charset=utf-8'],
   '/src/aufgaben/akkorde.mjs': ['src/aufgaben/akkorde.mjs', 'application/javascript; charset=utf-8'],
+  '/src/aufgaben/rhythmus.mjs': ['src/aufgaben/rhythmus.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
 const server = http.createServer((req, res) => {
