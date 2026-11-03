@@ -20,6 +20,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `src/aufgaben/rhythmus.mjs`: fünf Generatoren für Notenwerte, Pausen, Taktstrich und Triolen.
 - `src/aufgaben/quintenzirkel-vorzeichen.mjs`: Paralleltonarten, Quintenzirkel und Generalvorzeichen erkennen.
 - `src/aufgaben/harmoniefunktionen.mjs`: T/S/D, Parallelfunktionen, Funktionen erkennen, Sept- und Sixte-ajoutée-Akkorde; gemeinsamer Dur-Funktionskatalog für die harmonische Analyse.
+- `src/aufgaben/kadenz-analyse.mjs`: Kadenzen, Stimmführungsfehler und Harmonische Analyse mit gemeinsam importiertem Dur-Funktionskatalog.
 - `tests/aufgaben.test.cjs`: Regressionstests für Aufgaben, Duell und Dateistruktur unter Verwendung des echten Notennamen-Moduls.
 - `tests/notennamen.test.mjs`: direkte Unit-Tests für Notennamen und Eingaben.
 - `tests/tonhoehen.test.mjs`: direkte Unit-Tests für diatonische und chromatische Tonhöhen.
@@ -34,6 +35,7 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 - `tests/rhythmus-generatoren.test.mjs`: alle fünf Rhythmusaufgabentypen samt Taktangaben und Triolen.
 - `tests/quintenzirkel-vorzeichen.test.mjs`: Quintenzirkel, Generalvorzeichen, Paralleltonarten und Schlüsselwahl.
 - `tests/harmoniefunktionen-generatoren.test.mjs`: Haupt-/Nebenfunktionen, Dreiklänge, Umkehrungen und Vierklänge.
+- `tests/kadenz-analyse.test.mjs`: Kadenzen, Stimmführung, Stimmenverteilung im Klaviersystem und harmonische Analyse.
 - `tests/browser-smoke.cjs`: Chrome-Smoke-Test, der die ausgelagerten Assets über einen lokalen HTTP-Server lädt und den tatsächlichen Start der Oberfläche prüft.
 - `.github/workflows/aufgaben-regression.yml`: automatische Prüfungen für Pull Requests und `main`.
 
@@ -66,6 +68,7 @@ node --check src/aufgaben/akkorde.mjs
 node --check src/aufgaben/rhythmus.mjs
 node --check src/aufgaben/quintenzirkel-vorzeichen.mjs
 node --check src/aufgaben/harmoniefunktionen.mjs
+node --check src/aufgaben/kadenz-analyse.mjs
 node --test tests/*.test.*
 node tests/browser-smoke.cjs  # Chrome/Chromium auf dem System erforderlich
 ```
