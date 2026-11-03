@@ -89,5 +89,5 @@ test('Musikduell zeigt zwei unabhängig ausgerichtete Kopien desselben Notensyst
   assert.equal(bottom.props.children.props.style.rotate, '0deg');
   assert.equal(top.props.children.props.dangerouslySetInnerHTML.__html, svg);
   assert.equal(bottom.props.children.props.dangerouslySetInnerHTML.__html, svg);
-  assert.match(html, /\\.duel-score-svg>svg\\{[^}]*max-height:9vh/);
+  assert.match(html, /\.duel-score-svg>svg\{[^}]*max-height:9vh/);
 });
