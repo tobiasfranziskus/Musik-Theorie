@@ -64,10 +64,20 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 
 ## Stufe 3 – Oberfläche und Musikduell
 
-- Notensystem-Rendering und Eingabelogik als getrennte Komponenten.
-- Musikduell: Aufgabenpool, Fragen-/Zeitverwaltung, Punktelogik und Darstellung voneinander trennen.
-- Zwei unabhängig ausgerichtete Notenansichten für die gegenüberliegenden Tischseiten bewahren.
-- [x] iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
+### Inventur der bestehenden Darstellung
+
+- `src/app.js` enthält weiterhin den gebündelten React-Code mit Aufgabenoberfläche, Einzeltraining und Tischduell (2–4 Spieler).
+- Das SVG-Notensystem bestand aus 3 Ausgabewegen: `Lt` für Aufgaben mit einem Notensystem, `Rt` für das doppelte Klaviersystem und `zt` für die interaktive Noteneingabe. Gemeinsame interne Zeichenroutinen behandeln Schlüssel, Hilfslinien, Vorzeichen, Pausen und Triolen.
+- Im Tischduell verwendet die obere Tischseite die CSS-Klasse `rotate-180`; die eigentliche Notengrafik wird mit `rotate: 180deg` erneut aufrecht ausgerichtet. Diese zwei Drehungen sind eine wichtige Abnahmebedingung.
+- Der Duellzustand (Fragenpool, Spieler/Punkte, Zeitbegrenzung und Tast-/Touchaktionen) liegt bisher im React-Bundle. Er wird nicht gleichzeitig mit dem SVG-Renderer verändert.
+
+### Umsetzung und nächste Schritte
+
+- [x] SVG-Erzeugung für Notensystem, Klaviersystem und interaktive Eingabe nach `src/ui/notensystem.mjs` ausgelagert; **3.500 exakte SVG-Vergleiche (0 Abweichungen)** und **14 feste Referenzprüfsummen** mit drei Schlüsseln, Vorzeichen, Noten-/Pausenwerten, Triolen und Bewertungsfarben (PR #17).
+- [ ] Interaktive Eingabeverwaltung von SVG-Ausgabe trennen; Koordinaten-, Touch- und iPad-Verhalten gesondert prüfen.
+- [ ] Musikduell: Aufgabenpool, Fragen-/Zeitverwaltung, Punktelogik und Darstellung voneinander trennen.
+- [ ] Duelllayout mit gegenüberliegenden Ansichten gezielt per Browser-/iPad-Abnahme testen; alle sichtbaren Änderungen gesondert freigeben.
+- [x] Frühere iPad-/Safari-Abnahme für Querformat, Touch-Eingabe und Duell durch den Nutzer als abgeschlossen gemeldet; erneute Prüfung nach späteren UI-Änderungen erforderlich.
 
 ## Stufe 4 – Aufräumen
 
