@@ -31,11 +31,12 @@ Die Musiktheorie-Anwendung soll verständlich, modular und zuverlässig testbar 
 - [x] Vier Tonleiter-Aufgabengeneratoren nach `src/aufgaben/tonleitern.mjs` auslagern: Dur, Moll, Chromatik und Ganztonleitern; **5.600 deterministische Vergleiche ohne Abweichung** (PR #11).
 - [x] Sechs Dreiklang-Aufgabengeneratoren inkl. Umkehrungen, freier Eingabe und Hörakkorden nach `src/aufgaben/akkorde.mjs` auslagern. **8.400 deterministische Aufgabenvergleiche** und **9.800 Antwortprüfungen**, jeweils ohne Abweichung (PR #12).
 - [x] Fünf Rhythmusgeneratoren nach `src/aufgaben/rhythmus.mjs` auslagern (Noten-/Pausenwerte, Pausen erkennen, Taktstrich, Triolen): **5.200 deterministische Aufgabenerzeugungen und Zufallsfortsetzungen ohne Abweichung** (PR #13).
+- [x] Quintenzirkel und Generalvorzeichen (`src/aufgaben/quintenzirkel-vorzeichen.mjs`) als zwei Generatoren auslagern: **6.000 deterministische Vergleichsfälle und identische Zufallsfortsetzung**, keine Abweichungen (PR #14).
 - [ ] Weitere Generatorgruppen und Komponenten aus dem Bundle trennen.
 
 ### Inventur der Aufgabengeneratoren (13 Themenbereiche)
 
-Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davon **23 modularisiert** und **9 noch im Bundle**. Die beiden Hörgeneratoren sind bereits in die Intervall- und Akkordmodule übernommen.
+Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davon **25 modularisiert** und **7 noch im Bundle**. Die beiden Hörgeneratoren sind bereits in die Intervall- und Akkordmodule übernommen.
 
 | Bereich | Generatoren | Zustand |
 | --- | --- | --- |
@@ -48,12 +49,12 @@ Aus den `gens`-Registrierungen in `src/app.js`: **32 Generatorfunktionen**, davo
 | Noten-/Pausenwerte | 5 | ausgelagert (#13) |
 | Haupt-/Nebendreiklänge | 2 | offen |
 | Weitere Akkorde | 2 | offen |
-| Quintenzirkel | 1 | offen |
-| Vorzeichen lesen | 1 | offen |
+| Quintenzirkel | 1 | ausgelagert (#14) |
+| Vorzeichen lesen | 1 | ausgelagert (#14) |
 | Kadenz | 2 | offen |
 | Harmonische Analyse | 1 | offen |
 
-**Empfohlene Reihenfolge:** Als Nächstes Quintenzirkel/Vorzeichen (zwei Generatoren), danach Haupt-/Nebendreiklänge und weitere Akkorde (vier), anschließend Kadenz/Harmonieanalyse (drei). Vor jedem Auslagern Zufallsfolge, Notation, Antwortvalidierung und Browser-Start gegen den bestehenden Code prüfen.
+**Empfohlene Reihenfolge:** Als Nächstes Haupt-/Nebendreiklänge und weitere Akkorde (vier Generatoren), anschließend Kadenz und Harmonieanalyse (drei). Vor jedem Auslagern Zufallsfolge, Notation, Antwortvalidierung und Browser-Start gegen den bestehenden Code prüfen.
 
 **Hinweis zur Codequalität:** PR #12 verschiebt die sechs bisher kompakten Generatorfunktionskörper in ein eigenes Modul mit benannter Factory und unabhängigen Tests. Der eigentliche Funktionskörper wird noch in einem separaten, rein kosmetisch/refaktorierenden Schritt lesbar formatiert; keine Mischänderungen an der Aufgabenlogik.
 - Generatoren und Prüffunktionen separat von der Darstellung abbilden.
