@@ -8,7 +8,7 @@ const VALID_CLEFS = new Set(['mixed','treble','bass','alto']);
 
 export function normalizePracticePlan(value={}, defaultClef='mixed') {
   const data=value&&typeof value==='object'?value:{};
-  const amount=Number(data.count);
+  const amount=data.count==null||data.count===''?NaN:Number(data.count);
   return {
     count:Number.isFinite(amount)?Math.max(5,Math.min(30,Math.round(amount))):10,
     mode:VALID_MODES.has(data.mode)?data.mode:'all',
