@@ -18,6 +18,7 @@ jobs:
           node --check src/app.js
           node --check src/music/notennamen.mjs
           node --check src/music/tonhoehen.mjs
+          node --check src/music/intervalle.mjs
       - name: Noten- und Aufgabentests
         run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)
