@@ -34,6 +34,7 @@ jobs:
           node --check src/ui/noteneingabe.mjs
           node --check src/duell/spielregeln.mjs
           node --check src/duell/rundensteuerung.mjs
+          node --check src/duell/aufgabenpool.mjs
       - name: Noten- und Aufgabentests
         run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)
