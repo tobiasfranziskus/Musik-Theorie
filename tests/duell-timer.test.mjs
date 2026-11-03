@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {startDuelRoundTimer} from '../src/duell/timer.mjs';
 
-function clock(start=0) {
-  let time=start,callback=null,interval=null,serial=0;
+function clock(initial=0) {
+  let time=initial,callback=null,interval=null,serial=0;
   const events=[];
   const now=()=>time;
   const schedule=(fn,ms)=>{
@@ -74,9 +74,7 @@ test('Timer feuert auch für null Sekunden erst bei einem echten Intervall-Tick'
   c.start(0);
   assert.equal(c.events.length,1);
   c.tick(600);
-  assert.equal(c.events.at(-1)[0],'progress');
-  // Historisches Verhalten: 0 / 0 = NaN; daher keine automatische Ablaufprüfung.
-  assert.equal(c.events.some(e=>e[0]==='expired'),false);
+  assert.deepEqual(c.events.slice(-3),[['progress',0],['cancel',1],['expired']]);
 });
 
 test('Die Zeitquelle wird einmal beim Start und genau einmal pro Tick gelesen', () => {
