@@ -21,6 +21,7 @@ jobs:
           node --check src/music/intervalle.mjs
           node --check src/music/tonleitern.mjs
           node --check src/music/akkorde.mjs
+          node --check src/music/bewertung.mjs
       - name: Noten- und Aufgabentests
         run: node --test tests/*.test.*
       - name: Browser-Smoke-Test (Chrome)
