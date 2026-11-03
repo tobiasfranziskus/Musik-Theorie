@@ -122,3 +122,31 @@ test('Wenn ein QR-Link ungültig ist, bleibt die Kopierfunktion sichtbar',()=>{
   assert.ok(!nodes.some(x=>x.type==='svg'));
   assert.ok(nodes.some(x=>x.type==='button'&&x.props.children==='Link kopieren'));
 });
+
+test('Druckauftrag enthält den aktuellen Unterrichtsplan und nutzt die Browser-Druckaktion',()=>{
+  const I={jsx:(type,props,key)=>({type,props,key}),jsxs:(type,props,key)=>({type,props,key})};
+  const {PracticeSetup}=createPracticeWidgets(I);
+  let calls=0;
+  const view=PracticeSetup({
+    section:{id:'noten',title:'Notennamen'},
+    plan:{count:15,mode:'staff',difficulty:'beginner',clef:'bass'},
+    onChange:()=>{},onStart:()=>{},onClose:()=>{},errors:{},
+    shareUrl:classroomLink,onCopy:()=>{},onPrint:()=>{calls++;},copied:false,error:'',
+  });
+  const nodes=[];
+  walk(view,node=>nodes.push(node));
+  const card=nodes.find(node=>node.props.id==='practice-print-card');
+  const button=nodes.find(node=>node.type==='button'&&node.props.children==='Auftragskarte mit QR-Code drucken');
+  assert.ok(card&&button,'Druckkarte und Aktion müssen vorhanden sein');
+  assert.equal(card.props.style.display,'none','Karte bleibt außerhalb des Drucks unsichtbar');
+  const texts=nodes.filter(node=>typeof node.props.children==='string').map(node=>node.props.children);
+  assert.ok(texts.includes('Musiktheorie · Übungsauftrag'));
+  assert.ok(texts.includes('Notennamen'));
+  assert.ok(texts.includes('15 Aufgaben · Noten praktisch setzen · Bassschlüssel · Anfänger · ohne Vorzeichen'));
+  assert.ok(texts.includes(classroomLink));
+  const svgs=nodes.filter(node=>node.type==='svg');
+  assert.equal(svgs.length,2,'Anzeige- und Druck-QR mit identischer Geometrie');
+  assert.equal(svgs[0].props.children[1].props.d,svgs[1].props.children[1].props.d);
+  button.props.onClick();
+  assert.equal(calls,1,'Drucken erfolgt ausschließlich auf direkten Knopfdruck');
+});
