@@ -47,6 +47,8 @@ const assets = {
   '/src/duell/sitzung.mjs': ['src/duell/sitzung.mjs', 'application/javascript; charset=utf-8'],
   '/src/unterricht/lernplan.mjs': ['src/unterricht/lernplan.mjs', 'application/javascript; charset=utf-8'],
   '/src/unterricht/oberflaeche.mjs': ['src/unterricht/oberflaeche.mjs', 'application/javascript; charset=utf-8'],
+  '/src/unterricht/qr-code.mjs': ['src/unterricht/qr-code.mjs', 'application/javascript; charset=utf-8'],
+  '/src/unterricht/vendor/qrcode.mjs': ['src/unterricht/vendor/qrcode.mjs', 'application/javascript; charset=utf-8'],
   '/src/unterricht/profile.mjs': ['src/unterricht/profile.mjs', 'application/javascript; charset=utf-8'],
   '/src/styles.css': ['src/styles.css', 'text/css; charset=utf-8'],
 };
