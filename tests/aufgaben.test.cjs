@@ -37,6 +37,8 @@ test.before(async () => {
   const { createNoteNameTaskGenerators } = await import(nameTasksUrl);
   const intervalTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'intervalle.mjs')).href;
   const { createIntervalTaskGenerators } = await import(intervalTaskUrl);
+  const scaleTaskUrl = pathToFileURL(path.join(root, 'src', 'aufgaben', 'tonleitern.mjs')).href;
+  const { createScaleTaskGenerators } = await import(scaleTaskUrl);
   const chordExports = [
     'buildTriad', 'invertChord', 'hasSimpleAccidentals',
     'chordSymbol', 'chordDescription',
@@ -50,12 +52,12 @@ test.before(async () => {
     'formatGermanNote', 'parseGermanNoteInput',
     'diatonicIndex', 'noteFromDiatonicIndex', 'chromaticPitch',
     'INTERVALS', 'transposeDiatonic', ...scaleExports, ...chordExports, 'gradeWrittenNotes',
-    'createNoteNameTaskGenerators', 'createIntervalTaskGenerators',
+    'createNoteNameTaskGenerators', 'createIntervalTaskGenerators', 'createScaleTaskGenerators',
     'var ' + bundle.slice(begin, end) + ';return {M,N,Qt,Et,ye};'
   )(formatGermanNote, parseGermanNoteInput, diatonicIndex, noteFromDiatonicIndex, chromaticPitch,
     INTERVALS, transposeDiatonic, ...scaleExports.map(name => scales[name]),
     ...chordExports.map(name => chords[name]), gradeWrittenNotes,
-    createNoteNameTaskGenerators, createIntervalTaskGenerators));
+    createNoteNameTaskGenerators, createIntervalTaskGenerators, createScaleTaskGenerators));
 });
 
 test('Notennamen: f1, f¹ und f4 sind als f¹ gültig', () => {
@@ -193,5 +195,16 @@ test('Vier Intervall-Generatoren werden tatsächlich aus ihrem Modul aufgerufen'
     'intervalTaskGenerators.buildInterval(e)',
     'intervalTaskGenerators.recognizeInterval(e)',
     'intervalTaskGenerators.listeningInterval()',
+  ]) assert.ok(bundle.includes(call), call);
+});
+
+
+test('Tonleiter-Generatoren werden von der Anwendung aus dem Modul geladen', () => {
+  assert.ok(bundle.includes("from './aufgaben/tonleitern.mjs';"));
+  for (const call of [
+    'scaleTaskGenerators.majorScale(e)',
+    'scaleTaskGenerators.minorScale(e)',
+    'scaleTaskGenerators.chromaticScale(e)',
+    'scaleTaskGenerators.wholeToneScale(e)',
   ]) assert.ok(bundle.includes(call), call);
 });
