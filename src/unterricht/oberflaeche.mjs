@@ -3,6 +3,7 @@
  * JSX-Runtime wird injiziert, kein Build-Prozess oder DOM-Zugriff beim Import.
  */
 import {normalizePracticePlan,learningSummary} from './lernplan.mjs';
+import {createLessonQrSvgData} from './qr-code.mjs';
 
 const TYPES=[
   {value:'all',label:'Alle Aufgabenarten'},
@@ -38,6 +39,8 @@ export function createPracticeWidgets(I) {
     const config=normalizePracticePlan(plan);
     const set=(key,value)=>onChange({...config,[key]:value});
     const weak=learningSummary(errors,section.id).filter(x=>x.weak);
+    let qr=null;
+    try {if(shareUrl)qr=createLessonQrSvgData(shareUrl);} catch { /* link text remains available */ }
     return I.jsxs('section',{id:'practice-setup',className:'bg-slate-800/90 border border-teal-400/50 rounded-2xl p-4 sm:p-6 space-y-4 shadow-lg',
       children:[
         I.jsxs('div',{className:'flex justify-between gap-3 items-start',children:[
@@ -66,6 +69,20 @@ export function createPracticeWidgets(I) {
             I.jsx('button',{type:'button',onClick:onCopy,className:'px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-xs font-bold',children:copied?'Kopiert!':'Link kopieren'}),
           ]}),
           I.jsx('p',{className:'text-xs text-slate-400',children:'Der Link enthält nur die Übungseinstellungen, keine Ergebnisse oder persönlichen Daten.'}),
+          I.jsxs('details',{className:'rounded-xl bg-white/5 border border-white/10 p-3',children:[
+            I.jsx('summary',{className:'cursor-pointer text-teal-200 font-bold text-sm select-none',children:'QR-Code für Schüler-iPads anzeigen'}),
+            qr?I.jsxs('div',{className:'flex flex-col items-start gap-2 mt-3',children:[
+              I.jsxs('svg',{viewBox:qr.viewBox,width:232,height:232,
+                xmlns:'http://www.w3.org/2000/svg',role:'img',
+                'aria-label':'QR-Code für diesen Unterrichtslink',
+                className:'max-w-full h-auto bg-white rounded-lg shadow p-1',
+                children:[
+                  I.jsx('rect',{x:0,y:0,width:qr.size,height:qr.size,fill:'#ffffff'}),
+                  I.jsx('path',{d:qr.path,fill:'#111111'}),
+                ]}),
+              I.jsx('p',{className:'text-xs text-slate-300',children:'Mit der iPad-Kamera scannen. Der QR-Code wird direkt auf diesem Gerät erzeugt und benötigt keinen fremden Dienst.'}),
+            ]}):I.jsx('p',{className:'text-xs text-amber-200 mt-2',children:'Für diesen Link kann kein QR-Code erzeugt werden. Bitte den Link kopieren.'}),
+          ]}),
         ]}),
       ]});
   }
