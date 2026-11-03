@@ -34,7 +34,9 @@ function setupWorker({missing=null}={}) {
     fetched.push(url);
     if(!online)throw new TypeError('Network offline');
     if(missing && url.endsWith(missing))return new Response('Not found',{status:404});
-    return new Response(network.get(url)||'Resource '+new URL(url).pathname,{status:200});
+    const parsed = new URL(url);
+    const key = parsed.origin + parsed.pathname;
+    return new Response(network.get(url)??network.get(key)??('Resource '+parsed.pathname),{status:200});
   }
   const caches = {
     async open(name) {
@@ -132,10 +134,11 @@ test('Online-Updates ersetzen zwischengespeicherte Module und bleiben offline si
   worker.network.set(moduleURL,'Aktualisierter Generator');
   const response=await worker.dispatch('fetch',{url:moduleURL+'?v=2',method:'GET',mode:'cors'});
   assert.ok(response);
+  assert.equal(await (await response).text(),'Aktualisierter Generator');
   // Fetch mit Query bleibt zulässig; das Caching nutzt den kanonischen Asset-Pfad.
   worker.setOnline(false);
   const fallback=await worker.dispatch('fetch',{url:moduleURL,method:'GET',mode:'cors'});
-  assert.equal((await fallback).ok,true);
+  assert.equal(await (await fallback).text(),'Aktualisierter Generator');
 
   const external=await worker.dispatch('fetch',{
     url:'https://example.com/api/student',method:'GET',mode:'cors'});
