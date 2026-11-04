@@ -80,6 +80,7 @@ test('Eigene Duell-Themenauswahl wird an den Fragenpool übergeben',()=>{
   const render=()=>runtime.render(()=>use(true,['treble'],['noten','intervalle']));
   let session=render();
   session.d('custom');
+  session.l(0); // Ohne Browser-Timer testbar
   session=render();
   session.ae();
   assert.deepEqual(calls,[{count:15,topics:['noten','intervalle'],clefs:['treble']}]);
