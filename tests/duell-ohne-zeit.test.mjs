@@ -71,3 +71,26 @@ test('Mehrfinger-Antworten werden auch ohne Zwischenrender beide registriert',()
   assert.equal(s.x,true);
   assert.equal(s.T.current,null);
 });
+
+test('Eigene Duell-Themenauswahl wird an den Fragenpool übergeben',()=>{
+  const runtime=simulatedReact(),calls=[];
+  const use=createDuelSessionHook({React:runtime.React,
+    generateQuestions:(count,topics,clefs)=>{calls.push({count,topics,clefs});return questions;},
+    playFeedback:()=>{}});
+  const render=()=>runtime.render(()=>use(true,['treble'],['noten','intervalle']));
+  let session=render();
+  session.d('custom');
+  session=render();
+  session.ae();
+  assert.deepEqual(calls,[{count:15,topics:['noten','intervalle'],clefs:['treble']}]);
+  assert.equal(render().n,true);
+});
+test('Duell mit leerer individueller Auswahl startet nicht',()=>{
+  const runtime=simulatedReact(),calls=[];
+  const use=createDuelSessionHook({React:runtime.React,
+    generateQuestions:()=>{calls.push('attempt');return [];},playFeedback:()=>{}});
+  const render=()=>runtime.render(()=>use(true,['treble'],[]));
+  let session=render();session.d('custom');session=render();session.ae();
+  assert.deepEqual(calls,['attempt']);
+  assert.equal(render().n,false);
+});

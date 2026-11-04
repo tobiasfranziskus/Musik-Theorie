@@ -115,3 +115,33 @@ test('Identische Seeds ergeben exakt dieselbe Aufgabenfolge und denselben Zufall
   assert.deepEqual(a.calls(),b.calls());
   assert.equal(a.random(),b.random());
 });
+
+test('Mehrere ausgewählte Themen erzeugen nur Aufgaben aus diesen Bereichen', () => {
+  const fixtureData=fixture(411);
+  const pool=createDuelQuestionPool(fixtureData.input);
+  const questions=pool(12,['intervalle','notennamen']);
+  assert.equal(questions.length,12);
+  assert.ok(questions.some(q=>q.prompt.startsWith('Ton ')));
+  assert.ok(questions.some(q=>q.prompt.startsWith('Intervall ')));
+  assert.ok(questions.every(q=>q.prompt.startsWith('Ton ')||q.prompt.startsWith('Intervall ')));
+  assert.equal(fixtureData.calls().hearingCalls,0);
+});
+test('Individuell gewähltes Einzelthema bleibt auf dieses beschränkt', () => {
+  const fixtureData=fixture(415);
+  const questions=createDuelQuestionPool(fixtureData.input)(9,['intervalle']);
+  assert.equal(questions.length,9);
+  assert.ok(questions.every(q=>q.prompt.startsWith('Intervall ')));
+});
+test('Bei leerer oder unbekannter Themenauswahl keine fremden Ersatzfragen', () => {
+  const fixtureData=fixture(416);
+  const pool=createDuelQuestionPool(fixtureData.input);
+  assert.deepEqual(pool(12,[]),[]);
+  assert.deepEqual(pool(12,['gehoer','existiert-nicht']),[]);
+});
+test('Die Mehrfachauswahl bleibt bei identischen Seeds deterministisch', () => {
+  const a=fixture(417),b=fixture(417);
+  const selected=['notennamen','intervalle'];
+  assert.deepEqual(createDuelQuestionPool(a.input)(12,selected),
+    createDuelQuestionPool(b.input)(12,selected));
+  assert.deepEqual(a.calls(),b.calls());
+});
