@@ -46,8 +46,8 @@
    dargestellt; eine 180°-Drehung kann nicht in das Gegenfeld hineinragen. */
 .duel-center-panel-with-score {
   display: grid;
-  height: min(42vh, 420px);
-  max-height: 42vh;
+  height: min(52vh, 480px);
+  max-height: 52vh;
   min-height: 0;
   overflow: hidden;
   grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) auto auto auto;
@@ -96,8 +96,8 @@
 }
 @media (max-height: 560px) and (orientation: landscape) {
   .duel-center-panel-with-score {
-    height: 48vh;
-    max-height: 48vh;
+    height: 56vh;
+    max-height: 56vh;
     row-gap: 2px;
     padding-top: 5px;
     padding-bottom: 5px;

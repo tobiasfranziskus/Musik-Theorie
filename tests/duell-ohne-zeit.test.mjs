@@ -56,5 +56,18 @@ test('Stoppuhr-Regeln für reguläre Duelle bleiben separat abgedeckt',()=>{
   const runtime=simulatedReact();
   const use=createDuelSessionHook({React:runtime.React,generateQuestions:()=>questions,playFeedback:()=>{}});
   const s=runtime.render(()=>use(true,['treble','bass']));
-  assert.equal(s.c,12,'historischer Default unverändert');
+  assert.equal(s.c,15,'Standardauswahl und tatsächlich laufende Uhr stimmen überein');
+});
+
+test('Mehrfinger-Antworten werden auch ohne Zwischenrender beide registriert',()=>{
+  const runtime=simulatedReact();
+  const use=createDuelSessionHook({React:runtime.React,generateQuestions:()=>questions,playFeedback:()=>{}});
+  const render=()=>runtime.render(()=>use(true,['treble']));
+  let s=render();s.l(0);s=render();s.ae();s=render();
+  s.O(0,1);s.O(1,0);
+  s=render();
+  assert.equal(s.E.current[0].answer,s.E.current[0].perm[1]);
+  assert.equal(s.E.current[1].answer,s.E.current[1].perm[0]);
+  assert.equal(s.x,true);
+  assert.equal(s.T.current,null);
 });
