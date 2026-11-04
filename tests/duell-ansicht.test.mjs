@@ -21,10 +21,22 @@ const notationFixtures=[
 for(const [label,svg,upper,expected] of notationFixtures) {
   test(label,()=>{
     const view=renderDuelNotation(jsx,svg,upper);
-    assert.equal(fnv1a(normalize(view)),expected);
+    // Unveränderte innere Notengrafik (inklusive 180°-Ausrichtung):
+    // Die alten Referenzprüfsummen gelten weiter für den bisherigen JSX-
+    // Inhalt, nur die äußere Begrenzung ist absichtlich neu.
+    const legacyView={...view,props:{
+      className:'w-full flex items-center justify-center overflow-x-auto min-h-0',
+      style:{maxHeight:'10vh'},
+      children:view.props.children,
+    }};
+    assert.equal(fnv1a(normalize(legacyView)),expected);
     assert.equal(view.props.children.props.style.rotate,upper?'180deg':'0deg');
     assert.equal(view.props.children.props.dangerouslySetInnerHTML.__html,svg);
     assert.match(view.props.children.props.className,/duel-score-svg/);
+    assert.match(view.props.className,/duel-score-slot/);
+    assert.equal(view.props.role,'group');
+    assert.equal(view.props['data-duel-side'],upper?'top':'bottom');
+    assert.match(view.props['aria-label'],upper?/obere Tischseite/:/untere Tischseite/);
   });
 }
 
