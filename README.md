@@ -6,6 +6,8 @@ Interaktive Musiktheorie-Übungen in 13 Themenbereichen und ein Tischduell für 
 
 Im Kapitel **Notennamen** startet die Schaltfläche **„🌱 Anfänger · ohne Vorzeichen“** eine eigene Lernrunde mit reinen Stammtönen. Multiple-Choice-Antworten, Notensetzen und freie Texteingabe verwenden ausschließlich Töne ohne ♯ oder ♭. Enharmonische Verwechslungsfragen bleiben in dieser Anfängerrunde aus; die normale Übungsvariante bleibt unverändert. „Dieses Thema wiederholen“ erhält den Anfängermodus.
 
+Im Musikduell gibt es unter **Thema → Eigene Themenauswahl** jetzt die Möglichkeit, die gewünschten Übungsgebiete unabhängig voneinander zu aktivieren. Über **Alle wählen** und **Keine wählen** lässt sich die Auswahl schnell zurücksetzen; mindestens ein Thema muss aktiv sein. Die bisherige Einstellung „Alle Themen gemischt“ und jedes einzelne Thema bleiben unverändert verfügbar.
+
 In der **Musikduell-Arena** erscheinen bei „Notennamen“ und „Alle Themen“ Schaltflächen für **Violinschlüssel** und **Bassschlüssel**. Beide lassen sich unabhängig auswählen; mindestens einer bleibt aktiv. Ein Altschlüssel wird im Duell nicht angeboten. Die Auswahl gilt ausschließlich für Aufgaben des Themenbereichs Notennamen und ändert die Schlüssel der übrigen Aufgaben nicht.
 
 ## Konfigurierbare Übungsrunden (Unterrichtsmodus)
