@@ -30,6 +30,7 @@ const assets = {
   '/src/music/intervalle.mjs': ['src/music/intervalle.mjs', 'application/javascript; charset=utf-8'],
   '/src/music/tonleitern.mjs': ['src/music/tonleitern.mjs', 'application/javascript; charset=utf-8'],
   '/src/music/akkorde.mjs': ['src/music/akkorde.mjs', 'application/javascript; charset=utf-8'],
+  '/src/music/beispiel-audio.mjs': ['src/music/beispiel-audio.mjs', 'application/javascript; charset=utf-8'],
   '/src/music/bewertung.mjs': ['src/music/bewertung.mjs', 'application/javascript; charset=utf-8'],
   '/src/aufgaben/notennamen.mjs': ['src/aufgaben/notennamen.mjs', 'application/javascript; charset=utf-8'],
   '/src/aufgaben/intervalle.mjs': ['src/aufgaben/intervalle.mjs', 'application/javascript; charset=utf-8'],

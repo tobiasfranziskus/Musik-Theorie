@@ -17,7 +17,7 @@ test('Duellmittelteil reserviert zwei gleich große, unabhängige Notenfelder',(
   const rules=sectionBetween('.duel-center-panel-with-score {',
     '.duel-center-panel-with-score .duel-center-question {');
   assert.match(rules,/display:\s*grid/);
-  assert.match(rules,/height:\s*min\(42vh,\s*420px\)/);
+  assert.match(rules,/height:\s*min\(52vh,\s*480px\)/);
   assert.match(rules,/overflow:\s*hidden/);
   assert.match(rules,/grid-template-rows:\s*auto\s+minmax\(0,\s*1fr\)\s+minmax\(0,\s*1fr\)\s+auto\s+auto\s+auto/);
   assert.match(rules,/row-gap:\s*4px/);

@@ -4,7 +4,7 @@ import {renderDuelNotation,renderDuelPlayer} from '../src/duell/ansicht.mjs';
 
 const jsx={jsx:(type,props,key)=>({type,props,key}),jsxs:(type,props,key)=>({type,props,key})};
 const colors=['#32b0a2','#f4a23e','#ca78bf','#8aa2f4'];
-const normalize=element=>JSON.stringify(element,(_,v)=>typeof v==='function'?'[click]':v);
+const normalize=element=>JSON.stringify(element,(k,v)=>k==='onPointerDown'?undefined:typeof v==='function'?'[click]':v);
 function fnv1a(value) {
   let h=2166136261;
   for(let i=0;i<value.length;i++) h=Math.imul(h^value.charCodeAt(i),16777619);
@@ -90,4 +90,19 @@ test('JSX-Funktionen sind ohne DOM, Hooks und Browserinitialisierung nutzbar',()
   assert.equal(typeof renderDuelPlayer,'function');
   const rendered=renderDuelNotation(jsx,'<svg></svg>',true);
   assert.equal(rendered.type,'div');
+});
+
+test('Zwei gleichzeitige iPad-Touches lösen unabhängig Spielerantworten aus',()=>{
+  const calls=[],events=[],q={options:['A','B','C','D'],correct:0};
+  const first=renderDuelPlayer(jsx,colors,false,(id,slot)=>calls.push([id,slot]),player(0,null,0,0,0),q);
+  const second=renderDuelPlayer(jsx,colors,false,(id,slot)=>calls.push([id,slot]),player(1,null,0,0,0),q);
+  const a=first.props.children[2].props.children[0], b=second.props.children[2].props.children[1];
+  a.props.onPointerDown({pointerType:'touch',preventDefault:()=>events.push('one')});
+  b.props.onPointerDown({pointerType:'touch',preventDefault:()=>events.push('two')});
+  assert.deepEqual(calls,[[0,0],[1,1]]);
+  assert.deepEqual(events,['one','two']);
+  a.props.onPointerDown({pointerType:'mouse',preventDefault:()=>events.push('mouse')});
+  assert.equal(calls.length,2);
+  a.props.onClick();
+  assert.deepEqual(calls,[[0,0],[1,1],[0,0]]);
 });
